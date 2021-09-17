@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "naiveconsole.h": "c",
+        "videodriver.h": "c"
+    }
+}

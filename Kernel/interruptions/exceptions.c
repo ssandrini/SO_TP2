@@ -47,6 +47,8 @@ void zero_division()
 
 void registerPrint(uint64_t *stackFrame)
 {
+	// TUVE QUE COMENTAR TODO ESTO PORQUE NO TENEMOS DELETECURSOR Y ESO
+	/*
 	char buffer[9];
 	static const char *registersName[] = {"R15:   ", "R14:   ", "R13:   ", "R12:   ", "R11:   ", "R10:   ", "R9:    ", "R8:    ", "RSI:   ", "RDI:   ", "RBP:   ", "RDX:   ", "RCX:   ", "RBX:   ", "RAX:   ", "RIP:   ", "CS:    ", "FLAGS: ", "RSP:   "};
 	for (int i = 0; i < 19; i++)
@@ -92,5 +94,6 @@ void registerPrint(uint64_t *stackFrame)
 			deleteCursor();
 		}
 	}
+	*/
 	ncNewLine();
 }
