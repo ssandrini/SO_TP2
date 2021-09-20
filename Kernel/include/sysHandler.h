@@ -14,7 +14,6 @@ void read(unsigned char * r1, unsigned int r2);
 void getTimeRTC(uint64_t r1, uint64_t r2);
 void getReg(uint64_t * r1, uint64_t * stackFrame);
 void getMem(uint8_t * dir, uint8_t * vec);
-void clearScreen(int currentScreen);
 void getInfo(uint32_t * r1, uint32_t * r2, int * id);
 
 #endif

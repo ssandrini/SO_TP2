@@ -84,11 +84,6 @@ void getMem(uint8_t *dir, uint8_t *vec)
     }
 }
 
-void clearScreen(int currentScreen)
-{
-    ncClear(currentScreen);
-}
-
 void getInfo(uint32_t *r1, uint32_t *r2, int *id)
 {
     if (_cpuidSupport())

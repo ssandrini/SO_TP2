@@ -1,11 +1,25 @@
 #include <videoDriver.h>
 
 // aca estaría mejor armar un TAD
+#define DEL 127
+#define CURSOR 222
 
 static uint8_t * const video = (uint8_t*)0xB8000;
 static uint8_t * currentVideo = (uint8_t*)0xB8000;
 static const uint32_t width = 80;
 static const uint32_t height = 25 ;
+
+static int getInformation(uint8_t * dir)
+{
+	return *(dir+1);
+}
+
+// habria que tocar el color? podria usar directamente la de imprimir el char con el color negro
+static void clearLine(uint8_t * p) 
+{
+	for(int i = 0; i < width; i++)
+		p[i * 2] = ' ';
+}
 
 static void scroll() 
 {
@@ -21,28 +35,26 @@ static void scroll()
 	clearLine(currentVideo);
 }
 
-static int getInformation(uint8_t * dir)
-{
-	return *(dir+1);
-}
-
-// habria que tocar el color? podria usar directamente la de imprimir el char con el color negro
-static void clearLine(uint8_t * p) 
-{
-	for(int i = 0; i < width; i++)
-		p[i * 2] = ' ';
-}
-
 void writeAscii(char character, int color)
 {
 	if(currentVideo ==  video + width * 2 * height) {
 		scroll();
 	}
-
 	*currentVideo = character;
 	*(currentVideo + 1) = color;
-	currentVideo += 2;
-}
+	if(character == (char) DEL)
+	{
+		currentVideo-=2;
+		*currentVideo = character;
+		*(currentVideo + 1) = color;
+	}
+	else if(character != (char) CURSOR)
+	{
+		currentVideo+=2;
+	}
+} 
+
+// 
 
 void clearScreen()
 { // este deberia aprovechar clearLine
@@ -62,7 +74,6 @@ void newLine()
 
 void clearLastAscii()
 {
-	writeAscii(' ', 0);
-	currentVideo-=2;
-}
-
+	writeAscii(127, 0);
+	writeAscii(222,15);
+}   

@@ -11,7 +11,7 @@ void putChar(const char ascii)
     char toPrint[2];
     toPrint[0] = ascii;
     toPrint[1] = 0;
-    _write(toPrint, 0xFFFFFF);
+    _write(toPrint, 15);
 }
 
 char getChar()
@@ -165,7 +165,7 @@ void printf(char *str, ...)
         }
         i++;
     }
-    _write(buff, 0xFFFFFF);
+    _write(buff, 15);
     va_end(args);
 }
 
@@ -369,17 +369,17 @@ void stringToDouble(char *string, long double *num)
 
 void printUser(char *name)
 {
-    _write(name, 0x51AEAE);
+    _write(name, 13);
 }
 
 void printError(char *err)
 {
-    _write(err, 0xFF0000);
+    _write(err, 4);
 }
 
 void printTitle(char *title)
 {
-    _write(title, 0x8791D4);
+    _write(title, 14);
 }
 
 uint32_t uintToString(uint64_t value, char * buffer, uint32_t base)

@@ -35,47 +35,47 @@ void backAddresses(uint64_t *ip, uint64_t *rsp)
 
 void invalid_operation()
 {
-	ncPrint("Invalid code of operation", 0xFF0000);
-	ncNewLine();
+	ncPrint("Invalid code of operation", 4);
+	ncNewline();
 }
 
 void zero_division()
 {
-	ncPrint("Zero division error ", 0xFF0000);
-	ncNewLine();
+	ncPrint("Zero division error ", 4);
+	ncNewline();
 }
 
 void registerPrint(uint64_t *stackFrame)
 {
 	// TUVE QUE COMENTAR TODO ESTO PORQUE NO TENEMOS DELETECURSOR Y ESO
-	/*
+	
 	char buffer[9];
 	static const char *registersName[] = {"R15:   ", "R14:   ", "R13:   ", "R12:   ", "R11:   ", "R10:   ", "R9:    ", "R8:    ", "RSI:   ", "RDI:   ", "RBP:   ", "RDX:   ", "RCX:   ", "RBX:   ", "RAX:   ", "RIP:   ", "CS:    ", "FLAGS: ", "RSP:   "};
 	for (int i = 0; i < 19; i++)
 	{
-		ncPrint(registersName[i], 0xFF0000);
+		ncPrint(registersName[i], 4);
 		uintToBase(stackFrame[i], buffer, 16);
 		intToHexaStr(buffer);
-		ncPrint(buffer, 0xFF0000);
+		ncPrint(buffer,4);
 		if (i > 0 && i % 3 == 0)
 		{
-			ncNewLine();
+			ncNewline();
 		}
 		else
 		{
-			ncPrint("  ", 0xFF0000);
+			ncPrint("  ", 4);
 		}
 	}
 	_sti();
-	ncPrint("La pantalla se reiniciara en ", 0xFF0000);
+	ncPrint("La pantalla se reiniciara en ", 4);
 	char buff[3] = {0};
 	_hlt(); // aca lo cortamos hasta que el timer tick nos interrumpa
 	int init_time = seconds_elapsed();
 	int aux = 10;
 	int i = 10;
 	uintToBase(i, buff, 10);
-	ncPrint(buff, 0xFF0000);
-	deleteCursor();
+	ncPrint(buff, 4);
+	//deleteCursor();
 	while (i > 0)
 	{
 		_hlt();
@@ -83,17 +83,18 @@ void registerPrint(uint64_t *stackFrame)
 		if (i != aux)
 		{
 			char bspace[2] = {B_SPACE, 0};
-			ncPrint(bspace, 0xFF0000);
+			ncPrint(bspace, 4);
 			if (i == 10)
 			{
-				ncPrint(bspace, 0xFF0000);
+				ncPrint(bspace, 4);
 			}
 			i = aux;
 			uintToBase(i, buff, 10);
-			ncPrint(buff, 0xFF0000);
-			deleteCursor();
+			ncPrint(buff, 4);
+			//deleteCursor();
 		}
 	}
-	*/
-	ncNewLine();
+	ncNewline();
+	
+	
 }

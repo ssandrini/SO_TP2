@@ -50,9 +50,7 @@ int main()
 {
 	load_idt();
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
-	ncClear(0);
-	ncClear(1);
-	middleLine();
+	ncClear();
 
 	((EntryPoint)sampleCodeModuleAddress)();
 

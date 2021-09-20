@@ -65,8 +65,10 @@ void getMem(char *param)
 
 void exc0Trigger()
 {
-    int a = 5 / 0;
-    printf("%d \n", a);
+    int a = 5;
+    int b = 0;
+    int c = a/b;
+    printf("%d \n", c);
 }
 
 void exc6Trigger()
