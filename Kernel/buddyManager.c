@@ -1,10 +1,8 @@
-#ifdef NO_BUDDY
-
+#ifdef BUDDY
 #include <memoryManager.h>
 /*
-    Dejo estos comentarios para que después revisemos bien las direcciones
-    de los defines. Además tengo dudas si está bien lo de STRUCT POS
-    y me gustaría ver si se puede armar algo tipo patron singleton.
+    Idem los comentarios del otro MM, igual ahora estan
+    hardcodeados los dos exactamente iguales.
 */
 #define STRUCT_POS 0x0000000000600000
 #define INITIAL_POS 0x0000000000700000
