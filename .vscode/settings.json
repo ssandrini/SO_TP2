@@ -1,6 +1,25 @@
 {
     "files.associations": {
         "naiveconsole.h": "c",
-        "videodriver.h": "c"
+        "videodriver.h": "c",
+        "chrono": "c",
+        "__string": "c",
+        "cctype": "c",
+        "cstdio": "c",
+        "cstring": "c",
+        "cwchar": "c",
+        "ios": "c",
+        "istream": "c",
+        "iterator": "c",
+        "locale": "c",
+        "ostream": "c",
+        "sstream": "c",
+        "streambuf": "c",
+        "string": "c",
+        "string_view": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "cmath": "c",
+        "complex": "c"
     }
 }

@@ -17,9 +17,9 @@ void help()
     }
 }
 
-void clear(int cB)
+void clear()
 {
-    _clearScreen(cB);
+    _clearScreen();
 }
 
 void getTime()

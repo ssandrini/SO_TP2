@@ -3,7 +3,6 @@ GLOBAL _getBuffer
 GLOBAL _getTime
 GLOBAL _getReg
 GLOBAL _getMem
-GLOBAL _changeScreen
 GLOBAL _clearScreen
 GLOBAL _quadratic
 GLOBAL _exc6Trigger
@@ -43,13 +42,8 @@ _getMem:
     int 80h
     ret
 
-; void _changeScreen(int cB);
-_changeScreen:
-    mov rax, 5   
-    int 80h
-    ret
 
-; void _clearScreen(int cB);
+; void _clearScreen();
 _clearScreen:
     mov rax, 6   
     int 80h
