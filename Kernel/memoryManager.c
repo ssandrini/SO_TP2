@@ -1,20 +1,35 @@
 #include <memoryManager.h>
+/*
 
-char * current;
+    Dejo estos comentarios para que después revisemos bien las direcciones
+    de los defines. Además tengo dudas si está bien lo de STRUCT POS
+    y me gustaría ver si se puede armar algo tipo patron singleton.
 
-void * alloc(size_t size)
+*/
+#define STRUCT_POS 0x0000000000600000
+#define INITIAL_POS 0x0000000000700000
+#define FINAL_POS 0x000000000FFFFFFFF
+
+typedef struct memoryManagerCDT
 {
-    if(current + size < (char *) FINAL_POS)
+    char *current;
+} memoryManagerCDT;
+
+void *allocMem(memoryManagerADT mm, size_t size)
+{
+    if (mm->current + size < (char *)FINAL_POS)
     {
-        void * ans = (void *) current;
-        current+= size;
+        void *ans = (void *)mm->current;
+        mm->current += size;
         return ans;
     }
     else
         return NULL;
 }
 
-void initMemoryManager()
+memoryManagerADT newMemoryManager()
 {
-    current = (char *) INITIAL_POS;
+    memoryManagerADT mm = STRUCT_POS;
+    mm->current = (char *)INITIAL_POS;
+    return mm;
 }

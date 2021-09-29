@@ -2,9 +2,10 @@
 #define __MEMORYMANAGER_H_
 #include <stdlib.h>
 
-#define INITIAL_POS 0x0000000000110000
-#define FINAL_POS 0x00000000003FFFFFF
+typedef struct memoryManagerCDT *memoryManagerADT;
 
-void * alloc(size_t size);
-void initMemoryManager();
+memoryManagerADT newMemoryManager();
+void *allocMem(memoryManagerADT mm, size_t size);
+void freeMem(memoryManagerADT mm, void *p);
+
 #endif
