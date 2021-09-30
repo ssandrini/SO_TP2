@@ -1,0 +1,14 @@
+*.bin
+*.sys
+*.img
+*.qcow2
+.bash_history
+index.html
+.vscode
+PVS-Studio.log
+strace_out
+report.tasks
+PVS-Studio.lic
+30d59484437b42b
+*.vmdk
+*.o
