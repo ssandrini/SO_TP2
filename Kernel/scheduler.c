@@ -5,11 +5,23 @@
     entonces al crear otro se van a pisar
 */
 
-typedef enum
+typedef struct schedulerCDT
 {
-      READY,
-      BLOCKED
-} State;
+    PList processesList;
+    memoryManagerADT memoryManager;
+} schedulerCDT;
+
+typedef struct PList
+{
+      uint64_t size;
+      PNode *first;
+}PList;
+
+typedef struct PNode
+{
+      PCB pcb;
+      struct PNode *next;
+}PNode;
 
 typedef struct
 {
@@ -25,6 +37,12 @@ typedef struct
 
       State state; 
 } PCB;
+
+typedef enum
+{
+      READY,
+      BLOCKED
+} State;
 
 typedef struct
 {
@@ -53,16 +71,13 @@ typedef struct
       uint64_t base;
 } StackFrame;
 
-typedef struct PNode
-{
-      PCB pcb;
-      struct PNode *next;
-}PNode;
+schedulerADT newScheduler(memoryManagerADT memoryManager) {
+    schedulerADT scheduler = allocMem(memoryManager, sizeof(schedulerCDT));
+    //scheduler->processesList = allocMem(memoryManager, 1); ACA NO SE BIEN QUE TAMAÑO PONER
+    // CREO QUE EL TAMAÑO QUE IRIA SERIA EL DE UN PNODE DEL PROCESO INICIAL
+    return scheduler;
+}
 
-typedef struct PList
-{
-      uint32_t size;
-      PNode *first;
-}PList;
+
 
 

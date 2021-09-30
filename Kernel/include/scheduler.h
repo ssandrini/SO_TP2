@@ -1,10 +1,10 @@
 #ifndef __SCHEDULER_H_
 #define __SCHEDULER_H_
-#include <stdlib.h>
 #include <stdint.h>
+#include <memoryManager.h>
 
 typedef struct schedulerCDT *schedulerADT;
 
-schedulerADT newScheduler();
+schedulerADT newScheduler(memoryManagerADT memoryManager);
 
 #endif
