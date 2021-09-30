@@ -13,7 +13,7 @@
 typedef struct memoryManagerCDT
 {
     char *current;
-} memoryManagerCDT;
+}memoryManagerCDT;
 
 void *allocMem(memoryManagerADT mm, size_t size)
 {
@@ -29,7 +29,7 @@ void *allocMem(memoryManagerADT mm, size_t size)
 
 memoryManagerADT newMemoryManager()
 {
-    memoryManagerADT mm = STRUCT_POS;
+    memoryManagerADT mm;
     mm->current = (char *)INITIAL_POS;
     return mm;
 }

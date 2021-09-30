@@ -27,7 +27,7 @@ void *allocMem(memoryManagerADT mm, size_t size)
 
 memoryManagerADT newMemoryManager()
 {
-    memoryManagerADT mm = STRUCT_POS;
+    memoryManagerADT mm = (void *) STRUCT_POS;
     mm->current = (char *)INITIAL_POS;
     return mm;
 }
