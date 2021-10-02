@@ -4,24 +4,11 @@
     ojo que al crear el MM se crean en una posicion fija
     entonces al crear otro se van a pisar
 */
-
-typedef struct schedulerCDT
+typedef enum
 {
-    PList processesList;
-    memoryManagerADT memoryManager;
-} schedulerCDT;
-
-typedef struct PList
-{
-      uint64_t size;
-      PNode *first;
-}PList;
-
-typedef struct PNode
-{
-      PCB pcb;
-      struct PNode *next;
-}PNode;
+      READY,
+      BLOCKED
+} State;
 
 typedef struct
 {
@@ -36,13 +23,25 @@ typedef struct
       void *rbp;
 
       State state; 
-} PCB;
+}PCB;
 
-typedef enum
+typedef struct PNode
 {
-      READY,
-      BLOCKED
-} State;
+      PCB pcb;
+      struct PNode *next;
+}PNode;
+
+typedef struct PList
+{
+      uint64_t size;
+      PNode *first;
+}PList;
+
+typedef struct schedulerCDT
+{
+    memoryManagerADT memoryManager;
+    PList * processesList;
+} schedulerCDT;
 
 typedef struct
 {
@@ -73,11 +72,8 @@ typedef struct
 
 schedulerADT newScheduler(memoryManagerADT memoryManager) {
     schedulerADT scheduler = allocMem(memoryManager, sizeof(schedulerCDT));
-    //scheduler->processesList = allocMem(memoryManager, 1); ACA NO SE BIEN QUE TAMAÑO PONER
-    // CREO QUE EL TAMAÑO QUE IRIA SERIA EL DE UN PNODE DEL PROCESO INICIAL
+    scheduler->processesList = allocMem(memoryManager, sizeof(PList));
     return scheduler;
 }
-
-
 
 
