@@ -89,7 +89,7 @@ int main()
 		}
 	}
 	
-	/*
+	/* aaaaaaaaaaaaa
 	load_idt();
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	ncClear();
