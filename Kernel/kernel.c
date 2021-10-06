@@ -48,7 +48,7 @@ void *initializeKernelBinary()
 
 int main()
 {
-	/* UN TEST BASICO
+
 	memoryManagerADT mm = newMemoryManager();
 	int i = 0;
 	char * p = (char *) 0x0000000000700000;
@@ -84,16 +84,18 @@ int main()
 		}
 	}
 	for(i = 30; i < 40; i++) {
-		if( *(p+i) != 'e') {
+		if( *(p+i) != 'd') {
 			ncPrint("la cagamos con el 4", 15);
 		}
 	}
-	*/
+	
+	/*
 	load_idt();
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	ncClear();
 
 	((EntryPoint)sampleCodeModuleAddress)();
+	*/
 
 	return 0;
 }
