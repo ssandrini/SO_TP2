@@ -7,7 +7,7 @@
 #define STRUCT_POS 0x0000000000600000
 #define INITIAL_POS 0x0000000000700000
 #define FINAL_POS 0x000000000FFFFFFFF
-
+#define A 1
 typedef struct memoryManagerCDT
 {
     char *current;
