@@ -59,11 +59,11 @@ int main()
 	}
 	char * asd2 = (char * ) allocMem(mm, 2);
 	for(i = 0; i < 2; i++) {
-		asd[i] = i+2;
+		asd2[i] = i+2;
 	}
 	char * asd3 = (char * ) allocMem(mm, 2);
 	for(i = 0; i < 2; i++) {
-		asd[i] = i+4;
+		asd3[i] = i+4;
 	}
 
 	load_idt();

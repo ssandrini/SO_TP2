@@ -102,7 +102,7 @@ static void *allocRecursive(BNode *current, size_t size, memoryManagerADT mm)
             }
             if (current->right == NULL)
             {
-                current->right = newBNode(mm, current->size / 2, (void *)((char *) current->memDir + sizeof(current->size / 2)), current->level + 1);
+                current->right = newBNode(mm, current->size / 2, (void *)((char *) current->memDir + current->size / 2), current->level + 1);
             }
             current->state = DIVIDED;
             return allocRecursive(current->left, size, mm);
