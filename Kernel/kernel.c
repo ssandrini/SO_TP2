@@ -53,27 +53,24 @@ int main()
 
 	int i = 0;
 	char * p = (char *) 0x0000000000700000;
-	char * asd = (char * ) allocMem(mm, 8);
-	if( asd == (char * ) 0x0000000000700000)
-	{
-		ncPrint("si",15);
+	char * asd = (char * ) allocMem(mm, 2);
+	for(i = 0; i < 2; i++) {
+		asd[i] = i;
 	}
-	for(i = 0; i < 8; i++) {
-		asd[i] = 'a';
+	char * asd2 = (char * ) allocMem(mm, 2);
+	for(i = 0; i < 2; i++) {
+		asd[i] = i+2;
 	}
-	int j = 0;
+	char * asd3 = (char * ) allocMem(mm, 2);
+	for(i = 0; i < 2; i++) {
+		asd[i] = i+4;
+	}
 
-	for(j = 0; j < 8; j++) {
-		ncPrint((char *) (p+j), 15);
-	}
-
-	
 	load_idt();
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	ncClear();
 
 	((EntryPoint)sampleCodeModuleAddress)();
 	
-
 	return 0;
 }

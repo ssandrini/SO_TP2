@@ -1,16 +1,7 @@
 #ifdef BUDDY
 #include <memoryManager.h>
-
-/*
-
-
-*/
-
 #define STRUCT_POS 0x0000000000600000
 #define MIN_BLOCK 2
-/* este DEFINE va en kernel.c y es la dir que recibe por param al crear
-#define INITIAL_POS 0x0000000000700000
-*/
 
 typedef enum
 {
@@ -40,15 +31,15 @@ typedef struct memoryManagerCDT
     size_t maxLevel;
 } memoryManagerCDT;
 
-static BNode *newBNode(memoryManagerADT mm, BNode *node)
+static BNode *newBNode(memoryManagerADT mm, size_t size, void *memDir, size_t level)
 {
-    BNode *aux = mm->nextBNodePos;
+    BNode * aux = mm->nextBNodePos;
     mm->nextBNodePos = (void *)((char *)mm->nextBNodePos + sizeof(BNode));
-    aux->size = node->size / 2;
+    aux->size = size; //node->size / 2;
     aux->left = aux->right = NULL;
-    aux->memDir = node->memDir;
+    aux->memDir = memDir; //node->memDir;
     aux->state = FREE;
-    aux->level = node->level + 1;
+    aux->level = level; //node->level + 1;
     return aux;
 }
 
@@ -58,24 +49,23 @@ memoryManagerADT newMemoryManager(void *startDir, size_t size)
     {
         return NULL;
     }
-    memoryManagerADT buddyManager = (void *) STRUCT_POS;
+    memoryManagerADT buddyManager = (void *)STRUCT_POS;
     buddyManager->maxLevel = 0; // hay que calcularlo
     buddyManager->treeSize = 0; // hay que calcularlo
     buddyManager->usedSize = 0;
     buddyManager->memoryDir = startDir;
     buddyManager->root = (void *)((char *)buddyManager + sizeof(memoryManagerCDT));
     buddyManager->nextBNodePos = (void *)((char *)buddyManager->root + sizeof(BNode));
-    
+
     buddyManager->root->left = NULL;
     buddyManager->root->right = NULL;
     buddyManager->root->state = FREE;
     buddyManager->root->memDir = buddyManager->memoryDir;
     buddyManager->root->level = 0;
+    buddyManager->root->size = size;
 
     return buddyManager;
 }
-
-
 
 static void *allocRecursive(BNode *current, size_t size, memoryManagerADT mm)
 {
@@ -85,7 +75,7 @@ static void *allocRecursive(BNode *current, size_t size, memoryManagerADT mm)
     {
         return toReturn;
     }
-    
+
     else if (current->state == DIVIDED)
     {
         toReturn = allocRecursive(current->left, size, mm);
@@ -108,11 +98,11 @@ static void *allocRecursive(BNode *current, size_t size, memoryManagerADT mm)
         {
             if (current->left == NULL)
             {
-                current->left = newBNode(mm, current);
+                current->left = newBNode(mm, current->size / 2, current->memDir, current->level + 1);
             }
             if (current->right == NULL)
             {
-                current->right = newBNode(mm, current);
+                current->right = newBNode(mm, current->size / 2, (void *)((char *) current->memDir + sizeof(current->size / 2)), current->level + 1);
             }
             current->state = DIVIDED;
             return allocRecursive(current->left, size, mm);
