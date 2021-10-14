@@ -128,4 +128,40 @@ void *allocMem(memoryManagerADT mm, size_t size)
     return toReturn;
 }
 
+
+static int buddyFreeMemoryRec(void * p, buddy_node_t * node){
+    int toReturn;
+    if(node == NULL){
+        return 0;
+    }
+    if(node->state == FREE){
+        return 0;
+    }
+    else if(node->state == DIVIDED){
+        toReturn = buddyFreeMemoryRec(p,node->left);
+        if(toReturn == 0){
+            toReturn = buddyFreeMemoryRec(p,node->right);
+        }
+        if(node->left->state == FREE && node->right->state == FREE){
+            node->state = FREE;
+        }
+        return toReturn;
+    }
+    else{
+        if(node->memDir == ptr){
+            node->state=FREE;
+            buddyTree->usedSize -= node->size;
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+    return 0;
+}
+
+int freeMem(void * p){
+    return buddyFreeMemoryRec(p, buddyTree->head);
+}
+
 #endif
