@@ -1,9 +1,5 @@
 #include <scheduler.h>
 
-/*
-    ojo que al crear el MM se crean en una posicion fija
-    entonces al crear otro se van a pisar
-*/
 typedef enum
 {
       READY,
@@ -14,12 +10,13 @@ typedef struct
 {
       uint64_t pid;
       uint64_t ppid;
+      unsigned int priority;
 
       char *name;
       int argc;
       char **argv;
 
-      void *rsp;
+      void *rsp; // aca tendria que usar el stackFrame
       void *rbp;
 
       State state; 
@@ -34,13 +31,14 @@ typedef struct PNode
 typedef struct PList
 {
       uint64_t size;
-      PNode *first;
+      PNode * current;
 }PList;
 
 typedef struct schedulerCDT
 {
     memoryManagerADT memoryManager;
     PList * processesList;
+    int pidCounter;
 } schedulerCDT;
 
 typedef struct
@@ -70,10 +68,26 @@ typedef struct
       uint64_t base;
 } StackFrame;
 
-schedulerADT newScheduler(memoryManagerADT memoryManager) {
+schedulerADT newScheduler(memoryManagerADT memoryManager) 
+{
     schedulerADT scheduler = allocMem(memoryManager, sizeof(schedulerCDT));
     scheduler->processesList = allocMem(memoryManager, sizeof(PList));
+    scheduler->pidCounter = 0;
     return scheduler;
 }
 
+int newProcess(schedulerADT scheduler, char * processName, unsigned int priority, uint64_t codeAddress) 
+{
+    PCB * aux = (PCB *) allocMem(scheduler->memoryManager, sizeof(PCB));
+    aux->pid = scheduler->pidCounter++;
+    aux->ppid = scheduler->processesList->current->pcb.pid; 
+    aux->priority = priority;
+    aux->state = READY;
+    // strcpy(aux->name, processName); necesito hacerme strcpy
+    aux->rbp = allocMem(scheduler->memoryManager, STACK_SIZE);
+    //aux->rsp = newStackFrame();
+
+    // aca me faltaria agregarlo a la lista y seguir 
+
+}
 

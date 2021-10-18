@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <memoryManager.h>
 
+#define STACK_SIZE 4096
+
 typedef struct schedulerCDT *schedulerADT;
 
 schedulerADT newScheduler(memoryManagerADT memoryManager);
