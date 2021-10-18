@@ -78,6 +78,13 @@ schedulerADT newScheduler(memoryManagerADT memoryManager)
 
 int newProcess(schedulerADT scheduler, char * processName, unsigned int priority, uint64_t codeAddress) 
 {
+      // dejo este comentario:
+      /*
+            Creo que en el kernel.c apenas comienza y crea el mm y el scheduler
+            para iniciar todo deberia forzar una int20 entonces el scheduler va 
+            a tomar el primer proceso que creería que debería ser la shell
+
+      */
     PCB * aux = (PCB *) allocMem(scheduler->memoryManager, sizeof(PCB));
     aux->pid = scheduler->pidCounter++;
     aux->ppid = scheduler->processesList->current->pcb.pid; 
