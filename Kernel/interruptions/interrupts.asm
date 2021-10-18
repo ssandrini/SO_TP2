@@ -25,6 +25,8 @@ EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN sysHandler
 EXTERN getStackBase
+EXTERN scheduler
+EXTERN timer_handler
 
 SECTION .text
 
@@ -119,7 +121,17 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	pushState
+	call timer_handler
+	popState
+	pushState
+	mov rdi, rsp
+	call scheduler
+	mov rsp, rax	; agarro el rsp del prox proceso
+	popState
+	mov al, 20		; EOI para el pic
+	out 20h, al
+	iretq
 
 ;Keyboard
 _irq01Handler:
