@@ -66,6 +66,10 @@ int main()
 		asd3[i] = i+4;
 	}
 
+	freeMem(mm, (void*) 0x0000000000700000);
+	freeMem(mm, (void*) 0x0000000000700001);
+	freeMem(mm, (void*) 0x0000000000699990);
+
 	load_idt();
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	ncClear();

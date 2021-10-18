@@ -129,7 +129,7 @@ void *allocMem(memoryManagerADT mm, size_t size)
 }
 
 
-static int buddyFreeMemoryRec(void * p, buddy_node_t * node){
+static int buddyFreeMemoryRec(memoryManagerADT mm, void * p, BNode * node){
     int toReturn;
     if(node == NULL){
         return 0;
@@ -138,9 +138,9 @@ static int buddyFreeMemoryRec(void * p, buddy_node_t * node){
         return 0;
     }
     else if(node->state == DIVIDED){
-        toReturn = buddyFreeMemoryRec(p,node->left);
+        toReturn = buddyFreeMemoryRec(mm, p,node->left);
         if(toReturn == 0){
-            toReturn = buddyFreeMemoryRec(p,node->right);
+            toReturn = buddyFreeMemoryRec(mm, p,node->right);
         }
         if(node->left->state == FREE && node->right->state == FREE){
             node->state = FREE;
@@ -148,9 +148,9 @@ static int buddyFreeMemoryRec(void * p, buddy_node_t * node){
         return toReturn;
     }
     else{
-        if(node->memDir == ptr){
+        if(node->memDir == p){
             node->state=FREE;
-            buddyTree->usedSize -= node->size;
+            mm->usedSize -= node->size;
             return 1;
         }
         else{
@@ -160,8 +160,8 @@ static int buddyFreeMemoryRec(void * p, buddy_node_t * node){
     return 0;
 }
 
-int freeMem(void * p){
-    return buddyFreeMemoryRec(p, buddyTree->head);
+int freeMem(memoryManagerADT mm, void * p){
+    return buddyFreeMemoryRec(mm, p, mm->root);
 }
 
 #endif
