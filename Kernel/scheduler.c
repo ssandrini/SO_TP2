@@ -1,10 +1,5 @@
 #include <scheduler.h>
 
-typedef enum
-{
-      READY,
-      BLOCKED
-} State;
 
 typedef struct
 {
@@ -31,6 +26,7 @@ typedef struct PNode
 typedef struct PList
 {
       uint64_t size;
+      uint64_t qReady;
       PNode *first;
       PNode *last;
 } PList;
@@ -140,6 +136,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->pidCounter = 0;
       scheduler->processesList->first = scheduler->processesList->last  = NULL;
       scheduler->processesList->size = 0;
+      scheduler->processesList->qReady = 0;
 
       char *argv[] = {"Halt"};
       scheduler->idle = (PCB *) allocMem(scheduler->memoryManager, sizeof(PCB));
@@ -187,6 +184,10 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
       // y retornar pid en caso de que salga todo bien
       // y podria retornar -1 si algun alloc falló
 }
+uint64_t nextProcess(uint64_t currentRsp)
+{
+      // funcion principal
+}
 
 int getPid(schedulerADT scheduler){
       return 0;
@@ -204,5 +205,41 @@ int setState(schedulerADT scheduler, int pid, State newState){
       return 0;
 }
 
+static void queue(schedulerADT scheduler, PNode * newProcess)
+{
+      if (isEmpty(scheduler->processesList))
+      {
+            scheduler->processesList->first = scheduler->processesList->last = newProcess;
+      }
+      else
+      {
+            scheduler->processesList->last->next = newProcess;
+            scheduler->processesList->last = newProcess;
+      }
+
+      if (newProcess->pcb.state == READY)
+            scheduler->processesList->qReady++;
+
+      scheduler->processesList->size++;
+}
+
+static PCB *dequeue(schedulerADT scheduler)
+{
+      if (isEmpty(scheduler->processesList))
+            return NULL;
+
+      PCB * ans = scheduler->processesList->first;
+      scheduler->processesList->first = scheduler->processesList->first->next;
+      scheduler->processesList->size--;
+
+      if (ans->state == READY)
+            scheduler->processesList->qReady--;
+
+      return ans;
+}
+
+static int isEmpty(PList * list) {
+      return list->size == 0;
+}
 /*
       NO OLVIDARME DE LIBERAR TODA LA MEMORIA USADA AL MATAR UN PROCESO */

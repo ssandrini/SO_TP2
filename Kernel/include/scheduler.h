@@ -7,6 +7,12 @@
 
 #define STACK_SIZE 4096
 
+typedef enum
+{
+    READY,
+    BLOCKED
+} State;
+
 typedef struct schedulerCDT *schedulerADT;
 
 schedulerADT newScheduler(memoryManagerADT memoryManager);
@@ -21,6 +27,7 @@ int setPriority(schedulerADT scheduler, int pid, int newPriority);
 
 int setState(schedulerADT scheduler, int pid, State newState);
 
+uint64_t nextProcess(uint64_t currentRsp);
 // Me falta la de listar todos los procesos todavia
 
 #endif

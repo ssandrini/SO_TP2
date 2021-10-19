@@ -25,7 +25,7 @@ EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN sysHandler
 EXTERN getStackBase
-EXTERN scheduler
+EXTERN taskManager
 EXTERN timer_handler
 
 SECTION .text
@@ -130,7 +130,7 @@ _irq00Handler:
 	popState
 	pushState
 	mov rdi, rsp
-	call scheduler
+	call taskManager
 	mov rsp, rax	; agarro el rsp del prox proceso
 	popState
 	mov al, 20		; EOI para el pic
