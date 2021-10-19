@@ -71,26 +71,36 @@ typedef struct
       uint64_t base;
 } StackFrame;
 
+static int argsCopy(memoryManagerADT mm, char **buffer, char **argv, int argc)
+{
+      for (int i = 0; i < argc; i++)
+      {
+            buffer[i] = allocMem(mm, sizeof(char) * (strlen(argv[i]) + 1));
+            strcpy(argv[i], buffer[i]);
+      }
+      return 1;
+}
+
 static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp)
 {
       StackFrame *frame = (StackFrame *)rbp - 1;
-      frame->gs = 0x001;
-      frame->fs = 0x002;
-      frame->r15 = 0x003;
-      frame->r14 = 0x004;
-      frame->r13 = 0x005;
-      frame->r12 = 0x006;
-      frame->r11 = 0x007;
-      frame->r10 = 0x008;
-      frame->r9 = 0x009;
-      frame->r8 = 0x00A;
+      frame->gs = 0;
+      frame->fs = 0;
+      frame->r15 = 0;
+      frame->r14 = 0;
+      frame->r13 = 0;
+      frame->r12 = 0;
+      frame->r11 = 0;
+      frame->r10 = 0;
+      frame->r9 = 0;
+      frame->r8 = 0;
       frame->rsi = (uint64_t)argc;
       frame->rdi = (uint64_t)entryPoint;
-      frame->rbp = 0x00D;
+      frame->rbp = 0;
       frame->rdx = (uint64_t)argv;
-      frame->rcx = 0x00F;
-      frame->rbx = 0x010;
-      frame->rax = 0x011;
+      frame->rcx = 0;
+      frame->rbx = 0;
+      frame->rax = 0;
       frame->rip = (uint64_t)wrapper;
       frame->cs = 0x008;
       frame->eflags = 0x202;
@@ -119,11 +129,11 @@ static void halt(int argc, char **argv)
       }
 }
 
+
+// ------------------FUNCIONES DEFINIDAS EN EL TAD------------------------------
 schedulerADT newScheduler(memoryManagerADT mm)
 {
       // faltan los chequeos del allocMem
-
-
       schedulerADT scheduler = (schedulerADT) allocMem(mm, sizeof(schedulerCDT));
       scheduler->memoryManager = mm;
       scheduler->processesList = (PList *) allocMem(scheduler->memoryManager, sizeof(PList));
@@ -142,7 +152,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->idle->rbp = (void *)((char *)scheduler->idle->rbp + STACK_SIZE - 1);
       scheduler->idle->rsp = (void *)((StackFrame *)scheduler->idle->rbp - 1);
       char **argvAux = allocMem(scheduler->memoryManager, sizeof(char *));
-      argsCopy(argvAux, argv, 1);
+      argsCopy(scheduler->memoryManager, argvAux, argv, 1);
       scheduler->idle->argc = 1;
       scheduler->idle->argv = argvAux;
       setNewSF(&halt, 1, argvAux, scheduler->idle->rbp);
@@ -150,7 +160,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       return scheduler;
 }
 
-int newProcess(schedulerADT scheduler, char *processName, unsigned int priority, uint64_t codeAddress, char **argv, int argc)
+int newProcess(schedulerADT scheduler, char *processName, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc)
 {
       // dejo este comentario:
       /*
@@ -158,31 +168,41 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
             para iniciar todo deberia forzar una int20 entonces el scheduler va 
             a tomar el primer proceso que creería que debería ser la shell
       */
-      /*
-       scheduler->idle = (PCB *) allocMem(scheduler->memoryManager, sizeof(PCB));
-      scheduler->idle->pid = scheduler->pidCounter++;
-      scheduler->idle->ppid = 0;
-      scheduler->idle->argc = 1;
-      scheduler->idle->argv = argv;
-      strcpy(scheduler->idle->name, "Halt");
-      scheduler->idle->priority = 1;
-      scheduler->idle->state = READY;
-      scheduler->idle->rbp = allocMem(scheduler->memoryManager, STACK_SIZE);
-      scheduler->idle->rbp = (void *)((char *)scheduler->idle->rbp + STACK_SIZE - 1);
-      scheduler->idle->rsp = (void *)((StackFrame *)scheduler->idle->rbp - 1);
-      */
+
       PCB *aux = (PCB *)allocMem(scheduler->memoryManager, sizeof(PCB));
       aux->pid = scheduler->pidCounter++;
       aux->ppid = scheduler->currentProcess->pcb.pid;
-      aux->argc = argc;
-      aux->argv = argv;
+      char **argvAux = allocMem(scheduler->memoryManager, sizeof(char *) * argc);
+      argsCopy(scheduler->memoryManager, argvAux, argv, argc);
+      scheduler->idle->argc = argc;
+      scheduler->idle->argv = argvAux;
       strcpy(aux->name, processName);
       aux->priority = priority;
       aux->state = READY;
       aux->rbp = allocMem(scheduler->memoryManager, STACK_SIZE);
       aux->rbp = (void *)((char *)aux->rbp + STACK_SIZE - 1);
+      setNewSF(entryPoint, argc, argvAux, aux->rbp);
 
-      /*
-      NO OLVIDARME DE LIBERAR TODA LA MEMORIA USADA AL MATAR UN PROCESO */
+      // aca faltaria meterlo en la lista circular 
+      // y retornar pid en caso de que salga todo bien
+      // y podria retornar -1 si algun alloc falló
 }
 
+int getPid(schedulerADT scheduler){
+      return 0;
+}
+
+int killProcess(schedulerADT scheduler, int pid){
+      return 0;
+}
+
+int setPriority(schedulerADT scheduler, int pid, int newPriority){
+      return 0;
+}
+
+int setState(schedulerADT scheduler, int pid, State newState){
+      return 0;
+}
+
+/*
+      NO OLVIDARME DE LIBERAR TODA LA MEMORIA USADA AL MATAR UN PROCESO */
