@@ -19,7 +19,7 @@ typedef struct
 
 typedef struct PNode
 {
-      PCB pcb;
+      PCB * pcb;
       struct PNode *next;
 } PNode;
 
@@ -37,6 +37,7 @@ typedef struct schedulerCDT
       PList *processesList;
       int pidCounter;
       PNode *currentProcess;
+      int life;
       PCB *idle;
 } schedulerCDT;
 
@@ -134,6 +135,8 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->memoryManager = mm;
       scheduler->processesList = (PList *) allocMem(scheduler->memoryManager, sizeof(PList));
       scheduler->pidCounter = 0;
+      scheduler->currentProcess = NULL;
+      scheduler->life = 0;
       scheduler->processesList->first = scheduler->processesList->last  = NULL;
       scheduler->processesList->size = 0;
       scheduler->processesList->qReady = 0;
@@ -142,6 +145,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->idle = (PCB *) allocMem(scheduler->memoryManager, sizeof(PCB));
       scheduler->idle->pid = scheduler->pidCounter++;
       scheduler->idle->ppid = 0;
+      scheduler->idle->name = allocMem(scheduler->memoryManager, strlen("Halt"));
       strcpy(scheduler->idle->name, "Halt");
       scheduler->idle->priority = 1;
       scheduler->idle->state = READY;
@@ -168,11 +172,12 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
 
       PCB *aux = (PCB *)allocMem(scheduler->memoryManager, sizeof(PCB));
       aux->pid = scheduler->pidCounter++;
-      aux->ppid = scheduler->currentProcess->pcb.pid;
+      aux->ppid = scheduler->currentProcess->pcb->pid;
       char **argvAux = allocMem(scheduler->memoryManager, sizeof(char *) * argc);
       argsCopy(scheduler->memoryManager, argvAux, argv, argc);
-      scheduler->idle->argc = argc;
-      scheduler->idle->argv = argvAux;
+      aux->argc = argc;
+      aux->argv = argvAux;
+      aux->name = allocMem(scheduler->memoryManager, strlen(processName));
       strcpy(aux->name, processName);
       aux->priority = priority;
       aux->state = READY;
@@ -180,13 +185,59 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
       aux->rbp = (void *)((char *)aux->rbp + STACK_SIZE - 1);
       setNewSF(entryPoint, argc, argvAux, aux->rbp);
 
-      // aca faltaria meterlo en la lista circular 
-      // y retornar pid en caso de que salga todo bien
-      // y podria retornar -1 si algun alloc falló
+      PNode * auxNode = (PNode *)allocMem(scheduler->memoryManager, sizeof(PNode));
+      auxNode->pcb = aux;
+      enqueue(scheduler, auxNode);
+      
+      return aux->pid;
 }
-uint64_t nextProcess(uint64_t currentRsp)
+
+uint64_t nextProcess(schedulerADT scheduler, uint64_t currentRsp)
 {
-      // funcion principal
+      if(scheduler->currentProcess)
+      {
+            if(scheduler->currentProcess->pcb->state == READY && scheduler->life > 1)
+            {
+                  scheduler->life--;
+                  return currentRsp;
+            }
+            else
+            {
+                  if(scheduler->currentProcess->pcb->state == KILLED)
+                  {
+                        removeProcess(scheduler, scheduler->currentProcess);
+                  }
+                  else
+                  {
+                        enqueue(scheduler, scheduler->currentProcess);
+                  }
+                  scheduler->currentProcess = NULL;
+                  return nextProcess(scheduler, currentRsp);
+            }
+      }
+      else
+      {
+            if(scheduler->processesList->qReady > 0)
+            {
+                  scheduler->currentProcess = dequeue(scheduler);
+                  while (scheduler->currentProcess->pcb->state != READY)
+                  {
+                        if (scheduler->currentProcess->pcb->state == KILLED)
+                        {
+                              removeProcess(scheduler, scheduler->currentProcess);
+                        }
+                        else 
+                        {
+                              enqueue(scheduler, scheduler->currentProcess);
+                        }
+                        scheduler->currentProcess = dequeue(scheduler);
+                  }
+                  scheduler->life = scheduler->currentProcess->pcb->priority;
+                  return scheduler->currentProcess->pcb->rsp;
+            }
+
+            return scheduler->idle->rsp;
+      }
 }
 
 int getPid(schedulerADT scheduler){
@@ -205,7 +256,7 @@ int setState(schedulerADT scheduler, int pid, State newState){
       return 0;
 }
 
-static void queue(schedulerADT scheduler, PNode * newProcess)
+static void enqueue(schedulerADT scheduler, PNode * newProcess)
 {
       if (isEmpty(scheduler->processesList))
       {
@@ -217,7 +268,7 @@ static void queue(schedulerADT scheduler, PNode * newProcess)
             scheduler->processesList->last = newProcess;
       }
 
-      if (newProcess->pcb.state == READY)
+      if (newProcess->pcb->state == READY)
             scheduler->processesList->qReady++;
 
       scheduler->processesList->size++;
@@ -240,6 +291,20 @@ static PCB *dequeue(schedulerADT scheduler)
 
 static int isEmpty(PList * list) {
       return list->size == 0;
+}
+
+static void removeProcess(schedulerADT scheduler, PNode * node) 
+{
+      freeMem(scheduler->memoryManager, node->pcb->name);
+      freeMem(scheduler->memoryManager, node->pcb->argv);
+      freeMem(scheduler->memoryManager, node->pcb->rbp);
+      freeMem(scheduler->memoryManager, node->pcb);
+
+      PNode * iterator = scheduler->processesList->first;
+      while(iterator->next != node)
+            iterator = iterator->next;
+      iterator->next = node->next;
+      freeMem(scheduler->memoryManager, node);
 }
 /*
       NO OLVIDARME DE LIBERAR TODA LA MEMORIA USADA AL MATAR UN PROCESO */

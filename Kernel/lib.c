@@ -56,3 +56,13 @@ void strcpy(char *src, char *dest)
             dest[i] = src[i];
       dest[i] = 0;
 }
+
+int strlen(char *string)
+{
+    int i = 0;
+    while (*string++ != 0)
+    {
+        i++;
+    }
+    return i;
+}
