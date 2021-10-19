@@ -2,6 +2,8 @@
 #define __SCHEDULER_H_
 #include <stdint.h>
 #include <memoryManager.h>
+#include <lib.h>
+#include <interrupts.h>
 
 #define STACK_SIZE 4096
 
@@ -9,7 +11,7 @@ typedef struct schedulerCDT *schedulerADT;
 
 schedulerADT newScheduler(memoryManagerADT memoryManager);
 
-int newProcess(schedulerADT scheduler, char * processName, unsigned int priority, uint64_t codeAddress);
+int newProcess(schedulerADT scheduler, char * processName, unsigned int priority, uint64_t codeAddress, char **argv, int argc);
 
 int getPid(schedulerADT scheduler);
 

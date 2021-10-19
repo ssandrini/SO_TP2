@@ -1,5 +1,6 @@
 GLOBAL cpuVendor
 GLOBAL _getRSP
+GLOBAL _int20
 section .text
 	
 cpuVendor:
@@ -28,4 +29,8 @@ cpuVendor:
 
 _getRSP:
 	mov rax, rsp
+	ret
+
+_int20:
+	int 20h
 	ret
