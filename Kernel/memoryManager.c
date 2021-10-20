@@ -11,7 +11,6 @@
 #define INITIAL_POS 0x0000000000700000
 #define FINAL_POS 0x000000000FFFFFFFF
 
-extern int getProcessCount();
 enum STATE {FREE = 1, NOT_FREE = 0};
 
 typedef struct BNode {
@@ -40,13 +39,13 @@ BNode * allocMemRec(memoryManagerADT mm, BNode * node, size_t size){
     }
     else if (node->size > size){
       int spaceLeft = node->size - size;
+      node->size = size;
       if (spaceLeft > sizeof(BNode)){
         BNode * aux = (void *)((char *)node->memPtr + size); //creo el proximo nodo
         aux->next = node->next;
         aux->state = FREE;
         aux->memPtr = (void *)((char *)aux + sizeof(BNode));
         aux->size = spaceLeft - sizeof(BNode);
-        node->size = size;
         node->next = aux;
         mm->usedSize += sizeof(BNode);
       }
@@ -71,24 +70,24 @@ int freeMemRec(memoryManagerADT mm, BNode * actual, BNode *  previous, void * pt
     return 0;
   }
   if (actual->memPtr == ptr){
-    if ((previous == NULL || (previous != NULL && previous->state == NOT_FREE)) && ((actual->next != NULL && actual->next->state == NOT_FREE) || actual->next == NULL)){
+    if ((previous == NULL || (previous != NULL && previous->state == NOT_FREE)) && ((actual->next != NULL && actual->next->state == NOT_FREE) || actual->next == NULL)){ //el que le sigue es null
       actual->state = FREE;
       mm->usedSize -= actual->size;
       return 1;
     }
-    else if (previous != NULL && previous->state == FREE && ((actual->next != NULL && actual->next->state == NOT_FREE) || actual->next == NULL)){
+    else if (previous != NULL && previous->state == FREE && ((actual->next != NULL && actual->next->state == NOT_FREE) || actual->next == NULL)){ //el que le sigue no es null
       previous->size = previous->size + actual->size + sizeof(BNode);
       previous->next = actual->next;
       mm->usedSize -= (actual->size + sizeof(BNode));
       return 1;
     }
-    else if (previous != NULL && actual->next != NULL && previous->state == FREE && actual->next->state == FREE){
+    else if (previous != NULL && actual->next != NULL && previous->state == FREE && actual->next->state == FREE){ //cuando apuntan a algo pero son free
       previous->size = previous->size + actual->size + actual->next->size + (2 * sizeof(BNode));
       previous->next = actual->next->next;
       mm->usedSize -= (actual->size + 2*sizeof(BNode));
       return 1;
     }
-    else if ((previous == NULL || (previous->state == NOT_FREE)) && actual->next!= NULL && actual->next->state == FREE){
+    else if ((previous == NULL || (previous->state == NOT_FREE)) && actual->next!= NULL && actual->next->state == FREE){ //el siguiente apunta a algo pero es free
       mm->usedSize -= (actual->size + sizeof(BNode));
       actual->size = actual->size + actual->next->size + sizeof(BNode);
       actual->next = actual->next->next;
@@ -122,6 +121,5 @@ memoryManagerADT newMemoryManager(void * startDir, size_t totalSize){
   memoryManager->usedSize = 0;
   return memoryManager;
 }
-
 
 #endif

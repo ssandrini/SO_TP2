@@ -55,7 +55,7 @@ int main()
 	char * p = (char *) 0x0000000000700000;
 	char * asd = (char * ) allocMem(mm, 10);
 	ncPrint (asd, 4);
-	for(i = 0; i < 1; i++) {
+	for(i = 0; i < 10; i++) {
 		asd[i] = 1;
 	}
 	char * asd2 = (char * ) allocMem(mm, 2);
