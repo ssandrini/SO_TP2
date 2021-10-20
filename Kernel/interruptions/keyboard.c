@@ -59,7 +59,7 @@ void keyboard_handler()
                 }
                 break;
         }
-       // setState(sched2, 0, READY);
+        setState(sched2, 1, READY);
     }
     return;
 }

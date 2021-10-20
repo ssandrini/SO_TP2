@@ -25,7 +25,7 @@ typedef struct PNode
 typedef struct PList
 {
       uint64_t size;
-      uint64_t qReady;
+      int qReady;
       PNode *first;
       PNode *last;
 } PList;
@@ -131,7 +131,7 @@ static void halt(int argc, char **argv)
 {
       while (1)
       {
-            ncPrint("halt",15);
+           // ncPrint("halt",15);
             _hlt();
       }
 }
@@ -214,13 +214,16 @@ void *nextProcess(schedulerADT scheduler, void * currentRsp)
       else
       {
             
+            
             scheduler->currentProcess->pcb->rsp = currentRsp;
             if (scheduler->life < 1)
             { 
+                  
                   if(scheduler->currentProcess != scheduler->idle)
                         enqueue(scheduler, scheduler->currentProcess);
                   if(scheduler->processesList->qReady > 0)
                   {
+                        ncPrint("1",15);
                         scheduler->currentProcess = dequeue(scheduler);
                         while (scheduler->currentProcess->pcb->state != READY)
                         {
@@ -237,6 +240,7 @@ void *nextProcess(schedulerADT scheduler, void * currentRsp)
                   }
                   else
                   {
+                        ncPrint("2",15);
                         scheduler->currentProcess = scheduler->idle;
                   } 
                   scheduler->life = scheduler->currentProcess->pcb->priority;
@@ -263,14 +267,40 @@ int setPriority(schedulerADT scheduler, int pid, int newPriority)
 
 int setState(schedulerADT scheduler, int pid, State newState)
 {
-      PNode * aux = scheduler->processesList->first;
+      if(newState == BLOCKED) 
+      {
+            scheduler->processesList->first = NULL;
+            scheduler->currentProcess = NULL;
+            scheduler->processesList->qReady = 0;
+            scheduler->processesList->size = 0;
+      }
+     /* PNode * aux = scheduler->processesList->first;
       while( aux!= NULL && aux->pcb->pid != pid )
       {
             aux = aux->next;
       }
-      if(aux == NULL)
+      if(aux == NULL) {
             return -1;
+      }
+      
+      if( (newState == BLOCKED || READY) && aux->pcb->state == KILLED)
+            return -1;
+            
+      
+      if( newState == BLOCKED  && aux->pcb->state == READY) {
+            ncPrint("3",15);
+            scheduler->processesList->qReady--;
+      }
+      else if(newState == READY && aux->pcb->state == BLOCKED)
+            scheduler->processesList->qReady++;
+      else if(newState == KILLED && aux->pcb->state == READY)
+            scheduler->processesList->qReady--;
+      
+           ncPrint("C",15);
+      scheduler->processesList->qReady = -90;
       aux->pcb->state = newState;
+      */
+      
       return 0;
 }
 
@@ -286,8 +316,8 @@ static void enqueue(schedulerADT scheduler, PNode *newProcess)
             scheduler->processesList->last = newProcess;
       }
 
-      if (newProcess->pcb->state == READY)
-            scheduler->processesList->qReady++;
+      //if (newProcess->pcb->state == READY)
+      scheduler->processesList->qReady++;
 
       scheduler->processesList->size++;
 }

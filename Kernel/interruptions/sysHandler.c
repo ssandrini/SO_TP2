@@ -43,8 +43,10 @@ void initSysHandler(schedulerADT sched) {
 void read(unsigned char *r1, unsigned int r2)
 {
     unsigned char *KeyBuffer = getBuffer();
-   // if(*KeyBuffer == '\0')
-     //   setState(sch, getPid(sch), BLOCKED);
+    if(*KeyBuffer == '\0')
+    {
+        setState(sch, 1, BLOCKED);
+    }
     unsigned int i;
     r1[0] = 0;
     for (i = 0; KeyBuffer[i] != 0 && i < r2; i++)
