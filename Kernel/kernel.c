@@ -49,53 +49,31 @@ void *initializeKernelBinary()
 int main()
 {
 
-	memoryManagerADT mm = newMemoryManager();
+	memoryManagerADT mm = newMemoryManager((void*) 0x0000000000700000 , 8);
+
 	int i = 0;
 	char * p = (char *) 0x0000000000700000;
-	char * asd = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd[i] = 'a';
+	char * asd = (char * ) allocMem(mm, 10);
+	ncPrint (asd, 4);
+	for(i = 0; i < 1; i++) {
+		asd[i] = 1;
 	}
-	char * asd2 = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd2[i] = 'b';
+	char * asd2 = (char * ) allocMem(mm, 2);
+	for(i = 0; i < 2; i++) {
+		asd2[i] = 2;
 	}
-	char * asd3 = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd3[i] = 'c';
-	}
-	char * asd4 = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd4[i] = 'd';
-	}
-	for(i = 0; i < 10; i++) {
-		if( *(p+i) != 'a') {
-			ncPrint("la cagamos", 15);
-		}
-	}
-	for(i = 10; i < 20; i++) {
-		if( *(p+i) != 'b') {
-			ncPrint("la cagamos", 15);
-		}
-	}
-	for(i = 20; i < 30; i++) {
-		if( *(p+i) != 'c') {
-			ncPrint("la cagamos", 15);
-		}
-	}
-	for(i = 30; i < 40; i++) {
-		if( *(p+i) != 'd') {
-			ncPrint("la cagamos con el 4", 15);
-		}
+	char * asd3 = (char * ) allocMem(mm, 2);
+	for(i = 0; i < 2; i++) {
+		asd3[i] = 3;
 	}
 	
-	/*
 	load_idt();
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	ncClear();
 
 	((EntryPoint)sampleCodeModuleAddress)();
-	*/
+
+	
 
 	return 0;
 }
