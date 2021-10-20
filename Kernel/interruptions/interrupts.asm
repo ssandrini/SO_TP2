@@ -26,11 +26,9 @@ EXTERN exceptionDispatcher
 EXTERN sysHandler
 EXTERN getStackBase
 EXTERN taskManager
-EXTERN timer_handler
 
 SECTION .text
-
-%macro pushState 0
+%macro pushSch 0
 	push rax
 	push rbx
 	push rcx
@@ -50,9 +48,45 @@ SECTION .text
 	push gs
 %endmacro
 
-%macro popState 0
+%macro popSch 0
 	pop gs
 	pop fs
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsi
+	pop rdi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
+	pop rax
+%endmacro
+
+%macro pushState 0
+	push rax
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+%endmacro
+
+%macro popState 0
 	pop r15
 	pop r14
 	pop r13
@@ -126,15 +160,23 @@ picSlaveMask:
 ;8254 Timer (Timer Tick)
 _irq00Handler:
 	pushState
-	call timer_handler
+
+	mov rdi, 0    
+	call irqDispatcher
+
 	popState
-	pushState
+
+	pushSch
+
 	mov rdi, rsp
 	call taskManager
-	mov rsp, rax	; agarro el rsp del prox proceso
-	popState
-	mov al, 20		; EOI para el pic
+	mov rsp, rax
+
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
 	out 20h, al
+
+	popSch
 	iretq
 
 ;Keyboard

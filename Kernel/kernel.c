@@ -6,6 +6,8 @@
 #include <sysHandler.h>
 #include <naiveConsole.h>
 #include <memoryManager.h>
+#include <taskManager.h>
+#include <keyboard.h>
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -17,7 +19,8 @@ static const uint64_t PageSize = 0x1000;
 
 static void *const sampleCodeModuleAddress = (void *)0x400000;
 static void *const sampleDataModuleAddress = (void *)0x500000;
-
+void carlitos(int argc, char **argv);
+void pepe(int argc, char **argv);
 typedef int (*EntryPoint)();
 extern uint64_t *_getRSP();
 
@@ -48,7 +51,7 @@ void *initializeKernelBinary()
 
 int main()
 {
-
+	/*
 	memoryManagerADT mm = newMemoryManager();
 	int i = 0;
 	char * p = (char *) 0x0000000000700000;
@@ -88,14 +91,39 @@ int main()
 			ncPrint("la cagamos con el 4", 15);
 		}
 	}
-	
-	/* aaaaaaaaaaaaa
-	load_idt();
+	*/
+	memoryManagerADT mm = newMemoryManager();
+	schedulerADT scheduler = newScheduler(mm);
+	initTaskManager(scheduler);
+	initSysHandler(scheduler);
+	initKeyboard(scheduler);
+	char *argv[] = {"Shell"};
+	newProcess(scheduler,"Shell",50,sampleCodeModuleAddress,argv,1);
+	newProcess(scheduler,"pepe",1,&pepe,argv,1);
+	newProcess(scheduler,"carlitos",1,&carlitos,argv,1);
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
+	load_idt();
 	ncClear();
 
-	((EntryPoint)sampleCodeModuleAddress)();
-	*/
 
 	return 0;
+}
+
+void pepe(int argc, char **argv)
+{
+      
+	while(1)
+	{    	
+		ncPrint("p",15);
+		_hlt();
+	}
+            
+}
+
+void carlitos(int argc, char **argv)
+{
+	while(1) {
+    	ncPrint("c",15);
+		_hlt();
+	}
 }

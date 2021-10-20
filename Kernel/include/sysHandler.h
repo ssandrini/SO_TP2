@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <naiveConsole.h>
 #include <keyboard.h>
+#include <scheduler.h>
 
 extern int _RTC(int num);
 extern void _getRegisters(uint64_t * regs);
@@ -15,5 +16,6 @@ void getTimeRTC(uint64_t r1, uint64_t r2);
 void getReg(uint64_t * r1, uint64_t * stackFrame);
 void getMem(uint8_t * dir, uint8_t * vec);
 void getInfo(uint32_t * r1, uint32_t * r2, int * id);
+void initSysHandler(schedulerADT sched);
 
 #endif

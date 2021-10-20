@@ -2,11 +2,11 @@
 
 schedulerADT scheduler;
 
-void initTaskManager(schedulerADT sch) 
+void initTaskManager(schedulerADT sched) 
 {
-    scheduler = sch;
+    scheduler = sched;
 }
-uint64_t taskManager(void * currentRsp)
+void * taskManager(void * currentRsp)
 {
     return nextProcess(scheduler, currentRsp);
 }

@@ -1,13 +1,14 @@
 #include <sysHandler.h>
 #include <naiveConsole.h>
 
+schedulerADT sch;
+
 void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t rsp)
 {
     switch (sysNumber)
     {
     case 0: // sysRead  r1=buffer r2=bytes
         read((unsigned char *)r1, (unsigned int)r2);
-        _hlt();
         break;
     case 1: // sysWrite
         ncPrint((const char *)r1, (int)r2); 
@@ -35,9 +36,15 @@ void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint6
     }
 }
 
+void initSysHandler(schedulerADT sched) {
+    sch = sched;
+}
+
 void read(unsigned char *r1, unsigned int r2)
 {
     unsigned char *KeyBuffer = getBuffer();
+   // if(*KeyBuffer == '\0')
+     //   setState(sch, getPid(sch), BLOCKED);
     unsigned int i;
     r1[0] = 0;
     for (i = 0; KeyBuffer[i] != 0 && i < r2; i++)
@@ -45,6 +52,7 @@ void read(unsigned char *r1, unsigned int r2)
         r1[i] = KeyBuffer[i];
     }
     removeBuffer();
+    
 }
 
 // la manipulacion del formato la sacamos de la fuente que nos dio la catedra:

@@ -13,7 +13,7 @@
 unsigned char mayuscFlag = 0;
 unsigned char buffer[BUFFER_SIZE]={0};
 unsigned int buffIndex = 0;
-
+schedulerADT sched2;
 const char ascii_values[0x56][2] =
 {
     {-1,-1},
@@ -42,6 +42,7 @@ void keyboard_handler()
         unsigned char key = _getKey();
         switch (key)
         {
+            
             // dejamos un switch por si se agregan mas teclas especiales en un futuro
             // o por si se diferencia entre los shifts   
             case LEFT_SHIFT : case RIGHT_SHIFT :   
@@ -58,6 +59,7 @@ void keyboard_handler()
                 }
                 break;
         }
+       // setState(sched2, 0, READY);
     }
     return;
 }
@@ -84,4 +86,8 @@ unsigned char * getBuffer()
 unsigned int getBufferSize() 
 {
     return buffIndex;
+}
+
+void initKeyboard(schedulerADT sch) {
+    sched2 = sch;
 }
