@@ -68,6 +68,16 @@ typedef struct
       uint64_t base;
 } StackFrame;
 
+static PNode *dequeue(schedulerADT scheduler);
+static void enqueue(schedulerADT scheduler, PNode * newProcess);
+static int argsCopy(memoryManagerADT mm, char **buffer, char **argv, int argc);
+static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp);
+static void processExit();
+static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
+static void halt(int argc, char **argv);
+static int isEmpty(PList * list);
+static void removeProcess(schedulerADT scheduler, PNode * node) ;
+
 static int argsCopy(memoryManagerADT mm, char **buffer, char **argv, int argc)
 {
       for (int i = 0; i < argc; i++)
@@ -106,7 +116,7 @@ static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, vo
       frame->base = 0x000;
 }
 
-static void exit()
+static void processExit()
 {
       // aca iria un killprocess del current
       _int20();
@@ -115,7 +125,7 @@ static void exit()
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv)
 {
       entryPoint(argc, argv);
-      exit();
+      processExit();
 }
 
 static void halt(int argc, char **argv)
@@ -192,7 +202,7 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
       return aux->pid;
 }
 
-uint64_t nextProcess(schedulerADT scheduler, uint64_t currentRsp)
+void * nextProcess(schedulerADT scheduler, void * currentRsp)
 {
       if(scheduler->currentProcess)
       {
@@ -274,16 +284,16 @@ static void enqueue(schedulerADT scheduler, PNode * newProcess)
       scheduler->processesList->size++;
 }
 
-static PCB *dequeue(schedulerADT scheduler)
+static PNode *dequeue(schedulerADT scheduler)
 {
       if (isEmpty(scheduler->processesList))
             return NULL;
 
-      PCB * ans = scheduler->processesList->first;
+      PNode * ans = scheduler->processesList->first;
       scheduler->processesList->first = scheduler->processesList->first->next;
       scheduler->processesList->size--;
 
-      if (ans->state == READY)
+      if (ans->pcb->state == READY)
             scheduler->processesList->qReady--;
 
       return ans;

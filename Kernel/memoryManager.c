@@ -33,5 +33,8 @@ memoryManagerADT newMemoryManager()
     mm->current = (char *)INITIAL_POS;
     return mm;
 }
+void freeMem(memoryManagerADT mm, void *p){
+    return;
+}
 
 #endif

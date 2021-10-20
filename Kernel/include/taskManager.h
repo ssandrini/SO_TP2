@@ -3,5 +3,5 @@
 
 #include <scheduler.h>
 void initTaskManager(schedulerADT sch) ;
-uint64_t taskManager(uint64_t currentRsp);
+uint64_t taskManager(void * currentRsp);
 #endif

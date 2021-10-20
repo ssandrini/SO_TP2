@@ -6,7 +6,7 @@ void initTaskManager(schedulerADT sch)
 {
     scheduler = sch;
 }
-uint64_t taskManager(uint64_t currentRsp)
+uint64_t taskManager(void * currentRsp)
 {
     return nextProcess(scheduler, currentRsp);
 }
