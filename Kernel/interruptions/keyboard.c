@@ -58,7 +58,6 @@ void keyboard_handler()
                 }
                 break;
         }
-        unblockProcess(sched2,1);
     }
     return;
 }

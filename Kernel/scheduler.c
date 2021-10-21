@@ -131,7 +131,6 @@ static void halt(int argc, char **argv)
 {
       while (1)
       {
-            ncPrint("h",15);
             _hlt();
       }
 }
@@ -214,14 +213,13 @@ void *nextProcess(schedulerADT scheduler, void * currentRsp)
       else
       {
             scheduler->currentProcess->pcb->rsp = currentRsp;
-            if (scheduler->life < 1)
+            if (scheduler->life < 1) // no le quedan mas vidas
             { 
                   
                   if(scheduler->currentProcess != scheduler->idle)
                         enqueue(scheduler, scheduler->currentProcess);
                   if(scheduler->processesList->qReady > 0)
                   {
-                        ncPrint("si",15);
                         scheduler->currentProcess = dequeue(scheduler);
                         while (scheduler->currentProcess->pcb->state != READY)
                         {
@@ -271,14 +269,18 @@ int blockProcess(schedulerADT scheduler, uint64_t pid)
 {
       if(scheduler->currentProcess->pcb->pid == pid)
       {
+            ncPrint("BIF",15);
             scheduler->currentProcess->pcb->state = BLOCKED;
             scheduler->processesList->qReady--;
             scheduler->life = 0;
             enqueue(scheduler, scheduler->currentProcess);
+
+            _int20();
             return pid;
       }
       else
       {
+            ncPrint("BELSE",15);
             PNode * aux = scheduler->processesList->first;
             
             while(aux != NULL && aux->pcb->pid != pid) 
@@ -291,6 +293,7 @@ int blockProcess(schedulerADT scheduler, uint64_t pid)
             }
             aux->pcb->state = BLOCKED;
             scheduler->processesList->qReady--;
+            return pid;
       }
 }
 
@@ -307,8 +310,14 @@ int unblockProcess(schedulerADT scheduler, uint64_t pid)
       {
             return -1;
       }
-      aux->pcb->state = READY;
-      scheduler->processesList->qReady++;
+      if(aux->pcb->state == BLOCKED)
+      {
+            ncPrint("U",15);
+            aux->pcb->state = READY;
+            scheduler->processesList->qReady++;
+      }
+      return 0;
+      
 }
 
 static void enqueue(schedulerADT scheduler, PNode *newProcess)
@@ -322,7 +331,7 @@ static void enqueue(schedulerADT scheduler, PNode *newProcess)
             scheduler->processesList->last->next = newProcess;
             scheduler->processesList->last = newProcess;
       }
-
+      // es necesario hacer esto?
       if (newProcess->pcb->state == READY)
             scheduler->processesList->qReady++;
 
