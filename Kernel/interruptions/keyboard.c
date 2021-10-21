@@ -42,7 +42,6 @@ void keyboard_handler()
         unsigned char key = _getKey();
         switch (key)
         {
-            
             // dejamos un switch por si se agregan mas teclas especiales en un futuro
             // o por si se diferencia entre los shifts   
             case LEFT_SHIFT : case RIGHT_SHIFT :   
@@ -59,7 +58,7 @@ void keyboard_handler()
                 }
                 break;
         }
-        setState(sched2, 1, READY);
+        unblockProcess(sched2,1);
     }
     return;
 }

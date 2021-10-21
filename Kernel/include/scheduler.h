@@ -28,6 +28,9 @@ int setPriority(schedulerADT scheduler, int pid, int newPriority);
 
 int setState(schedulerADT scheduler, int pid, State newState);
 
+int blockProcess(schedulerADT scheduler, uint64_t pid);
+int unblockProcess(schedulerADT scheduler, uint64_t pid);
+
 void * nextProcess(schedulerADT scheduler, void * currentRsp);
 // Me falta la de listar todos los procesos todavia
 

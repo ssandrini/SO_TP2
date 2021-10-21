@@ -34,7 +34,7 @@ typedef struct schedulerCDT
 {
       memoryManagerADT memoryManager;
       PList *processesList;
-      int pidCounter;
+      uint64_t pidCounter;
       PNode *currentProcess;
       int life;
       PNode *idle;
@@ -131,7 +131,7 @@ static void halt(int argc, char **argv)
 {
       while (1)
       {
-           // ncPrint("halt",15);
+            ncPrint("h",15);
             _hlt();
       }
 }
@@ -213,8 +213,6 @@ void *nextProcess(schedulerADT scheduler, void * currentRsp)
       }
       else
       {
-            
-            
             scheduler->currentProcess->pcb->rsp = currentRsp;
             if (scheduler->life < 1)
             { 
@@ -223,7 +221,7 @@ void *nextProcess(schedulerADT scheduler, void * currentRsp)
                         enqueue(scheduler, scheduler->currentProcess);
                   if(scheduler->processesList->qReady > 0)
                   {
-                        ncPrint("1",15);
+                        ncPrint("si",15);
                         scheduler->currentProcess = dequeue(scheduler);
                         while (scheduler->currentProcess->pcb->state != READY)
                         {
@@ -240,7 +238,6 @@ void *nextProcess(schedulerADT scheduler, void * currentRsp)
                   }
                   else
                   {
-                        ncPrint("2",15);
                         scheduler->currentProcess = scheduler->idle;
                   } 
                   scheduler->life = scheduler->currentProcess->pcb->priority;
@@ -267,41 +264,51 @@ int setPriority(schedulerADT scheduler, int pid, int newPriority)
 
 int setState(schedulerADT scheduler, int pid, State newState)
 {
-      if(newState == BLOCKED) 
+      return 0;
+}
+
+int blockProcess(schedulerADT scheduler, uint64_t pid) 
+{
+      if(scheduler->currentProcess->pcb->pid == pid)
       {
-            scheduler->processesList->first = NULL;
-            scheduler->currentProcess = NULL;
-            scheduler->processesList->qReady = 0;
-            scheduler->processesList->size = 0;
+            scheduler->currentProcess->pcb->state = BLOCKED;
+            scheduler->processesList->qReady--;
+            scheduler->life = 0;
+            enqueue(scheduler, scheduler->currentProcess);
+            return pid;
       }
-     /* PNode * aux = scheduler->processesList->first;
-      while( aux!= NULL && aux->pcb->pid != pid )
+      else
+      {
+            PNode * aux = scheduler->processesList->first;
+            
+            while(aux != NULL && aux->pcb->pid != pid) 
+            {
+                  aux = aux->next;
+            }
+            if(aux == NULL)
+            {
+                  return -1;
+            }
+            aux->pcb->state = BLOCKED;
+            scheduler->processesList->qReady--;
+      }
+}
+
+int unblockProcess(schedulerADT scheduler, uint64_t pid)
+{
+      
+      PNode * aux = scheduler->processesList->first;
+      
+      while(aux != NULL && aux->pcb->pid != pid) 
       {
             aux = aux->next;
       }
-      if(aux == NULL) {
+      if(aux == NULL)
+      {
             return -1;
       }
-      
-      if( (newState == BLOCKED || READY) && aux->pcb->state == KILLED)
-            return -1;
-            
-      
-      if( newState == BLOCKED  && aux->pcb->state == READY) {
-            ncPrint("3",15);
-            scheduler->processesList->qReady--;
-      }
-      else if(newState == READY && aux->pcb->state == BLOCKED)
-            scheduler->processesList->qReady++;
-      else if(newState == KILLED && aux->pcb->state == READY)
-            scheduler->processesList->qReady--;
-      
-           ncPrint("C",15);
-      scheduler->processesList->qReady = -90;
-      aux->pcb->state = newState;
-      */
-      
-      return 0;
+      aux->pcb->state = READY;
+      scheduler->processesList->qReady++;
 }
 
 static void enqueue(schedulerADT scheduler, PNode *newProcess)
@@ -316,8 +323,8 @@ static void enqueue(schedulerADT scheduler, PNode *newProcess)
             scheduler->processesList->last = newProcess;
       }
 
-      //if (newProcess->pcb->state == READY)
-      scheduler->processesList->qReady++;
+      if (newProcess->pcb->state == READY)
+            scheduler->processesList->qReady++;
 
       scheduler->processesList->size++;
 }
