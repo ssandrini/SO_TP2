@@ -1,10 +1,12 @@
 #ifndef __STDFUN_H__
 #define __STDFUN_H__
 #include <stdint.h>
+#include <sys/types.h>
 #include <stdarg.h>
 
 extern void _write(char * string, int color);
 extern void _getBuffer(char * buffer, int bytes);
+extern void * _malloc(size_t size);
 void printf(char *str, ...); 
 void putChar(const char ascii);
 char getChar();
@@ -25,5 +27,5 @@ void printUser(char * name);
 void printError(char * err);
 void printTitle(char * title);
 uint32_t uintToString(uint64_t value, char * buffer, uint32_t base);
-
+void * malloc(size_t size);
 #endif

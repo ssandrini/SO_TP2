@@ -10,6 +10,7 @@ GLOBAL _getCpuInfo
 GLOBAL _FtoCelcius
 GLOBAL _CtoFahren
 GLOBAL _rectToPolar
+GLOBAL _malloc
 section .text
 
 ; void _getBuffer(char * buffer, int bytes);                                           
@@ -42,6 +43,10 @@ _getMem:
     int 80h
     ret
 
+_malloc:
+    mov rax, 5   
+    int 80h
+    ret
 
 ; void _clearScreen();
 _clearScreen:

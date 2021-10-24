@@ -414,3 +414,8 @@ uint32_t uintToString(uint64_t value, char * buffer, uint32_t base)
 
 	return digits;
 }
+
+void * malloc(size_t size) 
+{
+    return _malloc(size);
+}

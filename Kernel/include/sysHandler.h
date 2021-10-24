@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <naiveConsole.h>
 #include <keyboard.h>
-
+#include <memoryManager.h>
 extern int _RTC(int num);
 extern void _getRegisters(uint64_t * regs);
 extern void _cpuid(uint32_t * r1,uint32_t * r2, int * id);
@@ -15,5 +15,5 @@ void getTimeRTC(uint64_t r1, uint64_t r2);
 void getReg(uint64_t * r1, uint64_t * stackFrame);
 void getMem(uint8_t * dir, uint8_t * vec);
 void getInfo(uint32_t * r1, uint32_t * r2, int * id);
-
+void initSysHandler(memoryManagerADT mm);
 #endif

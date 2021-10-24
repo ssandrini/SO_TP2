@@ -1,6 +1,8 @@
 #include <sysHandler.h>
 #include <naiveConsole.h>
 
+memoryManagerADT memoryMan;
+
 void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t rsp)
 {
     switch (sysNumber)
@@ -10,9 +12,9 @@ void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint6
         _hlt();
         break;
     case 1: // sysWrite
-        ncPrint((const char *)r1, (int)r2); 
+        ncPrint((const char *)r1, (int)r2);
         break;
-    case 2: // sysGetTime
+    case 2:                 // sysGetTime
         getTimeRTC(r1, r2); // en r1 dia mes año y en r2 horas min seg
         break;
     case 3: // sysGetReg
@@ -21,8 +23,8 @@ void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint6
     case 4: // sysGetMem
         getMem((uint8_t *)r1, (uint8_t *)r2);
         break;
-    case 5: // sysChangeScreen pero la borre (desp vemos que hacemos)
-        
+    case 5: // sysMalloc 
+        allocMem(memoryMan, (size_t) r1);
         break;
     case 6: // sysClearScreen
         ncClear();
@@ -93,4 +95,9 @@ void getInfo(uint32_t *r1, uint32_t *r2, int *id)
     }
     else
         *id = 0;
+}
+
+void initSysHandler(memoryManagerADT mm)
+{
+    memoryMan = mm;
 }
