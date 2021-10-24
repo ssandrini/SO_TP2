@@ -51,46 +51,6 @@ int main()
 
 	memoryManagerADT mm = newMemoryManager((void*) 0x0000000000700000 , 8);
 
-	int i = 0;
-	char * p = (char *) 0x0000000000700000;
-	char * asd = (char * ) allocMem(mm, 2);
-	for(i = 0; i < 2; i++) {
-		asd[i] = i;
-	}
-	char * asd2 = (char * ) allocMem(mm, 2);
-	for(i = 0; i < 2; i++) {
-		asd2[i] = i+2;
-	}
-	char * asd3 = (char * ) allocMem(mm, 2);
-	for(i = 0; i < 2; i++) {
-		asd3[i] = i+4;
-	}
-	char * asd4 = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd4[i] = 'd';
-	}
-	for(i = 0; i < 10; i++) {
-		if( *(p+i) != 'a') {
-			ncPrint("la cagamos", 15);
-		}
-	}
-	for(i = 10; i < 20; i++) {
-		if( *(p+i) != 'b') {
-			ncPrint("la cagamos", 15);
-		}
-	}
-	for(i = 20; i < 30; i++) {
-		if( *(p+i) != 'c') {
-			ncPrint("la cagamos", 15);
-		}
-	}
-	for(i = 30; i < 40; i++) {
-		if( *(p+i) != 'd') {
-			ncPrint("la cagamos con el 4", 15);
-		}
-	}
-	
-	/* aaaaaaaaaaaaa
 	load_idt();
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	ncClear();
@@ -98,4 +58,5 @@ int main()
 	((EntryPoint)sampleCodeModuleAddress)();
 	
 	return 0;
+	
 }
