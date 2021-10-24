@@ -49,20 +49,21 @@ void *initializeKernelBinary()
 int main()
 {
 
-	memoryManagerADT mm = newMemoryManager();
+	memoryManagerADT mm = newMemoryManager((void*) 0x0000000000700000 , 8);
+
 	int i = 0;
 	char * p = (char *) 0x0000000000700000;
-	char * asd = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd[i] = 'a';
+	char * asd = (char * ) allocMem(mm, 2);
+	for(i = 0; i < 2; i++) {
+		asd[i] = i;
 	}
-	char * asd2 = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd2[i] = 'b';
+	char * asd2 = (char * ) allocMem(mm, 2);
+	for(i = 0; i < 2; i++) {
+		asd2[i] = i+2;
 	}
-	char * asd3 = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd3[i] = 'c';
+	char * asd3 = (char * ) allocMem(mm, 2);
+	for(i = 0; i < 2; i++) {
+		asd3[i] = i+4;
 	}
 	char * asd4 = allocMem(mm, 10);
 	for(i = 0; i < 10; i++) {
@@ -95,7 +96,6 @@ int main()
 	ncClear();
 
 	((EntryPoint)sampleCodeModuleAddress)();
-	*/
-
+	
 	return 0;
 }
