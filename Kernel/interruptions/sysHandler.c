@@ -32,6 +32,9 @@ void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint6
     case 7: // sysGetCpuInfo (en este caso el tercer parametro representa el ID)
         getInfo((uint32_t *)r1, (uint32_t *)r2, (int *)r3);
         break;
+    case 8:
+        freeMem(memoryMan, (void *) r1);
+        break;
     default:
         break;
     }

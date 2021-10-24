@@ -11,6 +11,7 @@ GLOBAL _FtoCelcius
 GLOBAL _CtoFahren
 GLOBAL _rectToPolar
 GLOBAL _malloc
+GLOBAL _free
 section .text
 
 ; void _getBuffer(char * buffer, int bytes);                                           
@@ -54,6 +55,7 @@ _clearScreen:
     int 80h
     ret
 
+
 ;-----------------------------------------------------------------------------------;
 ;_getCpuInfo(&rg1, &rg2, &id);                                                      ;    
 ; esta syscall devuelve dos datos de 32 bits con las features del procesador.       ;
@@ -83,6 +85,11 @@ _getCpuInfo:
     int 80h
     ret
 
+_free:
+    mov rax, 8   
+    int 80h
+    ret
+    
 ; https://www.felixcloutier.com/x86/ud
 _exc6Trigger:
 	UD2

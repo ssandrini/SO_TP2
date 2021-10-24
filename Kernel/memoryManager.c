@@ -27,6 +27,10 @@ void *allocMem(memoryManagerADT mm, size_t size)
         return NULL;
 }
 
+int freeMem(memoryManagerADT mm, void * p) 
+{
+    return 0;
+}
 memoryManagerADT newMemoryManager()
 {
     memoryManagerADT mm = (void *) STRUCT_POS;

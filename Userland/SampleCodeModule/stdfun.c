@@ -419,3 +419,8 @@ void * malloc(size_t size)
 {
     return _malloc(size);
 }
+
+void free(void * dir)
+{
+    return _free(dir);
+}
