@@ -5,11 +5,6 @@
 #include <stdarg.h>
 #include <syscalls.h>
 
-extern void _write(char * string, int color);
-extern void _getBuffer(char * buffer, int bytes);
-extern void * _malloc(size_t size);
-extern void * _free(void * dir);
-
 void printf(char *str, ...); 
 void putChar(const char ascii);
 char getChar();
