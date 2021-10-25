@@ -28,7 +28,6 @@ int checkCommand(char * buffer, char * parameter);
 //-------------------------------------------------------------------------------------------
 
 //---------------------------------------ASM FUNCTIONS----------------------------------------
-extern uint64_t _syscall(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t rsp);
 extern int _quadratic(long double * a, long double * b, long double * c, long double * r1, long double * r2);
 extern void _exc6Trigger();
 extern void _getReg(uint64_t registers);
