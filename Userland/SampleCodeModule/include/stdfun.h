@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdarg.h>
+#include <syscalls.h>
 
 extern void _write(char * string, int color);
 extern void _getBuffer(char * buffer, int bytes);

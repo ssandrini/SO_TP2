@@ -19,14 +19,16 @@ void help()
 
 void clear()
 {
-    _clearScreen();
+    //_clearScreen();
+    _syscall(CLEAR_SCREEN, 0, 0, 0, 0);
 }
 
 void getTime()
 {
     int date[3];
     int hour[3];
-    _getTime(date, hour);
+    //_getTime(date, hour);
+    _syscall(GET_TIME,(uint64_t) date,(uint64_t) hour,0,0);
     printf("fecha: ");
     printf(" %d / %d / %d \n", date[2], date[1], date[0]);
     printf("hora: ");
@@ -37,7 +39,8 @@ void inforeg()
 {
     uint64_t registers[19];
     static char *registersName[] = {"R15    ", "R14    ", "R13    ", "R12    ", "R11    ", "R10    ", "R9     ", "R8     ", "RSI    ", "RDI    ", "RBP    ", "RDX    ", "RCX    ", "RBX    ", "RAX    ", "RIP    ", "CS     ", "FLAGS  ", "RSP    "};
-    _getReg((uint64_t)registers);
+    //_getReg((uint64_t)registers);
+    _syscall(GET_REG, (uint64_t) registers,0,0,0);
     for (int i = 0; i < 19; i++)
     {
         if (i > 0 && i % 3 == 0)
@@ -52,7 +55,8 @@ void getMem(char *param)
 {
     uint8_t * dir = (uint8_t * ) hexaStrToDir(param);
     uint8_t vec[32]; // 32 "registros" de 1 byte 
-    _getMem(dir, vec);
+    //_getMem(dir, vec);
+    _syscall(GET_MEM, (uint64_t) dir, (uint64_t) vec, 0 ,0);
     printTitle("Volcado de memoria byte a byte a partir de la direccion solicitada: \n");
     for (int i = 0; i < 32; i++)
     {
@@ -188,7 +192,8 @@ void cpuid()
     int ok = FEATURES_ID;
     uint32_t aux = 0;
 
-    _getCpuInfo(&r1, &r2, &ok);
+    //_getCpuInfo(&r1, &r2, &ok);
+    _syscall(CPU_INFO, (uint64_t) &r1, (uint64_t) &r2, (uint64_t) &ok, 0);
     
     if (ok)
     {

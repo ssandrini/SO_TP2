@@ -167,10 +167,10 @@ _int80Handler:
 	pushState
 	
 	mov r8, rsp
-	mov rcx, rdx
-	mov rdx, rsi
-	mov rsi, rdi
-	mov rdi, rax
+	;mov rcx, rdx estos mov ya no harían falta
+	;mov rdx, rsi
+	;mov rsi, rdi
+	;mov rdi, rax
 	call sysHandler
 	
 	popState

@@ -12,9 +12,14 @@ GLOBAL _CtoFahren
 GLOBAL _rectToPolar
 GLOBAL _malloc
 GLOBAL _free
+GLOBAL _syscall
 section .text
 
-; void _getBuffer(char * buffer, int bytes);                                           
+_syscall:
+    int 80h
+    ret
+
+; void _getBuffer(char * buffer, int bytes); 
 _getBuffer:
     mov rax, 0     
     int 80h
