@@ -9,8 +9,11 @@
 #define MAX_BLOCKED_PIDS 32
 #define MAX_SEMAPHORES 64
 
-void initSemManager(memoryManagerADT mm);
-uint64_t semOpen(uint64_t id, uint64_t initValue);
+extern int _xchg(int *mutex, int value);
+
+void initSemManager(memoryManagerADT mm, schedulerADT scheduler);
+uint64_t semOpen(uint64_t id);
+uint64_t semCreate(uint64_t initValue);
 int semWait(uint64_t id);
 int semPost(uint64_t id);
 int semClose(uint64_t id);

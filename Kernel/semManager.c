@@ -2,55 +2,162 @@
 
 #define NULL 0
 
-memoryManagerADT memMan;
 typedef struct Semaphore
 {
     uint64_t id;
     uint64_t value;
     uint64_t blockedPIDs[MAX_BLOCKED_PIDS];
     uint64_t blockedSize;
+    uint64_t attachedProcesses;
     int mutex;
+    struct Semaphore * next;
 } Semaphore;
 
-static Semaphore * semList[MAX_SEMAPHORES];
-
-void initSemManager(memoryManagerADT mm)
+typedef struct SemaphoreList
 {
-    for (int i = 0; i < MAX_SEMAPHORES; i++)
-    {
-        semList[i] = NULL;
-    }
+    Semaphore * first;
+    Semaphore * last;
+    uint64_t size;
+} SemaphoreList;
+
+memoryManagerADT memMan;
+schedulerADT schedul;
+static SemaphoreList * semList;
+static uint64_t idCounter;
+
+static void addInList(Semaphore * newSem);
+static Semaphore * findSem(uint64_t id);
+static void removeFromList(uint64_t id);
+
+void initSemManager(memoryManagerADT mm, schedulerADT scheduler)
+{
     memMan = mm;
+    schedul = scheduler;
+    idCounter = 1;
+    semList = allocMem(memMan, sizeof(SemaphoreList));
+    semList->first = NULL;
+    semList->size = 0;
 }
-// static void dumpBlockedPIDs(uint64_t *blockedPIDs, uint64_t blockedPIDsSize);
+
+
+uint64_t semCreate(uint64_t initValue)
+{
+    Semaphore * sem = allocMem(memMan, sizeof(Semaphore));
+    if (sem == NULL)
+        return NULL;
+
+    sem->value = initValue;
+    sem->blockedSize = 0;
+    sem->id = idCounter++;
+    sem->mutex = 0;
+    sem->attachedProcesses = 1;
+    
+    addInList(sem);
+    return sem->id;
+}
+
+uint64_t semOpen(uint64_t id)
+{
+    Semaphore * sem = findSem(id);
+    // hay que chequear si el semaforo ya está lleno?
+    if(sem == NULL)
+        return NULL;
+    sem->attachedProcesses++;
+    return sem->id;
+}
+
+int semWait(uint64_t id)
+{
+    Semaphore *sem = findSem(id);
+    if (sem == NULL)
+        return -1;
+
+    while (_xchg(&(sem->mutex), 1) != 0);
+
+    if (sem->value <= 0)
+    {
+        int currPid = getPid(schedul);
+        sem->blockedPIDs[sem->blockedSize++] = currPid;
+        blockProcess(schedul,currPid);
+    }
+    else
+    {
+        sem->value--;
+    }
+
+    _xchg(&(sem->mutex), 0);
+    return 0;
+}
+
+int semPost(uint64_t id)
+{
+    Semaphore *sem = findSem(id);
+    if (sem == NULL)
+        return -1;
+
+    while (_xchg(&(sem->mutex), 1) != 0);
+
+    if (sem->blockedSize > 0)
+    {
+        // hay que desbloquear 1 o todos?
+    }
+    else
+        sem->value++;
+
+    _xchg(&(sem->mutex), 0);
+    return 0;
+}
+
+int semClose(uint64_t id)
+{
+    Semaphore *sem = findSem(id);
+    if (sem == NULL)
+        return -1;
+
+    if(sem->attachedProcesses > 0)
+    {
+        sem->attachedProcesses--;
+        return 0;
+    }
+    
+    freeMem(memMan, sem);
+    return 0;
+}
+/////////////////// static functions /////////////////////////
 
 static Semaphore * findSem(uint64_t id)
 {
-    int i;
-    for(i = 0; i < MAX_SEMAPHORES; i++)
-    {
-        if(semList[i]->id == id)
-        {
-            return semList[i];
-        }
-    }
-    return NULL;
+    Semaphore * current = semList->first;
+    while(current != NULL && current->id != id)
+        current = current->next;
+    return current;
 }
 
-uint64_t semOpen(uint64_t id, uint64_t initValue)
+static void addInList(Semaphore * newSem)
 {
-    Semaphore * sem = findSem(id);
-    if (sem == NULL)
+    if(semList->size == 0)
     {
-        sem = allocMem(memMan, sizeof(Semaphore));
-        if (sem == NULL)
-            return -1;
-
-        sem->value = initValue;
-        sem->blockedSize = 0;
-        sem->id = id;
-        sem->mutex = 0;
+        semList->first = semList->last = newSem;
     }
-    // habria que chequear blockedPIDSize si no es null?
-    return id;
+    else
+    {
+        semList->last->next = newSem;
+        semList->last = newSem;
+    }
+    semList->size++;
+}
+
+static void removeFromList(uint64_t id)
+{
+    if(semList->size == 0)
+        return;
+
+    Semaphore * current = semList->first;
+    while(current->next != NULL && current->next->id != id)
+        current = current->next;
+    if(current->next == NULL)
+        return;
+    Semaphore * aux = current->next;
+    current->next = current->next->next;
+    freeMem(memMan, aux);
 }
