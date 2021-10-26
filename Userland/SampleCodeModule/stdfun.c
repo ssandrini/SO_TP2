@@ -165,7 +165,6 @@ void printf(char *str, ...)
         }
         i++;
     }
-    //_write(buff, 15);
     _syscall(WRITE,(uint64_t) buff,(uint64_t) 15,0,0);
     va_end(args);
 }

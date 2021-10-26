@@ -1,17 +1,9 @@
-GLOBAL _write
-GLOBAL _getBuffer
-GLOBAL _getTime
-GLOBAL _getReg
-GLOBAL _getMem
-GLOBAL _clearScreen
 GLOBAL _quadratic
 GLOBAL _exc6Trigger
 GLOBAL _getCpuInfo
 GLOBAL _FtoCelcius
 GLOBAL _CtoFahren
 GLOBAL _rectToPolar
-GLOBAL _malloc
-GLOBAL _free
 GLOBAL _syscall
 section .text
 
@@ -19,82 +11,6 @@ _syscall:
     int 80h
     ret
 
-; void _getBuffer(char * buffer, int bytes); 
-_getBuffer:
-    mov rax, 0     
-    int 80h
-    ret
-
-; void _write(char * string, int color);                                              
-_write:
-    mov rax, 1     
-    int 80h         
-    ret
-
-; void _getTime(int * fecha, int * hora);
-_getTime:
-    mov rax, 2     
-    int 80h
-    ret
-
-; void _getReg(uint64_t registers);
-_getReg:
-    mov rax, 3   
-    int 80h
-    ret
-
-; void _getMem(uint8_t * dir, uint8_t * memory);
-_getMem:
-    mov rax, 4   
-    int 80h
-    ret
-
-_malloc:
-    mov rax, 5   
-    int 80h
-    ret
-
-; void _clearScreen();
-_clearScreen:
-    mov rax, 6   
-    int 80h
-    ret
-
-
-;-----------------------------------------------------------------------------------;
-;_getCpuInfo(&rg1, &rg2, &id);                                                      ;    
-; esta syscall devuelve dos datos de 32 bits con las features del procesador.       ;
-; si se indica el flag id=1 devuelve las comunes y                                  ;
-; y si el flag id=7  devuelve las special                                           ;
-; ademas en id se setea en 0 o en 1 si soporta la instruccion cpuid o no.           ;
-;-----------------------------------------------------------------------------------;
-; caso ID = 0                      |                     caso ID = 1                ;
-;-----------------------------------------------------------------------------------;
-; en rg1 tiene cargado:            |                 en rg1 tiene cargado:          ;    
-; sse3_support, (bit0)             |                 vaesni_support (bit9)          ;
-; pclmulqdq_support (bit1)         |                 vpclmulqdq_support (bit10)     ;
-; fma_support (bit12)              |                                                ;
-; sse41_support, (bit19)           |                                                ;
-; sse42_support (bit20)            |                                                ;
-; aesni_support (bit25)            |                                                ;
-; avx_support (bit28)              |                                                ;
-; f16c_support (bit29)             |                                                ;
-;-----------------------------------------------------------------------------------;
-; en rg2 tiene cargado:            |                  en rg2 tiene cargado:         ;
-; mx_support   (bit23)             |                  avx2_support (bit5)           ;
-; sse_support   (bit25)            |                                                ;
-; sse2_support (bit26)             |                                                ;
-;-----------------------------------------------------------------------------------;
-_getCpuInfo:
-    mov rax, 7      
-    int 80h
-    ret
-
-_free:
-    mov rax, 8   
-    int 80h
-    ret
-    
 ; https://www.felixcloutier.com/x86/ud
 _exc6Trigger:
 	UD2
