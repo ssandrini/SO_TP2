@@ -98,9 +98,7 @@ int main()
 	initSysHandler(scheduler);
 	initKeyboard(scheduler);
 	char *argv[] = {"Shell"};
-	newProcess(scheduler,"Shell",5,sampleCodeModuleAddress,argv,1);
-	//newProcess(scheduler,"pepe",1,&pepe,argv,1);
-	//newProcess(scheduler,"carlitos",1,&carlitos,argv,1);
+	newProcess(scheduler,"Shell",5,sampleCodeModuleAddress,argv,1,1);
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	load_idt();
 	ncClear();

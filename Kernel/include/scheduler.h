@@ -18,7 +18,7 @@ typedef struct schedulerCDT *schedulerADT;
 
 schedulerADT newScheduler(memoryManagerADT memoryManager);
 
-int newProcess(schedulerADT scheduler, char * processName, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc);
+int newProcess(schedulerADT scheduler, char * processName, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg);
 
 int getPid(schedulerADT scheduler);
 

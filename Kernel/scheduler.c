@@ -5,7 +5,7 @@ typedef struct
       uint64_t pid;
       uint64_t ppid;
       unsigned int priority;
-
+      int fg;
       char *name;
       int argc;
       char **argv;
@@ -67,6 +67,7 @@ typedef struct
       uint64_t base;
 } StackFrame;
 
+static schedulerADT sch;
 static PNode *dequeue(schedulerADT scheduler);
 static void enqueue(schedulerADT scheduler, PNode *newProcess);
 static int argsCopy(memoryManagerADT mm, char **buffer, char **argv, int argc);
@@ -117,7 +118,7 @@ static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, vo
 
 static void processExit()
 {
-      // aca falta un kill
+      killProcess(sch, sch->currentProcess->pcb->pid);
       _int20();
 }
 
@@ -140,6 +141,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
 {
       // faltan los chequeos del allocMem
       schedulerADT scheduler = allocMem(mm, sizeof(schedulerCDT));
+      sch = scheduler; // lo necesito para el wrapper
       scheduler->memoryManager = mm;
       scheduler->processesList = allocMem(scheduler->memoryManager, sizeof(PList));
       scheduler->pidCounter = 0;
@@ -156,6 +158,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->idle->pcb->ppid = 0;
       scheduler->idle->pcb->name = allocMem(scheduler->memoryManager, strlen("Halt"));
       strcpy(scheduler->idle->pcb->name, "Halt");
+      scheduler->idle->pcb->fg = 0;
       scheduler->idle->pcb->priority = 1;
       scheduler->idle->pcb->state = READY;
       scheduler->idle->pcb->rbp = allocMem(scheduler->memoryManager, STACK_SIZE);
@@ -170,8 +173,16 @@ schedulerADT newScheduler(memoryManagerADT mm)
       return scheduler;
 }
 
-int newProcess(schedulerADT scheduler, char *processName, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc)
+int newProcess(schedulerADT scheduler, char *processName, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg)
 {
+      if (scheduler->currentProcess != NULL) 
+      {
+            // Solo un foreground puede crear a otro foreground
+            if (fg == 1 && scheduler->currentProcess->pcb->fg == 0) 
+            {
+                  return -1;
+            }
+      }
       PCB *aux = allocMem(scheduler->memoryManager, sizeof(PCB));
       aux->pid = scheduler->pidCounter++;
       if (scheduler->currentProcess != NULL)
@@ -190,6 +201,7 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
       aux->rbp = allocMem(scheduler->memoryManager, STACK_SIZE);
       aux->rbp = (void *)((char *)aux->rbp + STACK_SIZE - 1);
       aux->rsp = (void *)((StackFrame *)aux->rbp - 1);
+      aux->fg = fg;
       setNewSF(entryPoint, argc, argvAux, aux->rbp);
 
       PNode *auxNode = allocMem(scheduler->memoryManager, sizeof(PNode));
@@ -197,6 +209,9 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
       auxNode->next = NULL;
       enqueue(scheduler, auxNode);
 
+      // bloqueo al padre (la shell deberia bloquearse mientras se corre un ls por ejemplo)
+      if(fg == 1 && scheduler->currentProcess != NULL && scheduler->currentProcess != scheduler->idle)
+            blockProcess(scheduler, auxNode->pcb->ppid);
       return aux->pid;
 }
 
@@ -256,6 +271,10 @@ int killProcess(schedulerADT scheduler, int pid)
       if(scheduler->currentProcess != NULL && scheduler->currentProcess->pcb->pid == pid)
       {
             scheduler->currentProcess->pcb->state = KILLED;
+            if (scheduler->currentProcess->pcb->fg == 1)
+            {
+                  unblockProcess(scheduler, scheduler->currentProcess->pcb->ppid);
+            }
             return 0;
       }
       
@@ -270,6 +289,12 @@ int killProcess(schedulerADT scheduler, int pid)
       if(current->pcb->state == READY)
             scheduler->processesList->qReady--;
       current->pcb->state = KILLED;
+
+      if (current->pcb->fg == 1) 
+      {
+            unblockProcess(scheduler,current->pcb->ppid); 
+      }
+
       return 0;
 }
       
