@@ -1,6 +1,7 @@
 GLOBAL cpuVendor
 GLOBAL _getRSP
 GLOBAL _xchg
+GLOBAL _int20
 section .text
 	
 cpuVendor:
@@ -35,3 +36,7 @@ _xchg:
     mov rax, rsi
     xchg [rdi], eax
     ret
+
+_int20:
+	int 20h
+	ret
