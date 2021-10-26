@@ -19,8 +19,6 @@ static const uint64_t PageSize = 0x1000;
 
 static void *const sampleCodeModuleAddress = (void *)0x400000;
 static void *const sampleDataModuleAddress = (void *)0x500000;
-void carlitos(int argc, char **argv);
-void pepe(int argc, char **argv);
 typedef int (*EntryPoint)();
 extern uint64_t *_getRSP();
 
@@ -51,52 +49,13 @@ void *initializeKernelBinary()
 
 int main()
 {
-	/*
-	memoryManagerADT mm = newMemoryManager();
-	int i = 0;
-	char * p = (char *) 0x0000000000700000;
-	char * asd = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd[i] = 'a';
-	}
-	char * asd2 = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd2[i] = 'b';
-	}
-	char * asd3 = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd3[i] = 'c';
-	}
-	char * asd4 = allocMem(mm, 10);
-	for(i = 0; i < 10; i++) {
-		asd4[i] = 'd';
-	}
-	for(i = 0; i < 10; i++) {
-		if( *(p+i) != 'a') {
-			ncPrint("la cagamos", 15);
-		}
-	}
-	for(i = 10; i < 20; i++) {
-		if( *(p+i) != 'b') {
-			ncPrint("la cagamos", 15);
-		}
-	}
-	for(i = 20; i < 30; i++) {
-		if( *(p+i) != 'c') {
-			ncPrint("la cagamos", 15);
-		}
-	}
-	for(i = 30; i < 40; i++) {
-		if( *(p+i) != 'd') {
-			ncPrint("la cagamos con el 4", 15);
-		}
-	}
-	*/
 	memoryManagerADT mm = newMemoryManager();
 	schedulerADT scheduler = newScheduler(mm);
 	initTaskManager(scheduler);
 	initSysHandler(scheduler);
 	initKeyboard(scheduler);
+
+	/* First process */
 	char *argv[] = {"Shell"};
 	newProcess(scheduler,"Shell",5,sampleCodeModuleAddress,argv,1,1);
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
@@ -105,23 +64,4 @@ int main()
 
 
 	return 0;
-}
-
-void pepe(int argc, char **argv)
-{
-      
-	while(1)
-	{    	
-		ncPrint("p",15);
-		_hlt();
-	}
-            
-}
-
-void carlitos(int argc, char **argv)
-{
-	while(1) {
-    	ncPrint("c",15);
-		_hlt();
-	}
 }
