@@ -13,7 +13,7 @@
 unsigned char mayuscFlag = 0;
 unsigned char buffer[BUFFER_SIZE]={0};
 unsigned int buffIndex = 0;
-schedulerADT sched2;
+schedulerADT scheduler;
 const char ascii_values[0x56][2] =
 {
     {-1,-1},
@@ -55,7 +55,7 @@ void keyboard_handler()
                 if(key < 0x56) {
                     buffer[buffIndex++] = getAscii(key);
                     buffer[buffIndex] = 0;
-                    unblockProcess(sched2,1);
+                    unblockProcess(scheduler,1);
                 }
                 break;
         }
@@ -88,5 +88,5 @@ unsigned int getBufferSize()
 }
 
 void initKeyboard(schedulerADT sch) {
-    sched2 = sch;
+    scheduler = sch;
 }

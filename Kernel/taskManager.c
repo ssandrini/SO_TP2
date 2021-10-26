@@ -1,6 +1,6 @@
 #include <taskManager.h>
 
-schedulerADT scheduler;
+static schedulerADT scheduler;
 
 void initTaskManager(schedulerADT sched) 
 {

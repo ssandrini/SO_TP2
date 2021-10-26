@@ -1,7 +1,7 @@
 #include <sysHandler.h>
 #include <naiveConsole.h>
 
-schedulerADT sch;
+static schedulerADT scheduler;
 
 void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t rsp)
 {
@@ -37,7 +37,7 @@ void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint6
 }
 
 void initSysHandler(schedulerADT sched) {
-    sch = sched;
+    scheduler = sched;
 }
 
 void read(unsigned char *r1, unsigned int r2)
@@ -46,7 +46,7 @@ void read(unsigned char *r1, unsigned int r2)
     unsigned int i;
     if(KeyBuffer[0] == '\0')
     {
-        blockProcess(sch,1);
+        blockProcess(scheduler,1);
     }
     r1[0] = 0;
     for (i = 0; KeyBuffer[i] != 0 && i < r2; i++)
