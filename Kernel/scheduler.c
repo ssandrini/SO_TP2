@@ -77,7 +77,7 @@ static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
 static void halt(int argc, char **argv);
 static int isEmpty(PList *list);
 static void removeProcess(schedulerADT scheduler, PNode *node);
-
+char * aux2;
 static int argsCopy(memoryManagerADT mm, char **buffer, char **argv, int argc)
 {
       for (int i = 0; i < argc; i++)
@@ -151,6 +151,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->processesList->size = 0;
       scheduler->processesList->qReady = 0;
       
+      aux2= allocMem(scheduler->memoryManager,10);
       char *argv[] = {"Halt"};
       scheduler->idle = allocMem(scheduler->memoryManager, sizeof(PNode));
       scheduler->idle->pcb = allocMem(scheduler->memoryManager, sizeof(PCB));
@@ -208,7 +209,8 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
       auxNode->pcb = aux;
       auxNode->next = NULL;
       enqueue(scheduler, auxNode);
-
+      scheduler->processesList->qReady++;
+      
       // bloqueo al padre (la shell deberia bloquearse mientras se corre un ls por ejemplo)
       if(fg == 1 && scheduler->currentProcess != NULL && scheduler->currentProcess != scheduler->idle)
             blockProcess(scheduler, auxNode->pcb->ppid);
@@ -217,6 +219,7 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
 
 void *nextProcess(schedulerADT scheduler, void * currentRsp)
 {     
+      
       if (scheduler->currentProcess == NULL) 
       {
             if (!isEmpty(scheduler->processesList))
@@ -236,19 +239,18 @@ void *nextProcess(schedulerADT scheduler, void * currentRsp)
                   }
                   if(scheduler->processesList->qReady > 0)
                   {
-                        scheduler->currentProcess = dequeue(scheduler);
-                        while (scheduler->currentProcess->pcb->state != READY)
+                        do
                         {
+                              scheduler->currentProcess = dequeue(scheduler);
                               if (scheduler->currentProcess->pcb->state == KILLED)
                               {
                                     removeProcess(scheduler, scheduler->currentProcess);
                               }
-                              else 
+                              else if(scheduler->currentProcess->pcb->state == BLOCKED)
                               {
                                     enqueue(scheduler, scheduler->currentProcess);
                               }
-                              scheduler->currentProcess = dequeue(scheduler);
-                        }
+                        }while (scheduler->processesList->qReady > 0 && scheduler->currentProcess->pcb->state != READY);
                   }
                   else
                   {
@@ -269,12 +271,15 @@ int getPid(schedulerADT scheduler)
 int killProcess(schedulerADT scheduler, int pid)
 {
       if(scheduler->currentProcess != NULL && scheduler->currentProcess->pcb->pid == pid)
-      {
+      {   
             scheduler->currentProcess->pcb->state = KILLED;
-            if (scheduler->currentProcess->pcb->fg == 1)
+            scheduler->life = 0;
+            scheduler->processesList->qReady--;
+            if (scheduler->currentProcess->pcb->fg == 1 && scheduler->currentProcess->pcb->ppid != 0)
             {
                   unblockProcess(scheduler, scheduler->currentProcess->pcb->ppid);
             }
+            _int20();
             return 0;
       }
       
@@ -290,7 +295,7 @@ int killProcess(schedulerADT scheduler, int pid)
             scheduler->processesList->qReady--;
       current->pcb->state = KILLED;
 
-      if (current->pcb->fg == 1) 
+      if (current->pcb->fg == 1 && current->pcb->ppid != 0) 
       {
             unblockProcess(scheduler,current->pcb->ppid); 
       }
@@ -332,7 +337,6 @@ int blockProcess(schedulerADT scheduler, uint64_t pid)
             scheduler->processesList->qReady--;
             scheduler->life = 0;
             enqueue(scheduler, scheduler->currentProcess);
-            
             _int20();
             return pid;
       }
@@ -387,18 +391,16 @@ static void enqueue(schedulerADT scheduler, PNode *newProcess)
             scheduler->processesList->last->next = newProcess;
             scheduler->processesList->last = newProcess;
       }
-      if (newProcess->pcb->state == READY)
-      {
-            scheduler->processesList->qReady++;
-      }
-
+      
       scheduler->processesList->size++;
 }
 
 static PNode *dequeue(schedulerADT scheduler)
 {
       if (isEmpty(scheduler->processesList))
+      {
             return NULL;
+      }
 
       PNode *ans = scheduler->processesList->first;
       scheduler->processesList->first = scheduler->processesList->first->next;
@@ -414,16 +416,14 @@ static int isEmpty(PList *list)
 
 static void removeProcess(schedulerADT scheduler, PNode *node)
 {
+      return;
+      /*
       freeMem(scheduler->memoryManager, node->pcb->name);
       freeMem(scheduler->memoryManager, node->pcb->argv);
       freeMem(scheduler->memoryManager, node->pcb->rbp);
       freeMem(scheduler->memoryManager, node->pcb);
-
-      PNode *iterator = scheduler->processesList->first;
-      while (iterator->next != node)
-            iterator = iterator->next;
-      iterator->next = node->next;
       freeMem(scheduler->memoryManager, node);
+      */
 }
 /*
       NO OLVIDARME DE LIBERAR TODA LA MEMORIA USADA AL MATAR UN PROCESO */
