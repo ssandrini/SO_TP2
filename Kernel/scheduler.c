@@ -67,8 +67,6 @@ typedef struct
       uint64_t base;
 } StackFrame;
 
-char * aux2;
-
 static PNode *dequeue(schedulerADT scheduler);
 static void enqueue(schedulerADT scheduler, PNode *newProcess);
 static int argsCopy(memoryManagerADT mm, char **buffer, char **argv, int argc);
@@ -150,9 +148,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->processesList->first = scheduler->processesList->last = NULL;
       scheduler->processesList->size = 0;
       scheduler->processesList->qReady = 0;
-      aux2 = allocMem(scheduler->memoryManager, 10);
       
-
       char *argv[] = {"Halt"};
       scheduler->idle = allocMem(scheduler->memoryManager, sizeof(PNode));
       scheduler->idle->pcb = allocMem(scheduler->memoryManager, sizeof(PCB));
@@ -257,8 +253,23 @@ int getPid(schedulerADT scheduler)
 
 int killProcess(schedulerADT scheduler, int pid)
 {
-      return 0;
+      if(scheduler->currentProcess != NULL && scheduler->currentProcess->pcb->pid == pid)
+      {
+            scheduler->currentProcess->pcb->state = KILLED;
+      }
+      
+      PNode * current = scheduler->processesList->first;
+      while(current != NULL && current->pcb->pid != pid)
+      {
+            current = current->next;
+      }
+      if(current == NULL)
+            return -1;
+      if(current->pcb->state == READY)
+            scheduler->processesList->qReady--;
+      current->pcb->state = KILLED;
 }
+      
 
 int setPriority(schedulerADT scheduler, int pid, int newPriority)
 {
@@ -349,10 +360,6 @@ static PNode *dequeue(schedulerADT scheduler)
       PNode *ans = scheduler->processesList->first;
       scheduler->processesList->first = scheduler->processesList->first->next;
       scheduler->processesList->size--;
-
-      /*if (ans->pcb->state == READY)
-            scheduler->processesList->qReady--;
-            */
 
       return ans;
 }
