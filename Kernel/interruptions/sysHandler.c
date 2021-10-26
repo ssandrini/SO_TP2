@@ -44,6 +44,10 @@ void read(unsigned char *r1, unsigned int r2)
 {
     unsigned char *KeyBuffer = getBuffer();
     unsigned int i;
+    if(KeyBuffer[0] == '\0')
+    {
+        blockProcess(sch,1);
+    }
     r1[0] = 0;
     for (i = 0; KeyBuffer[i] != 0 && i < r2; i++)
     {

@@ -32,4 +32,9 @@ memoryManagerADT newMemoryManager()
     return mm;
 }
 
+void freeMem(memoryManagerADT mm, void *p)
+{
+    return;
+}
+
 #endif

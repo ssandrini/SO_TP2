@@ -55,6 +55,7 @@ void keyboard_handler()
                 if(key < 0x56) {
                     buffer[buffIndex++] = getAscii(key);
                     buffer[buffIndex] = 0;
+                    unblockProcess(sched2,1);
                 }
                 break;
         }

@@ -25,7 +25,7 @@ typedef struct PNode
 typedef struct PList
 {
       uint64_t size;
-      int qReady;
+      uint64_t qReady;
       PNode *first;
       PNode *last;
 } PList;
@@ -66,6 +66,8 @@ typedef struct
       uint64_t ss;
       uint64_t base;
 } StackFrame;
+
+char * aux2;
 
 static PNode *dequeue(schedulerADT scheduler);
 static void enqueue(schedulerADT scheduler, PNode *newProcess);
@@ -148,6 +150,8 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->processesList->first = scheduler->processesList->last = NULL;
       scheduler->processesList->size = 0;
       scheduler->processesList->qReady = 0;
+      aux2 = allocMem(scheduler->memoryManager, 10);
+      
 
       char *argv[] = {"Halt"};
       scheduler->idle = allocMem(scheduler->memoryManager, sizeof(PNode));
@@ -201,7 +205,7 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
 }
 
 void *nextProcess(schedulerADT scheduler, void * currentRsp)
-{      
+{     
       if (scheduler->currentProcess == NULL) 
       {
             if (!isEmpty(scheduler->processesList))
@@ -215,9 +219,10 @@ void *nextProcess(schedulerADT scheduler, void * currentRsp)
             scheduler->currentProcess->pcb->rsp = currentRsp;
             if (scheduler->life < 1) // no le quedan mas vidas
             { 
-                  
                   if(scheduler->currentProcess != scheduler->idle)
+                  {
                         enqueue(scheduler, scheduler->currentProcess);
+                  }
                   if(scheduler->processesList->qReady > 0)
                   {
                         scheduler->currentProcess = dequeue(scheduler);
@@ -269,18 +274,16 @@ int blockProcess(schedulerADT scheduler, uint64_t pid)
 {
       if(scheduler->currentProcess->pcb->pid == pid)
       {
-            ncPrint("BIF",15);
             scheduler->currentProcess->pcb->state = BLOCKED;
             scheduler->processesList->qReady--;
             scheduler->life = 0;
             enqueue(scheduler, scheduler->currentProcess);
-
+            
             _int20();
             return pid;
       }
       else
       {
-            ncPrint("BELSE",15);
             PNode * aux = scheduler->processesList->first;
             
             while(aux != NULL && aux->pcb->pid != pid) 
@@ -312,7 +315,6 @@ int unblockProcess(schedulerADT scheduler, uint64_t pid)
       }
       if(aux->pcb->state == BLOCKED)
       {
-            ncPrint("U",15);
             aux->pcb->state = READY;
             scheduler->processesList->qReady++;
       }
@@ -331,9 +333,10 @@ static void enqueue(schedulerADT scheduler, PNode *newProcess)
             scheduler->processesList->last->next = newProcess;
             scheduler->processesList->last = newProcess;
       }
-      // es necesario hacer esto?
       if (newProcess->pcb->state == READY)
+      {
             scheduler->processesList->qReady++;
+      }
 
       scheduler->processesList->size++;
 }
@@ -347,8 +350,9 @@ static PNode *dequeue(schedulerADT scheduler)
       scheduler->processesList->first = scheduler->processesList->first->next;
       scheduler->processesList->size--;
 
-      if (ans->pcb->state == READY)
+      /*if (ans->pcb->state == READY)
             scheduler->processesList->qReady--;
+            */
 
       return ans;
 }
