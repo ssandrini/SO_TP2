@@ -164,9 +164,4 @@ int freeMem(memoryManagerADT mm, void * p){
     return buddyFreeMemoryRec(mm, p, mm->root);
 }
 
-void freeMem(memoryManagerADT mm, void *p)
-{
-    return;
-}
-
 #endif

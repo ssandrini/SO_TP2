@@ -7,6 +7,7 @@
 #include <naiveConsole.h>
 #include <memoryManager.h>
 #include <taskManager.h>
+#include <semManager.h>
 #include <keyboard.h>
 extern uint8_t text;
 extern uint8_t rodata;
@@ -52,9 +53,9 @@ int main()
 	memoryManagerADT mm = newMemoryManager();
 	schedulerADT scheduler = newScheduler(mm);
 	initTaskManager(scheduler);
-	initSysHandler(scheduler);
+	initSysHandler(mm,scheduler);
 	initKeyboard(scheduler);
-
+	initSemManager(mm, scheduler);
 	/* First process */
 	char *argv[] = {"Shell"};
 	newProcess(scheduler,"Shell",5,sampleCodeModuleAddress,argv,1,1);

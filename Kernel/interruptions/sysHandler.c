@@ -23,7 +23,7 @@ void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint6
         getMem((uint8_t *)r1, (uint8_t *)r2);
         break;
     case 5: // sysMalloc 
-        allocMem(memoryMan, (size_t) r1);
+        allocMem(memoryManager, (size_t) r1);
         break;
     case 6: // sysClearScreen
         ncClear();
@@ -32,15 +32,11 @@ void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint6
         getInfo((uint32_t *)r1, (uint32_t *)r2, (int *)r3);
         break;
     case 8:
-        freeMem(memoryMan, (void *) r1);
+        freeMem(memoryManager, (void *) r1);
         break;
     default:
         break;
     }
-}
-
-void initSysHandler(schedulerADT sched) {
-    scheduler = sched;
 }
 
 void read(unsigned char *r1, unsigned int r2)
@@ -111,5 +107,5 @@ void getInfo(uint32_t *r1, uint32_t *r2, int *id)
 void initSysHandler(memoryManagerADT mm, schedulerADT sch)
 {
     scheduler = sch;
-    memoryMan = mm;
+    memoryManager = mm;
 }

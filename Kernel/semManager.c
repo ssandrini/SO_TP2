@@ -1,7 +1,5 @@
 #include <semManager.h>
 
-#define NULL 0
-
 typedef struct Semaphore
 {
     uint64_t id;
@@ -20,8 +18,8 @@ typedef struct SemaphoreList
     uint64_t size;
 } SemaphoreList;
 
-memoryManagerADT memMan;
-schedulerADT schedul;
+static memoryManagerADT memMan;
+static schedulerADT scheduler;
 static SemaphoreList *semList;
 static uint64_t idCounter;
 
@@ -29,10 +27,10 @@ static void addInList(Semaphore *newSem);
 static Semaphore *findSem(uint64_t id);
 static void removeFromList(uint64_t id);
 
-void initSemManager(memoryManagerADT mm, schedulerADT scheduler)
+void initSemManager(memoryManagerADT mm, schedulerADT sch)
 {
     memMan = mm;
-    schedul = scheduler;
+    scheduler = sch;
     idCounter = 1;
     semList = allocMem(memMan, sizeof(SemaphoreList));
     semList->first = NULL;
@@ -43,7 +41,7 @@ uint64_t semCreate(uint64_t initValue)
 {
     Semaphore *sem = allocMem(memMan, sizeof(Semaphore));
     if (sem == NULL)
-        return NULL;
+        return (uint64_t) NULL;
 
     sem->value = initValue;
     sem->blockedSize = 0;
@@ -60,7 +58,7 @@ uint64_t semOpen(uint64_t id)
     Semaphore *sem = findSem(id);
     // hay que chequear si el semaforo ya está lleno?
     if (sem == NULL)
-        return NULL;
+        return (uint64_t) NULL;
     sem->attachedProcesses++;
     return sem->id;
 }
@@ -76,9 +74,9 @@ int semWait(uint64_t id)
 
     if (sem->value <= 0 || sem->blockedSize > 0)
     {
-        int currPid = getPid(schedul);
+        int currPid = getPid(scheduler);
         sem->blockedPIDs[sem->blockedSize++] = currPid;
-        blockProcess(schedul, currPid);
+        blockProcess(scheduler, currPid);
     }
     else
     {
@@ -107,7 +105,7 @@ int semPost(uint64_t id)
             sem->blockedPIDs[i] = sem->blockedPIDs[i + 1];
         }
         sem->blockedSize--;
-        unblockProcess(first);
+        unblockProcess(scheduler, first);
     }
     else
         sem->value++;
