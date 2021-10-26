@@ -11,14 +11,12 @@ void putChar(const char ascii)
     char toPrint[2];
     toPrint[0] = ascii;
     toPrint[1] = 0;
-    //_write(toPrint, 15);
     _syscall(WRITE, (uint64_t) toPrint, (uint64_t) 15,0,0);
 }
 
 char getChar()
 {
     char k = 0;
-    //_getBuffer(&k, 1);
     _syscall(READ,(uint64_t) &k,(uint64_t) 1,0,0);
     return k;
 }
@@ -372,19 +370,16 @@ void stringToDouble(char *string, long double *num)
 
 void printUser(char *name)
 {
-    //_write(name, 13);
     _syscall(WRITE,(uint64_t) name, (uint64_t) 13,0,0);
 }
 
 void printError(char *err)
 {
-    //_write(err, 4);
     _syscall(WRITE,(uint64_t) err, (uint64_t)4,0,0);
 }
 
 void printTitle(char *title)
 {
-    //_write(title, 14);
     _syscall(WRITE,(uint64_t)title,14,0,0);
 }
 
@@ -423,12 +418,10 @@ uint32_t uintToString(uint64_t value, char * buffer, uint32_t base)
 
 void * malloc(size_t size) 
 {
-    //return _malloc(size);
     return (void * ) _syscall(MALLOC, (uint64_t)size, 0, 0, 0);
 }
 
 void free(void * dir)
 {
-    //free
     _syscall(FREE, (uint64_t) dir, 0,0,0);
 }
