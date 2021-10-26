@@ -256,6 +256,7 @@ int killProcess(schedulerADT scheduler, int pid)
       if(scheduler->currentProcess != NULL && scheduler->currentProcess->pcb->pid == pid)
       {
             scheduler->currentProcess->pcb->state = KILLED;
+            return 0;
       }
       
       PNode * current = scheduler->processesList->first;
@@ -265,19 +266,36 @@ int killProcess(schedulerADT scheduler, int pid)
       }
       if(current == NULL)
             return -1;
+
       if(current->pcb->state == READY)
             scheduler->processesList->qReady--;
       current->pcb->state = KILLED;
+      return 0;
 }
       
 
 int setPriority(schedulerADT scheduler, int pid, int newPriority)
 {
-      return 0;
-}
+      if(newPriority < 1) 
+      {
+            return -1;
+      }
+      if(scheduler->currentProcess != NULL && scheduler->currentProcess->pcb->pid == pid)
+      {
+            scheduler->currentProcess->pcb->priority = newPriority;
+            scheduler->life = newPriority; // reinicio los ciclos restantes
+            return 0;
+      }
+      
+      PNode * current = scheduler->processesList->first;
+      while(current != NULL && current->pcb->pid != pid)
+      {
+            current = current->next;
+      }
+      if(current == NULL)
+            return -1;
 
-int setState(schedulerADT scheduler, int pid, State newState)
-{
+      scheduler->currentProcess->pcb->priority = newPriority;
       return 0;
 }
 
