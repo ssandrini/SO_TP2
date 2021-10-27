@@ -67,15 +67,8 @@ void keyboard_handler()
                 if(key < 0x56) {
                     buffer[buffIndex++] = getAscii(key);
                     buffer[buffIndex] = 0;
-                    if(key == 20)
-                    {
-                        pid = newProcess(scheduler,2,&pepe,argv,argc,1);
-                    }
-                    else
-                    {   
                         if(getPid(scheduler) != pid)
                             unblockProcess(scheduler,1);
-                    }
                 }
                 break;
         }
