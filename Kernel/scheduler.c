@@ -176,11 +176,13 @@ schedulerADT newScheduler(memoryManagerADT mm)
 
 int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg)
 {
+      ncPrint("nuevo proceso",10);
       if (scheduler->currentProcess != NULL) 
       {
             // Solo un foreground puede crear a otro foreground
             if (fg == 1 && scheduler->currentProcess->pcb->fg == 0) 
             {
+                  ncPrint("esto esta mal",10);
                   return -1;
             }
       }
