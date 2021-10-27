@@ -223,12 +223,11 @@ _getKey:
 
 _int80Handler:
 	pushState
-	
-	mov r8, rsp
-	;mov rcx, rdx estos mov ya no harían falta
-	;mov rdx, rsi
-	;mov rsi, rdi
-	;mov rdi, rax
+	; aca en el caso de que necesito usar r9 
+	; y no es necesario el rsp (por ejemplo para newProcess si necesito fd)
+	; hago un cmp para ver si hacer
+	; la linea mov r9, rsp
+	mov r9, rsp
 	call sysHandler
 	
 	popState

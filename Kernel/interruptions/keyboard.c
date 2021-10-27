@@ -87,6 +87,7 @@ unsigned int getBufferSize()
     return buffIndex;
 }
 
-void initKeyboard(schedulerADT sch) {
+void initKeyboard(schedulerADT sch) 
+{
     scheduler = sch;
 }

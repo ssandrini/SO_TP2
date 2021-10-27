@@ -58,7 +58,7 @@ int main()
 	initSemManager(mm, scheduler);
 	/* First process */
 	char *argv[] = {"Shell"};
-	newProcess(scheduler,"Shell",5,sampleCodeModuleAddress,argv,1,1);
+	newProcess(scheduler,5,sampleCodeModuleAddress,argv,1,1);
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	load_idt();
 	ncClear();

@@ -18,7 +18,7 @@ typedef struct schedulerCDT *schedulerADT;
 
 schedulerADT newScheduler(memoryManagerADT memoryManager);
 
-int newProcess(schedulerADT scheduler, char * processName, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg);
+int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg);
 
 int getPid(schedulerADT scheduler);
 
@@ -30,6 +30,8 @@ int blockProcess(schedulerADT scheduler, uint64_t pid);
 int unblockProcess(schedulerADT scheduler, uint64_t pid);
 
 void * nextProcess(schedulerADT scheduler, void * currentRsp);
+
+void printProcesses(schedulerADT scheduler);
 // Me falta la de listar todos los procesos todavia
 
 #endif

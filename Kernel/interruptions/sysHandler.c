@@ -3,7 +3,7 @@
 
 static schedulerADT scheduler;
 static memoryManagerADT memoryManager;
-void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t rsp)
+void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t r4, uint64_t rsp)
 {
     switch (sysNumber)
     {
@@ -33,6 +33,25 @@ void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint6
         break;
     case 8:
         freeMem(memoryManager, (void *) r1);
+        break;
+    case 9: // sysCreateProcess(entryPoint, argv, argc, fg)
+        // por defecto todos se crean con prioridad 1 (esta bien?)
+        newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4);
+        break;
+    case 10: //sysKill(pid);
+        killProcess(scheduler, (int) r1);
+        break;
+    case 11: //sysBLock(pid)
+        blockProcess(scheduler, r1);
+        break;
+    case 12: //sysUnblock(pid)
+        unblockProcess(scheduler, r1);
+        break;
+    case 13: //sysNice(pid, priorioty)
+        setPriority(scheduler, (int) r1, (int) r2);
+        break;
+    case 14:
+        printProcesses(scheduler);
         break;
     default:
         break;

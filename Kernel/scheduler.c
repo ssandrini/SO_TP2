@@ -174,7 +174,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       return scheduler;
 }
 
-int newProcess(schedulerADT scheduler, char *processName, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg)
+int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg)
 {
       if (scheduler->currentProcess != NULL) 
       {
@@ -195,8 +195,8 @@ int newProcess(schedulerADT scheduler, char *processName, unsigned int priority,
       argsCopy(scheduler->memoryManager, argvAux, argv, argc);
       aux->argc = argc;
       aux->argv = argvAux;
-      aux->name = allocMem(scheduler->memoryManager, strlen(processName));
-      strcpy(aux->name, processName);
+      aux->name = allocMem(scheduler->memoryManager, strlen(argv[0]));
+      strcpy(aux->name, argv[0]);
       aux->priority = priority;
       aux->state = READY;
       aux->rbp = allocMem(scheduler->memoryManager, STACK_SIZE);
@@ -378,6 +378,11 @@ int unblockProcess(schedulerADT scheduler, uint64_t pid)
       }
       return 0;
       
+}
+
+void printProcesses(schedulerADT scheduler)
+{
+      return ;
 }
 
 static void enqueue(schedulerADT scheduler, PNode *newProcess)
