@@ -42,10 +42,10 @@ void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint6
         killProcess(scheduler, (int) r1);
         break;
     case 11: //sysBLock(pid)
-        blockProcess(scheduler, r1);
+        blockProcess(scheduler, (int) r1);
         break;
     case 12: //sysUnblock(pid)
-        unblockProcess(scheduler, r1);
+        unblockProcess(scheduler, (int) r1);
         break;
     case 13: //sysNice(pid, priorioty)
         setPriority(scheduler, (int) r1, (int) r2);

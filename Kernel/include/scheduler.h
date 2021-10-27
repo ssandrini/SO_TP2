@@ -26,8 +26,8 @@ int killProcess(schedulerADT scheduler, int pid);
 
 int setPriority(schedulerADT scheduler, int pid, int newPriority);
 
-int blockProcess(schedulerADT scheduler, uint64_t pid);
-int unblockProcess(schedulerADT scheduler, uint64_t pid);
+int blockProcess(schedulerADT scheduler, int pid);
+int unblockProcess(schedulerADT scheduler, int pid);
 
 void * nextProcess(schedulerADT scheduler, void * currentRsp);
 

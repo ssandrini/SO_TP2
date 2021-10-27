@@ -14,8 +14,7 @@ unsigned char mayuscFlag = 0;
 unsigned char buffer[BUFFER_SIZE]={0};
 unsigned int buffIndex = 0;
 static schedulerADT scheduler;
-static char *argv[] = {"pepe"};
-static int argc = 1;
+static memoryManagerADT mm;
 const char ascii_values[0x56][2] =
 {
     {-1,-1},
@@ -31,16 +30,7 @@ const char ascii_values[0x56][2] =
     {0,0},{0,0},{' ',' '},
     {0,0}
 };
-void pepe(int argc, char **argv) 
-{
-    uint64_t i = 0;
-    uint64_t k = 0;
-    uint64_t j = i-1;
-    for(i = 0; i < 10; i++)
-    {
-        ncPrint("a",14);
-    }
-}
+
 char keyPressed()
 {
 	return _keyPressed();
@@ -50,7 +40,6 @@ void keyboard_handler()
 {
     if(keyPressed())
     { 
-        int pid = 12;
         unsigned char key = _getKey();
         switch (key)
         {
@@ -64,18 +53,10 @@ void keyboard_handler()
             case LEFT_CONTROL:  // por ahora no tiene funcionalidad
                 break;
             default:
-                if(key < 0x56) {
+                if(key < 0x56) {       
                     buffer[buffIndex++] = getAscii(key);
                     buffer[buffIndex] = 0;
-                    if(key == 20)
-                    {
-                        pid = newProcess(scheduler,2,&pepe,argv,argc,1);
-                    }
-                    else
-                    {   
-                        if(getPid(scheduler) != pid)
-                            unblockProcess(scheduler,1);
-                    }
+                    unblockProcess(scheduler,1);
                 }
                 break;
         }
@@ -107,8 +88,9 @@ unsigned int getBufferSize()
     return buffIndex;
 }
 
-void initKeyboard(schedulerADT sch) 
+void initKeyboard(schedulerADT sch, memoryManagerADT memMan) 
 {
     scheduler = sch;
+    mm = memMan;
 }
 

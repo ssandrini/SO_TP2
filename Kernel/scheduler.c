@@ -2,8 +2,8 @@
 #include <naiveConsole.h>
 typedef struct
 {
-      uint64_t pid;
-      uint64_t ppid;
+      int pid;
+      int ppid;
       unsigned int priority;
       int fg;
       char *name;
@@ -34,7 +34,7 @@ typedef struct schedulerCDT
 {
       memoryManagerADT memoryManager;
       PList *processesList;
-      uint64_t pidCounter;
+      int pidCounter;
       PNode *currentProcess;
       int life;
       PNode *idle;
@@ -132,6 +132,7 @@ static void halt(int argc, char **argv)
 {
       while (1)
       {
+            ncPrint("H",12);
             _hlt();
       }
 }
@@ -159,7 +160,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->idle->pcb->ppid = 0;
       scheduler->idle->pcb->name = allocMem(scheduler->memoryManager, strlen("Halt"));
       strcpy(scheduler->idle->pcb->name, "Halt");
-      scheduler->idle->pcb->fg = 0;
+      scheduler->idle->pcb->fg = 1;
       scheduler->idle->pcb->priority = 1;
       scheduler->idle->pcb->state = READY;
       scheduler->idle->pcb->rbp = allocMem(scheduler->memoryManager, STACK_SIZE);
@@ -331,7 +332,7 @@ int setPriority(schedulerADT scheduler, int pid, int newPriority)
       return 0;
 }
 
-int blockProcess(schedulerADT scheduler, uint64_t pid) 
+int blockProcess(schedulerADT scheduler, int pid) 
 {
       if(scheduler->currentProcess->pcb->pid == pid)
       {
@@ -360,7 +361,7 @@ int blockProcess(schedulerADT scheduler, uint64_t pid)
       }
 }
 
-int unblockProcess(schedulerADT scheduler, uint64_t pid)
+int unblockProcess(schedulerADT scheduler, int pid)
 {
       
       PNode * aux = scheduler->processesList->first;
