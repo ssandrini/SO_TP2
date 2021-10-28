@@ -83,11 +83,11 @@ SECTION .text
 	push r12
 	push r13
 	push r14
-	push r15
+	;push r15
 %endmacro
 
 %macro popState 0
-	pop r15
+	;pop r15
 	pop r14
 	pop r13
 	pop r12
@@ -229,8 +229,11 @@ _int80Handler:
 	; la linea mov r9, rsp
 	mov r9, rsp
 	call sysHandler
-	
+	mov r15, rax
 	popState
+
+	mov rax, r15
+	
 	iretq
 
 _RTC:

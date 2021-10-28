@@ -3,6 +3,7 @@
 #include <stdfun.h>
 #include <stdint.h>
 #include <syscalls.h>
+#include <tests.h>
 #define COMMANDS_SIZE 12
 #define CASE_GETMEM 3
 #define LENGTH_PRINTMEM 8

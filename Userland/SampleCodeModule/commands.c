@@ -10,11 +10,14 @@ char info[11][150] = { "desplega el dia y la hora del sistema\n", "imprime en pa
 
 void help()
 {
+    test_kill();
+    /*
     for (int i = 0; i < 11; i++)
     {
         printTitle(commandsNames[i+1]); 
         printf(": %s", info[i]);
     }
+    */
 }
 
 void clear()

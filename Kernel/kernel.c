@@ -49,7 +49,19 @@ void *initializeKernelBinary()
 }
 void pepe(int argc, char ** argv)
 {
-	;
+	while(1)
+	{
+		ncPrint("a",10);
+		_hlt();
+	}
+}
+void pepe2(int argc, char ** argv)
+{
+	while(1)
+	{
+		ncPrint("b",10);
+		_hlt();
+	}
 }
 int main()
 {
@@ -61,8 +73,13 @@ int main()
 	initSemManager(mm, scheduler);
 	/* First process */
 	char *argv[] = {"Shell"};
-	newProcess(scheduler,5,sampleCodeModuleAddress,argv,1,1);
+	char *argv2[] = {"Test"};
+	newProcess(scheduler,50,sampleCodeModuleAddress,argv,1,1);
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
+	/*
+	newProcess(scheduler,1,&pepe,argv2,1,0);
+	newProcess(scheduler,1,&pepe2,argv2,1,0);
+	*/
 	load_idt();
 	ncClear();
 

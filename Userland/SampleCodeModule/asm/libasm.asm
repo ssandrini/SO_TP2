@@ -5,6 +5,7 @@ GLOBAL _FtoCelcius
 GLOBAL _CtoFahren
 GLOBAL _rectToPolar
 GLOBAL _syscall
+GLOBAL _hltuser
 section .text
 
 _syscall:
@@ -119,3 +120,8 @@ _rectToPolar:
     mov rsp, rbp
     pop rbp
     ret
+
+_hltuser:
+	sti
+	hlt
+	ret

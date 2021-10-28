@@ -248,10 +248,12 @@ void *nextProcess(schedulerADT scheduler, void *currentRsp)
                               scheduler->currentProcess = dequeue(scheduler);
                               if (scheduler->currentProcess->pcb->state == KILLED)
                               {
+                                    ncPrint("me lleve un muerto",10);
+                                    newLine();
                                     removeProcess(scheduler, scheduler->currentProcess);
                               }
                               else if (scheduler->currentProcess->pcb->state == BLOCKED)
-                              {
+                              {     
                                     enqueue(scheduler, scheduler->currentProcess);
                               }
                         } while (scheduler->processesList->qReady > 0 && scheduler->currentProcess->pcb->state != READY);
@@ -363,6 +365,7 @@ int blockProcess(schedulerADT scheduler, int pid)
 
 int unblockProcess(schedulerADT scheduler, int pid)
 {
+      ncPrint("U",10);
 
       PNode *aux = scheduler->processesList->first;
 
@@ -400,8 +403,11 @@ void printProcesses(schedulerADT scheduler)
             newLine();
       }
 
+/*
       if (scheduler->currentProcess != NULL)
             printProcessInfo(scheduler->currentProcess);
+*/
+      newLine();
       return 0;
 }
 
