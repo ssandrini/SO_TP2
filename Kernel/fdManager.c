@@ -14,13 +14,13 @@ int initFdManager(memoryManagerADT mm, schedulerADT sch)
 {
     memoryManager = mm;
     scheduler = sch;
-    newFd(-1); // STDOUT
-    newFd(-1); // STDIN
+    newFd(NO_PIPE); // STDOUT
+    newFd(NO_PIPE); // STDIN
 }
 
 int newFd(int pipeId)
 {
-    int i;
+    int i = 0;
     while (i < MAX_FD && fdList[i] != NULL)
         i++;
     if (i > MAX_FD)
@@ -63,14 +63,14 @@ int fdRead(int fd, char *dest, int count)
     }
 }
 
-int fdWrite(int fd, char *src, int color)
+int fdWrite(int fd, char *src)
 {
     if (fd > MAX_FD || fdList[fd] == NULL || fd == STDIN)
         return -1;
     fdADT fdAux = fdList[fd];
     if (fd == STDOUT)
     {
-        ncPrint(src, color);
+        ncPrint(src, STD_COLOR);
         return 0;
     }
     else

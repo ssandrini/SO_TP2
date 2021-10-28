@@ -14,13 +14,11 @@ typedef struct pipeCDT
 static pipeADT pipeList[MAX_PIPES] = {NULL};
 static memoryManagerADT memoryManager;
 static schedulerADT scheduler;
-static int pipeIdCounter;
 
 void initPipeManager(memoryManagerADT mm, schedulerADT sch)
 {
     memoryManager = mm;
     scheduler = sch;
-    pipeIdCounter = 0;
 }
 
 int newPipe()
@@ -32,7 +30,7 @@ int newPipe()
     pipeADT newPipe = allocMem(memoryManager, sizeof(pipeCDT));
     newPipe->beingAccessed = newPipe->waitingProcess = 0;
     newPipe->pipeQueue = newPipeQueue(memoryManager);
-    newPipe->pipeId = pipeIdCounter++;
+    newPipe->pipeId = i;
     pipeList[i] = newPipe;
 
     return newPipe->pipeId;
@@ -77,7 +75,7 @@ int pipeRead(int pipeId, char *dest, int count)
     {
         int pid = getPid(scheduler);
         pipe->waitingProcess = pid;
-        blockProcess(scheduler,pid);
+        blockProcess(scheduler, pid);
 
         pipe->waitingProcess = 0;
     }
@@ -101,4 +99,22 @@ int closePipe(int pipeId)
         return -1;
     pipeADT pipe = pipeList[pipeId];
     return putS(pipe->pipeQueue, EOF);
+}
+
+int freePipe(int pipeId)
+{
+    if (pipeId < 0 || pipeId > MAX_PIPES || pipeList[pipeId] == NULL)
+        return -1;
+
+    pipeADT pipe = pipeList[pipeId];
+    freeMem(memoryManager, pipe->pipeQueue);
+    freeMem(memoryManager, pipe);
+    pipeList[pipeId] = NULL;
+
+    return 0;
+}
+
+void printPipes()
+{
+    return;
 }
