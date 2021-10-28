@@ -47,7 +47,10 @@ void *initializeKernelBinary()
 
 	return getStackBase();
 }
-
+void pepe(int argc, char ** argv)
+{
+	;
+}
 int main()
 {
 	memoryManagerADT mm = newMemoryManager();
@@ -58,10 +61,11 @@ int main()
 	initSemManager(mm, scheduler);
 	/* First process */
 	char *argv[] = {"Shell"};
-	newProcess(scheduler,5,sampleCodeModuleAddress,argv,1,1);
+	newProcess(scheduler,5,sampleDataModuleAddress,argv,1,1);
+	printProcesses(scheduler);
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	load_idt();
-	ncClear();
+	//ncClear();
 
 
 	return 0;

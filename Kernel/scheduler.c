@@ -70,7 +70,7 @@ typedef struct
 static schedulerADT sch;
 static PNode *dequeue(schedulerADT scheduler);
 static void enqueue(schedulerADT scheduler, PNode *newProcess);
-static int argsCopy(memoryManagerADT mm, char **buffer, char **argv, int argc);
+static int argsCpy(memoryManagerADT mm, char **buffer, char **argv, int argc);
 static void setNewSF(void (*entryPoint)(int, char **), int argc, char **argv, void *rbp);
 static void processExit();
 static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
@@ -79,11 +79,13 @@ static int isEmpty(PList *list);
 static void removeProcess(schedulerADT scheduler, PNode *node);
 static void printProcessInfo(PNode *n);
 char * aux2;
-static int argsCopy(memoryManagerADT mm, char **buffer, char **argv, int argc)
+static int argsCpy(memoryManagerADT mm, char **buffer, char **argv, int argc)
 {
       for (int i = 0; i < argc; i++)
       {
             buffer[i] = allocMem(mm, sizeof(char) * (strlen(argv[i]) + 1));
+            if(buffer[i] == NULL)
+                  return -1;
             strcpy(argv[i], buffer[i]);
       }
       return 1;
@@ -158,8 +160,8 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->idle->pcb = allocMem(scheduler->memoryManager, sizeof(PCB));
       scheduler->idle->pcb->pid = scheduler->pidCounter++;
       scheduler->idle->pcb->ppid = 0;
-      scheduler->idle->pcb->name = allocMem(scheduler->memoryManager, strlen("Halt"));
-      strcpy(scheduler->idle->pcb->name, "Halt");
+      scheduler->idle->pcb->name = allocMem(scheduler->memoryManager, strlen(argv[0]));
+      strcpy(argv[0],scheduler->idle->pcb->name);
       scheduler->idle->pcb->fg = 1;
       scheduler->idle->pcb->priority = 1;
       scheduler->idle->pcb->state = READY;
@@ -167,7 +169,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->idle->pcb->rbp = (void *)((char *)scheduler->idle->pcb->rbp + STACK_SIZE - 1);
       scheduler->idle->pcb->rsp = (void *)((StackFrame *)scheduler->idle->pcb->rbp - 1);
       char **argvAux = allocMem(scheduler->memoryManager, sizeof(char *));
-      argsCopy(scheduler->memoryManager, argvAux, argv, 1);
+      argsCpy(scheduler->memoryManager, argvAux, argv, 1);
       scheduler->idle->pcb->argc = 1;
       scheduler->idle->pcb->argv = argvAux;
       setNewSF(&halt, 1, argvAux, scheduler->idle->pcb->rbp);
@@ -177,7 +179,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
 
 int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg)
 {
-      ncPrint("nuevo proceso",10);
+      //ncPrint("nuevo proceso",10);
       if (scheduler->currentProcess != NULL) 
       {
             // Solo un foreground puede crear a otro foreground
@@ -195,18 +197,18 @@ int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)
             aux->ppid = 0;
 
       char **argvAux = allocMem(scheduler->memoryManager, sizeof(char *) * argc);
-      argsCopy(scheduler->memoryManager, argvAux, argv, argc);
+      argsCpy(scheduler->memoryManager, argvAux, argv, argc);
       aux->argc = argc;
       aux->argv = argvAux;
       aux->name = allocMem(scheduler->memoryManager, strlen(argv[0]));
-      strcpy(aux->name, argv[0]);
+      strcpy(argv[0], aux->name);
       aux->priority = priority;
       aux->state = READY;
       aux->rbp = allocMem(scheduler->memoryManager, STACK_SIZE);
       aux->rbp = (void *)((char *)aux->rbp + STACK_SIZE - 1);
       aux->rsp = (void *)((StackFrame *)aux->rbp - 1);
       aux->fg = fg;
-      setNewSF(entryPoint, argc, argvAux, aux->rbp);
+      setNewSF(entryPoint, aux->argc, aux->argv, aux->rbp);
 
       PNode *auxNode = allocMem(scheduler->memoryManager, sizeof(PNode));
       auxNode->pcb = aux;
@@ -386,45 +388,74 @@ int unblockProcess(schedulerADT scheduler, int pid)
 void printProcesses(schedulerADT scheduler)
 {
       PNode * node = scheduler->processesList->first;
-      char *message = "NAME     PID:   PPID PRIOR:      RSP:            RBP:       foreground:  state:";
-      ncPrint(message, 15);
+      char *message = "NAME               PID:   PPID:   PRIORITY:    RSP:     RBP:   GROUND:  STATE:";
+      ncPrint(message, 12);
       newLine();
       for (; node != NULL; node = node->next) {
             printProcessInfo(node);
             newLine();
       }
 
-      printProcessInfo(scheduler->currentProcess);
+      if(scheduler->currentProcess != NULL)
+            printProcessInfo(scheduler->currentProcess);
     return 0;
 }
 
 static void printProcessInfo(PNode *n) {
             
-      uint64_t number[10];
-      uint64_t registers[SIZE_REGISTER + 1];
+      char * buff = allocMem(sch->memoryManager, 10);
 
       ncPrint(n->pcb->name, COLOR);
-      ncPrint("      ", COLOR);
+      int space = strlen(n->pcb->name);
+      while(space < 19)
+      {
+            ncPrint(" ", COLOR);
+            space++;
+      }
 
-      ncPrint(uintToBase(n->pcb->pid, number, 10), COLOR);
+      uintToBase(n->pcb->pid, buff, 10);
+      space = n->pcb->pid >= 10? 2 : 1;
+      space = n->pcb->pid >= 100? 3 : space; 
+      ncPrint(buff, COLOR);
+      while(space < 7)
+      {
+            ncPrint(" ", COLOR);
+            space++;
+      }
+      
+      uintToBase(n->pcb->ppid, buff, 10);
+      ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      ncPrint(uintToBase(n->pcb->ppid, number, 10), COLOR);
+      uintToBase(n->pcb->priority, buff, 10);
+      ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      ncPrint(uintToBase(n->pcb->priority, number, 10), COLOR);
+      uintToBase(n->pcb->rsp, buff, 10);
+      ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      ncPrint(uintToBase(n->pcb->rsp, registers, SIZE_REGISTER + 1), COLOR);
+      uintToBase(n->pcb->rbp, buff, 16);
+      ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      ncPrint(uintToBase(n->pcb->rbp, registers, SIZE_REGISTER + 1), COLOR);
+      uintToBase(n->pcb->fg, buff, 10);
+      ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      ncPrint(uintToBase(n->pcb->fg, number, 10), COLOR);
-      ncPrint("   ", COLOR);
+      if(n->pcb->state == READY)
+      {
+            ncPrint("Ready", COLOR);
+      }
+      else if(n->pcb->state == BLOCKED)
+      {
+            ncPrint("Blocked", COLOR);
+      }
+      else
+      {
+            ncPrint("Killed", COLOR);
+      }
 
-      //como podriamos imprimir el state?
 }
 
 static void enqueue(schedulerADT scheduler, PNode *newProcess)
