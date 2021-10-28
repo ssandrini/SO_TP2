@@ -8,9 +8,23 @@ char info[11][150] = { "desplega el dia y la hora del sistema\n", "imprime en pa
                     "borra toda la pantalla\n", "realiza la conversion de grados celsius a fahrenheit \n", 
                     "realiza la conversion de grados fahrenheit a celsius \n", "convierte coordenadas rectangulares en polares \n"};
 
+void pepe3(int argc, char ** argv)
+{
+	while(1)
+	{
+		printf("a");
+		_hltuser();
+	}
+}
+
 void help()
 {
-    test_kill();
+    //printf("aca?");
+    //test_processes();
+    char* argAux[] = {"mytestkill"};
+    _syscall(NEW_PROCESS,(uint64_t) &pepe3, (uint64_t) argAux,(uint64_t) 1,(uint64_t)0,(uint64_t)0);
+    _syscall(PS,0,0,0,0,0);
+    
     /*
     for (int i = 0; i < 11; i++)
     {

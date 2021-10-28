@@ -53,10 +53,11 @@ void keyboard_handler()
             case LEFT_CONTROL:  // por ahora no tiene funcionalidad
                 break;
             default:
-                if(key < 0x56) {       
+                if(key < 0x56) {  
+                    //unblockProcess(scheduler,1);     
                     buffer[buffIndex++] = getAscii(key);
                     buffer[buffIndex] = 0;
-                    unblockProcess(scheduler,1);
+                    
                 }
                 break;
         }

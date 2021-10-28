@@ -178,7 +178,6 @@ schedulerADT newScheduler(memoryManagerADT mm)
 
 int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg)
 {
-      //ncPrint("nuevo proceso",10);
       if (scheduler->currentProcess != NULL)
       {
             // Solo un foreground puede crear a otro foreground
@@ -248,8 +247,6 @@ void *nextProcess(schedulerADT scheduler, void *currentRsp)
                               scheduler->currentProcess = dequeue(scheduler);
                               if (scheduler->currentProcess->pcb->state == KILLED)
                               {
-                                    ncPrint("me lleve un muerto",10);
-                                    newLine();
                                     removeProcess(scheduler, scheduler->currentProcess);
                               }
                               else if (scheduler->currentProcess->pcb->state == BLOCKED)
@@ -365,7 +362,6 @@ int blockProcess(schedulerADT scheduler, int pid)
 
 int unblockProcess(schedulerADT scheduler, int pid)
 {
-      ncPrint("U",10);
 
       PNode *aux = scheduler->processesList->first;
 

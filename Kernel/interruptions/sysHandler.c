@@ -3,6 +3,16 @@
 //static char * aux3;
 static schedulerADT scheduler;
 static memoryManagerADT memoryManager;
+static char *argv6[] = {"Test"};
+void pepe6(int argc, char ** argv)
+{
+	while(1)
+	{
+		ncPrint("a",10);
+		_hlt();
+	}
+}
+
 uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t r4, uint64_t rsp)
 {
     switch (sysNumber)
@@ -43,7 +53,8 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         break;
     case 9: // sysCreateProcess(entryPoint, argv, argc, fg)
         // por defecto todos se crean con prioridad 1 (esta bien?)
-        return (uint64_t) newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4);
+        //return (uint64_t) newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4);
+        return (uint64_t) newProcess(scheduler,1,&pepe6,argv6,1,0);
         break;
     case 10: //sysKill(pid);
         return (uint64_t) killProcess(scheduler, (int) r1);
@@ -75,10 +86,14 @@ void read(unsigned char *r1, unsigned int r2)
 {
     unsigned char *KeyBuffer = getBuffer();
     unsigned int i;
+    
+    /*
     if(KeyBuffer[0] == '\0')
     {
         blockProcess(scheduler,1);
     }
+    */
+    
     r1[0] = 0;
     for (i = 0; KeyBuffer[i] != 0 && i < r2; i++)
     {

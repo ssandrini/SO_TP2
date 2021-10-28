@@ -36,7 +36,7 @@ typedef struct P_rq
 
 int test_processes()
 {
-  /*
+  
   printf("Test processes\n");
   p_rq p_rqs[MAX_PROCESSES];
   uint8_t rq;
@@ -44,7 +44,7 @@ int test_processes()
   uint8_t action;
 
   // Create MAX_PROCESSES processes
-  for (rq = 0; rq < 1; rq++)
+  for (rq = 0; rq < MAX_PROCESSES; rq++)
   {
     char* argAux[] = {"endless_loop"};
     p_rqs[rq].pid = _syscall(NEW_PROCESS,&endless_loop, argAux,1,0,0); // TODO: Port this call as required
@@ -117,7 +117,7 @@ int test_processes()
   _syscall(PS,0,0,0,0,0);
   
   printf("termino\n");
-  */
+  
   return 0;
 }
 
