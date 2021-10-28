@@ -77,6 +77,7 @@ static void wrapper(void (*entryPoint)(int, char **), int argc, char **argv);
 static void halt(int argc, char **argv);
 static int isEmpty(PList *list);
 static void removeProcess(schedulerADT scheduler, PNode *node);
+static void printProcessInfo(PNode *n);
 char * aux2;
 static int argsCopy(memoryManagerADT mm, char **buffer, char **argv, int argc)
 {
@@ -132,7 +133,6 @@ static void halt(int argc, char **argv)
 {
       while (1)
       {
-            ncPrint("H",12);
             _hlt();
       }
 }
@@ -385,7 +385,46 @@ int unblockProcess(schedulerADT scheduler, int pid)
 
 void printProcesses(schedulerADT scheduler)
 {
-      return ;
+      PNode * node = scheduler->processesList->first;
+      char *message = "NAME     PID:   PPID PRIOR:      RSP:            RBP:       foreground:  state:";
+      ncPrint(message, 15);
+      newLine();
+      for (; node != NULL; node = node->next) {
+            printProcessInfo(node);
+            newLine();
+      }
+
+      printProcessInfo(scheduler->currentProcess);
+    return 0;
+}
+
+static void printProcessInfo(PNode *n) {
+            
+      uint64_t number[10];
+      uint64_t registers[SIZE_REGISTER + 1];
+
+      ncPrint(n->pcb->name, COLOR);
+      ncPrint("      ", COLOR);
+
+      ncPrint(uintToBase(n->pcb->pid, number, 10), COLOR);
+      ncPrint("   ", COLOR);
+
+      ncPrint(uintToBase(n->pcb->ppid, number, 10), COLOR);
+      ncPrint("   ", COLOR);
+
+      ncPrint(uintToBase(n->pcb->priority, number, 10), COLOR);
+      ncPrint("   ", COLOR);
+
+      ncPrint(uintToBase(n->pcb->rsp, registers, SIZE_REGISTER + 1), COLOR);
+      ncPrint("   ", COLOR);
+
+      ncPrint(uintToBase(n->pcb->rbp, registers, SIZE_REGISTER + 1), COLOR);
+      ncPrint("   ", COLOR);
+
+      ncPrint(uintToBase(n->pcb->fg, number, 10), COLOR);
+      ncPrint("   ", COLOR);
+
+      //como podriamos imprimir el state?
 }
 
 static void enqueue(schedulerADT scheduler, PNode *newProcess)

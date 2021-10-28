@@ -6,6 +6,8 @@
 #include <interrupts.h>
 
 #define STACK_SIZE 4096
+#define SIZE_REGISTER 16
+#define COLOR 15    
 
 typedef enum
 {
