@@ -1,19 +1,23 @@
 #include <commands.h>
 #define EPSILON 0.00000001
-char commandsNames[12][20] = {"help", "time", "inforeg", "printmem", "cpuid", "trigger0", "trigger6", "quadratic", "clear", "celsius", "fahrenheit", "polar"};
-char info[11][150] = { "desplega el dia y la hora del sistema\n", "imprime en pantalla el valor de todos los registros\n", 
+char commandsNames[19][20] = {"help", "time", "inforeg", "printmem", "cpuid", "trigger0", "trigger6", "quadratic", "clear", "celsius", "fahrenheit", "polar", "mem", "ps", "kill", "nice", "block", "sem", "pipe"};
+char info[18][150] = { "desplega el dia y la hora del sistema\n", "imprime en pantalla el valor de todos los registros\n", 
                     "realiza un volcado de memoria de 32 bytes a partir de la direccion recibida como argumento \n",
                     "despliega los features del procesador\n","demuestra la excepcion de division por cero\n", 
                     "demuestra la excepcion de operacion invalida\n", "obtiene las raices de la funcion quadratica deseada\n",
                     "borra toda la pantalla\n", "realiza la conversion de grados celsius a fahrenheit \n", 
-                    "realiza la conversion de grados fahrenheit a celsius \n", "convierte coordenadas rectangulares en polares \n"};
+                    "realiza la conversion de grados fahrenheit a celsius \n", "convierte coordenadas rectangulares en polares \n", "imprime el estado de la memoria\n",
+                    "imprime la lista de todos los procesos con sus propiedades\n", "mata un proceso dado su ID\n",
+                    "cambia la prioridad de un proceso dado su ID y la nueva prioridad\n", 
+                    "cambia el estado de un proceso entre bloqueado y listo dado su ID\n",
+                    "imprime la lista de todos los semaforos con sus propiedades\n","imprime la lista de todos los pipes con sus propiedades\n" };
 
 char commandsNamesUserApps[5][20] = {"loop","cat", "wc", "filter", "phylo"};
 char infoUserApps[5][150] = {"imprime su ID con un saludo cada 15 segundos\n", "imprime el stdin tal como lo recibe\n", "cuenta la cantidad de lineas del input\n", "filtra las vocales del input\n", "implementa el problema de los filosofos comensales\n"};
 
 void help()
 {
-    for (int i = 0; i < 11; i++)
+    for (int i = 0; i < 18; i++)
     {
         printTitle(commandsNames[i+1]); 
         printf(": %s", info[i]);

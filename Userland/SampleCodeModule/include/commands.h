@@ -8,7 +8,7 @@
 #include "wc.h"
 #include "phylo.h"
 #include "cat.h"
-#define COMMANDS_SIZE 12
+#define COMMANDS_SIZE 19
 #define APPS_SIZE 5
 #define CASE_CAT 1
 #define CASE_GETMEM 3
