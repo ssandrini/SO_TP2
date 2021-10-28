@@ -19,19 +19,11 @@ void pepe3(int argc, char ** argv)
 
 void help()
 {
-    //printf("aca?");
-    //test_processes();
-    char* argAux[] = {"mytestkill"};
-    _syscall(NEW_PROCESS,(uint64_t) &pepe3, (uint64_t) argAux,(uint64_t) 1,(uint64_t)0,(uint64_t)0);
-    _syscall(PS,0,0,0,0,0);
-    
-    /*
     for (int i = 0; i < 11; i++)
     {
         printTitle(commandsNames[i+1]); 
         printf(": %s", info[i]);
     }
-    */
 }
 
 void clear()
