@@ -34,6 +34,7 @@ int unblockProcess(schedulerADT scheduler, int pid);
 void * nextProcess(schedulerADT scheduler, void * currentRsp);
 
 void printProcesses(schedulerADT scheduler);
-// Me falta la de listar todos los procesos todavia
+
+void yield(schedulerADT scheduler);
 
 #endif

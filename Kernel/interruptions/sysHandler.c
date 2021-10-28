@@ -53,6 +53,9 @@ void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint6
     case 14:
         printProcesses(scheduler);
         break;
+    case 15:
+        yield(scheduler);
+        break;
     default:
         break;
     }
