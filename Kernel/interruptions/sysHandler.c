@@ -1,63 +1,72 @@
 #include <sysHandler.h>
 #include <naiveConsole.h>
-static int pidaux = 0;
-static char * aux3;
+//static char * aux3;
 static schedulerADT scheduler;
 static memoryManagerADT memoryManager;
-void sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t r4, uint64_t rsp)
+uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t r4, uint64_t rsp)
 {
     switch (sysNumber)
     {
     case 0: // sysRead  r1=buffer r2=bytes
         read((unsigned char *)r1, (unsigned int)r2);
+        return 0;
         break;
     case 1: // sysWrite
         ncPrint((const char *)r1, (int)r2);
+        return 0;
         break;
     case 2:                 // sysGetTime
         getTimeRTC(r1, r2); // en r1 dia mes año y en r2 horas min seg
+        return 0;
         break;
     case 3: // sysGetReg
         getReg((uint64_t *)r1, (uint64_t *)rsp);
+        return 0;
         break;
     case 4: // sysGetMem
         getMem((uint8_t *)r1, (uint8_t *)r2);
+        return 0;
         break;
     case 5: // sysMalloc 
-        allocMem(memoryManager, (size_t) r1);
+        return (uint64_t) allocMem(memoryManager, (size_t) r1);
         break;
     case 6: // sysClearScreen
         ncClear();
+        return 0;
         break;
     case 7: // sysGetCpuInfo (en este caso el tercer parametro representa el ID)
         getInfo((uint32_t *)r1, (uint32_t *)r2, (int *)r3);
+        return 0;
         break;
     case 8:
-        freeMem(memoryManager, (void *) r1);
+        return freeMem(memoryManager, (void *) r1);
         break;
     case 9: // sysCreateProcess(entryPoint, argv, argc, fg)
         // por defecto todos se crean con prioridad 1 (esta bien?)
-        return newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4);
+        return (uint64_t) newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4);
         break;
     case 10: //sysKill(pid);
-        killProcess(scheduler, (int) r1);
+        return (uint64_t) killProcess(scheduler, (int) r1);
         break;
     case 11: //sysBLock(pid)
-        blockProcess(scheduler, (int) r1);
+        return (uint64_t) blockProcess(scheduler, (int) r1);
         break;
     case 12: //sysUnblock(pid)
-        unblockProcess(scheduler, (int) r1);
+        return (uint64_t) unblockProcess(scheduler, (int) r1);
         break;
     case 13: //sysNice(pid, priorioty)
-        setPriority(scheduler, (int) r1, (int) r2);
+        return (uint64_t) setPriority(scheduler, (int) r1, (int) r2);
         break;
     case 14:
         printProcesses(scheduler);
+        return 0;
         break;
     case 15:
         yield(scheduler);
+        return 0;
         break;
     default:
+        return 0;
         break;
     }
 }
@@ -131,5 +140,5 @@ void initSysHandler(memoryManagerADT mm, schedulerADT sch)
 {
     scheduler = sch;
     memoryManager = mm;
-    aux3 = allocMem(mm,10);
+    //aux3 = allocMem(mm,10);
 }

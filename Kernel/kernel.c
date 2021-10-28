@@ -73,7 +73,7 @@ int main()
 	initSemManager(mm, scheduler);
 	/* First process */
 	char *argv[] = {"Shell"};
-	char *argv2[] = {"Test"};
+	//char *argv2[] = {"Test"};
 	newProcess(scheduler,50,sampleCodeModuleAddress,argv,1,1);
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	/*

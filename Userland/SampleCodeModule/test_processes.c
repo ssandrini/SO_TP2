@@ -36,6 +36,7 @@ typedef struct P_rq
 
 int test_processes()
 {
+  /*
   printf("Test processes\n");
   p_rq p_rqs[MAX_PROCESSES];
   uint8_t rq;
@@ -62,7 +63,7 @@ int test_processes()
 
   _syscall(PS,0,0,0,0,0);
 
-  /*
+  
   // Randomly kills, blocks or unblocks processes until every one has been killed
   while (alive > 0)
   {
@@ -114,8 +115,9 @@ int test_processes()
       
   }
   _syscall(PS,0,0,0,0,0);
-  */
+  
   printf("termino\n");
+  */
   return 0;
 }
 
@@ -123,8 +125,9 @@ int test_kill()
 {
   printf("Test kill\n");
   char* argAux[] = {"mytestkill"};
-  _syscall(NEW_PROCESS,&endless_loop, argAux,1,0,0);
-  _syscall(NEW_PROCESS,&endless_loop2, argAux,1,0,0);
+  _syscall(NEW_PROCESS,(uint64_t) &endless_loop, (uint64_t) argAux,1,0,0);
+  _syscall(NEW_PROCESS,(uint64_t) &endless_loop2, (uint64_t) argAux,1,0,0);
+  _syscall(PS,0,0,0,0,0);
   //_syscall(KILL_PROCESS,pid,0,0,0,0);
   //_syscall(PS,0,0,0,0,0);
   return 0;

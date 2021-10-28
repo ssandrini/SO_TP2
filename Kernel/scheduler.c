@@ -408,7 +408,6 @@ void printProcesses(schedulerADT scheduler)
             printProcessInfo(scheduler->currentProcess);
 */
       newLine();
-      return 0;
 }
 
 static void printProcessInfo(PNode *n)
@@ -424,7 +423,7 @@ static void printProcessInfo(PNode *n)
             space++;
       }
 
-      uintToBase(n->pcb->pid, buff, 10);
+      uintToBase((uint64_t) n->pcb->pid, buff, 10);
       space = n->pcb->pid >= 10 ? 2 : 1;
       space = n->pcb->pid >= 100 ? 3 : space;
       ncPrint(buff, COLOR);
@@ -434,23 +433,23 @@ static void printProcessInfo(PNode *n)
             space++;
       }
 
-      uintToBase(n->pcb->ppid, buff, 10);
+      uintToBase((uint64_t) n->pcb->ppid, buff, 10);
       ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      uintToBase(n->pcb->priority, buff, 10);
+      uintToBase((uint64_t) n->pcb->priority, buff, 10);
       ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      uintToBase(n->pcb->rsp, buff, 10);
+      uintToBase((uint64_t) n->pcb->rsp, buff, 10);
       ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      uintToBase(n->pcb->rbp, buff, 16);
+      uintToBase((uint64_t) n->pcb->rbp, buff, 16);
       ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      uintToBase(n->pcb->fg, buff, 10);
+      uintToBase((uint64_t) n->pcb->fg, buff, 10);
       ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 

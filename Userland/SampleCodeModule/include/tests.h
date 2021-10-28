@@ -2,7 +2,7 @@
 #define __TESTS_H__
 #include "test_util.h"
 #include <syscalls.h>
-
+#include <stdfun.h>
 void endless_loop(int argc, char ** argv);
 int test_processes(); 
 int test_kill();
