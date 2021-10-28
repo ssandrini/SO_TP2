@@ -47,12 +47,12 @@ int test_processes()
   for (rq = 0; rq < MAX_PROCESSES; rq++)
   {
     char* argAux[] = {"endless_loop"};
-    p_rqs[rq].pid = _syscall(NEW_PROCESS,&endless_loop, argAux,1,0,0); // TODO: Port this call as required
+    p_rqs[rq].pid = _syscall(NEW_PROCESS,(uint64_t) &endless_loop, (uint64_t) argAux,1,0,0); // TODO: Port this call as required
    
     if (p_rqs[rq].pid == -1)
     {                                     // TODO: Port this as required
       printf("Error creating process\n"); // TODO: Port this as required
-      return;
+      return -1;
     }
     else
     {
@@ -77,10 +77,10 @@ int test_processes()
       case 0:
         if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED)
         {
-          if (_syscall(KILL_PROCESS,p_rqs[rq].pid,0,0,0,0) == -1)
+          if (_syscall(KILL_PROCESS, (uint64_t) p_rqs[rq].pid,0,0,0,0) == -1)
           {                                    // TODO: Port this as required
             printf("Error killing process\n"); // TODO: Port this as required
-            return;
+            return -1;
           }
           p_rqs[rq].state = KILLED;
           alive--;
@@ -90,10 +90,10 @@ int test_processes()
       case 1:
         if (p_rqs[rq].state == RUNNING)
         {
-          if (_syscall(BLOCK_PROCESS,p_rqs[rq].pid,0,0,0,0) == -1)
+          if (_syscall(BLOCK_PROCESS, (uint64_t) p_rqs[rq].pid,0,0,0,0) == -1)
           {                                     // TODO: Port this as required
             printf("Error blocking process\n"); // TODO: Port this as required
-            return;
+            return -1;
           }
           p_rqs[rq].state = BLOCKED;
         }
@@ -105,10 +105,10 @@ int test_processes()
     for (rq = 0; rq < MAX_PROCESSES; rq++)
       if (p_rqs[rq].state == BLOCKED && GetUniform(2) % 2)
       {
-        if (_syscall(UNBLOCK_PROCESS,p_rqs[rq].pid,0,0,0,0) == -1)
+        if (_syscall(UNBLOCK_PROCESS,(uint64_t) p_rqs[rq].pid,0,0,0,0) == -1)
         {                                       // TODO: Port this as required
           printf("Error unblocking process\n"); // TODO: Port this as required
-          return;
+          return -1;
         }
         p_rqs[rq].state = RUNNING;
       }
@@ -117,7 +117,6 @@ int test_processes()
   _syscall(PS,0,0,0,0,0);
   
   printf("termino\n");
-  
   return 0;
 }
 

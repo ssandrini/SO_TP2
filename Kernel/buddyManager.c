@@ -33,7 +33,7 @@ typedef struct memoryManagerCDT
 
 static BNode *newBNode(memoryManagerADT mm, size_t size, void *memDir, size_t level)
 {
-    BNode * aux = mm->nextBNodePos;
+    BNode *aux = mm->nextBNodePos;
     mm->nextBNodePos = (void *)((char *)mm->nextBNodePos + sizeof(BNode));
     aux->size = size; //node->size / 2;
     aux->left = aux->right = NULL;
@@ -102,7 +102,7 @@ static void *allocRecursive(BNode *current, size_t size, memoryManagerADT mm)
             }
             if (current->right == NULL)
             {
-                current->right = newBNode(mm, current->size / 2, (void *)((char *) current->memDir + current->size / 2), current->level + 1);
+                current->right = newBNode(mm, current->size / 2, (void *)((char *)current->memDir + current->size / 2), current->level + 1);
             }
             current->state = DIVIDED;
             return allocRecursive(current->left, size, mm);
@@ -128,39 +128,48 @@ void *allocMem(memoryManagerADT mm, size_t size)
     return toReturn;
 }
 
-
-static int buddyFreeMemoryRec(memoryManagerADT mm, void * p, BNode * node){
+static int buddyFreeMemoryRec(memoryManagerADT mm, void *p, BNode *node)
+{
     int toReturn;
-    if(node == NULL){
+    if (node == NULL)
+    {
         return 0;
     }
-    if(node->state == FREE){
+    if (node->state == FREE)
+    {
         return 0;
     }
-    else if(node->state == DIVIDED){
-        toReturn = buddyFreeMemoryRec(mm, p,node->left);
-        if(toReturn == 0){
-            toReturn = buddyFreeMemoryRec(mm, p,node->right);
+    else if (node->state == DIVIDED)
+    {
+        toReturn = buddyFreeMemoryRec(mm, p, node->left);
+        if (toReturn == 0)
+        {
+            toReturn = buddyFreeMemoryRec(mm, p, node->right);
         }
-        if(node->left->state == FREE && node->right->state == FREE){
+        if (node->left->state == FREE && node->right->state == FREE)
+        {
             node->state = FREE;
         }
         return toReturn;
     }
-    else{
-        if(node->memDir == p){
-            node->state=FREE;
+    else
+    {
+        if (node->memDir == p)
+        {
+            node->state = FREE;
             mm->usedSize -= node->size;
             return 1;
         }
-        else{
+        else
+        {
             return 0;
         }
     }
     return 0;
 }
 
-int freeMem(memoryManagerADT mm, void * p){
+int freeMem(memoryManagerADT mm, void *p)
+{
     return buddyFreeMemoryRec(mm, p, mm->root);
 }
 

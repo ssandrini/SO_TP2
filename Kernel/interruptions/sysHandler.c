@@ -53,8 +53,8 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         break;
     case 9: // sysCreateProcess(entryPoint, argv, argc, fg)
         // por defecto todos se crean con prioridad 1 (esta bien?)
-        //return (uint64_t) newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4);
-        return (uint64_t) newProcess(scheduler,1,&pepe6,argv6,1,0);
+        return (uint64_t) newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4);
+        //return (uint64_t) newProcess(scheduler,1,&pepe6,argv6,1,0);
         break;
     case 10: //sysKill(pid);
         return (uint64_t) killProcess(scheduler, (int) r1);
