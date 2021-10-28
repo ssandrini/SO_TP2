@@ -13,8 +13,7 @@ int bIndex;
 int uIndex;
 int exit = 0;
 int exitUser;
-
-void (*func_ptr[COMMANDS_SIZE])() = {help, getTime, inforeg, getMem, cpuid, exc0Trigger, exc6Trigger, quadratic, clear, celsius, fahrenheit, polar};
+void (*func_ptr[COMMANDS_SIZE])() = {help, getTime, inforeg, getMem, cpuid, exc0Trigger, exc6Trigger, quadratic, clear, celsius, fahrenheit, polar, mem, ps, kill, nice, block};
 int (*func_ptr_apps[APPS_SIZE])() = {loop, cat, wc, filter, phylo};
 
 void shell()
@@ -34,7 +33,7 @@ void shell()
         }
         else if (c == TAB)
         {
-            ;//ya no tiene ninguna funcion
+            ; //ya no tiene ninguna funcion
         }
         else if (c == '\n')
         {
@@ -44,22 +43,23 @@ void shell()
             {
                 func_ptr_apps[isCommand]();
             }
-            else if(isCommand == -1){
+            else if (isCommand == -1)
+            {
                 isCommand = checkCommandBuiltIn(buffer, parameter);
-            buffer[0] = 0;
-            bIndex = 0;
-            if (isCommand >= 0)
-            {
-                if (isCommand == 3)
-                    func_ptr[isCommand](parameter);
+                buffer[0] = 0;
+                bIndex = 0;
+                if (isCommand >= 0)
+                {
+                    if (isCommand == 3)
+                        func_ptr[isCommand](parameter);
+                    else
+                        func_ptr[isCommand]();
+                    parameter[0] = 0;
+                }
                 else
-                    func_ptr[isCommand]();
-                parameter[0] = 0;
-            }
-            else
-            {
-                printError("El comando ingresado es invalido\n");
-            }
+                {
+                    printError("El comando ingresado es invalido\n");
+                }
             }
             printUser(user);
             printUser(":$ ");

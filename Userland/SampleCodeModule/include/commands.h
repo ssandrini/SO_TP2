@@ -8,7 +8,7 @@
 #include "wc.h"
 #include "phylo.h"
 #include "cat.h"
-#define COMMANDS_SIZE 19
+#define COMMANDS_SIZE 17
 #define APPS_SIZE 5
 #define CASE_CAT 1
 #include <tests.h>
@@ -31,6 +31,11 @@ void cpuid();
 void celsius();
 void fahrenheit();
 void polar();
+void mem();
+void ps();
+void kill(int pid);
+void nice(int pid);
+void block(int pid);
 int cat(int argc, char *argv[]);
 //-------------------------------------------------------------------------------------------
 //---------------------------------------AUX FUNCTIONS---------------------------------------

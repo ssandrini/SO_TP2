@@ -1,6 +1,6 @@
 #include <commands.h>
 #define EPSILON 0.00000001
-char commandsNames[19][20] = {"help", "time", "inforeg", "printmem", "cpuid", "trigger0", "trigger6", "quadratic", "clear", "celsius", "fahrenheit", "polar", "mem", "ps", "kill", "nice", "block", "sem", "pipe"};
+char commandsNames[17][20] = {"help", "time", "inforeg", "printmem", "cpuid", "trigger0", "trigger6", "quadratic", "clear", "celsius", "fahrenheit", "polar", "mem", "ps", "kill", "nice", "block"};
 char info[18][150] = { "desplega el dia y la hora del sistema\n", "imprime en pantalla el valor de todos los registros\n", 
                     "realiza un volcado de memoria de 32 bytes a partir de la direccion recibida como argumento \n",
                     "despliega los features del procesador\n","demuestra la excepcion de division por cero\n", 
@@ -399,3 +399,30 @@ void polar() {
     doubleToString(ans[1], stringAns);
     printf("Angulo = %s grados\n",stringAns);
 }
+
+void mem()
+{
+    char *argv[] = {"Pepe"};
+    _syscall(NEW_PROCESS, (uint64_t) pepe3, (uint64_t) argv, 1, 0, 0);
+}
+void ps()
+{
+    _syscall(PS,0,0,0,0,0);
+}
+
+void kill(int pid)
+{
+    _syscall(KILL_PROCESS, (uint64_t) pid, 0 ,0 ,0 ,0);
+}
+
+void nice(int pid)
+{
+    _syscall(NICE, (uint64_t) pid, (uint64_t) 5 ,0 ,0 ,0);
+}
+
+void block(int pid)
+{
+    _syscall(BLOCK_PROCESS, (uint64_t) pid, 0 ,0 ,0 ,0);
+}
+
+/*"mem", "ps", "kill", "nice", "block", "unblock"};*/

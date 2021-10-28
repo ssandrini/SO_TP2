@@ -393,16 +393,17 @@ void printProcesses(schedulerADT scheduler)
       char *message = "NAME               PID:   PPID:   PRIORITY:    RSP:     RBP:   GROUND:  STATE:";
       ncPrint(message, 12);
       newLine();
-      for (; node != NULL; node = node->next)
+      int i = 0;
+      for (i= 0; i < scheduler->processesList->size; node = node->next, i++)
       {
             printProcessInfo(node);
             newLine();
       }
 
-/*
+
       if (scheduler->currentProcess != NULL)
             printProcessInfo(scheduler->currentProcess);
-*/
+
       newLine();
 }
 
