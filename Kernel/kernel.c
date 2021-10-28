@@ -61,11 +61,10 @@ int main()
 	initSemManager(mm, scheduler);
 	/* First process */
 	char *argv[] = {"Shell"};
-	newProcess(scheduler,5,sampleDataModuleAddress,argv,1,1);
-	printProcesses(scheduler);
+	newProcess(scheduler,5,sampleCodeModuleAddress,argv,1,1);
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	load_idt();
-	//ncClear();
+	ncClear();
 
 
 	return 0;
