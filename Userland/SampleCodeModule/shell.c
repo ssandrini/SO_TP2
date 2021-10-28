@@ -15,6 +15,7 @@ int exit = 0;
 int exitUser;
 
 void (*func_ptr[COMMANDS_SIZE])() = {help, getTime, inforeg, getMem, cpuid, exc0Trigger, exc6Trigger, quadratic, clear, celsius, fahrenheit, polar};
+int (*func_ptr_apps[APPS_SIZE])() = {loop, cat, wc, filter, phylo};
 
 void shell()
 {
@@ -38,7 +39,13 @@ void shell()
         else if (c == '\n')
         {
             putChar(c);
-            int isCommand = checkCommand(buffer, parameter); //el uno por default
+            int isCommand = checkCommandUserApps(buffer, parameter); //el uno por default
+            if (isCommand >= 0)
+            {
+                func_ptr_apps[isCommand]();
+            }
+            else if(isCommand == -1){
+                isCommand = checkCommandBuiltIn(buffer, parameter);
             buffer[0] = 0;
             bIndex = 0;
             if (isCommand >= 0)
@@ -52,6 +59,7 @@ void shell()
             else
             {
                 printError("El comando ingresado es invalido\n");
+            }
             }
             printUser(user);
             printUser(":$ ");

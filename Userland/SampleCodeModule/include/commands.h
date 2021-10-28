@@ -3,10 +3,18 @@
 #include <stdfun.h>
 #include <stdint.h>
 #include <syscalls.h>
+#include "filter.h"
+#include "loop.h"
+#include "wc.h"
+#include "phylo.h"
+#include "cat.h"
+#define COMMANDS_SIZE 19
+#define APPS_SIZE 5
+#define CASE_CAT 1
 #include <tests.h>
-#define COMMANDS_SIZE 12
 #define CASE_GETMEM 3
 #define LENGTH_PRINTMEM 8
+#define LENGTH_CAT 3
 #define SPECIAL_FEATURES_ID 7
 #define FEATURES_ID 1
 
@@ -23,9 +31,11 @@ void cpuid();
 void celsius();
 void fahrenheit();
 void polar();
+int cat(int argc, char *argv[]);
 //-------------------------------------------------------------------------------------------
 //---------------------------------------AUX FUNCTIONS---------------------------------------
-int checkCommand(char * buffer, char * parameter);
+int checkCommandBuiltIn(char * buffer, char * parameter);
+int checkCommandUserApps(char * buffer, char * parameter);
 //-------------------------------------------------------------------------------------------
 
 //---------------------------------------ASM FUNCTIONS----------------------------------------

@@ -1,12 +1,19 @@
 #include <commands.h>
 #define EPSILON 0.00000001
-char commandsNames[12][20] = {"help", "time", "inforeg", "printmem", "cpuid", "trigger0", "trigger6", "quadratic", "clear", "celsius", "fahrenheit", "polar"};
-char info[11][150] = { "desplega el dia y la hora del sistema\n", "imprime en pantalla el valor de todos los registros\n", 
+char commandsNames[19][20] = {"help", "time", "inforeg", "printmem", "cpuid", "trigger0", "trigger6", "quadratic", "clear", "celsius", "fahrenheit", "polar", "mem", "ps", "kill", "nice", "block", "sem", "pipe"};
+char info[18][150] = { "desplega el dia y la hora del sistema\n", "imprime en pantalla el valor de todos los registros\n", 
                     "realiza un volcado de memoria de 32 bytes a partir de la direccion recibida como argumento \n",
                     "despliega los features del procesador\n","demuestra la excepcion de division por cero\n", 
                     "demuestra la excepcion de operacion invalida\n", "obtiene las raices de la funcion quadratica deseada\n",
                     "borra toda la pantalla\n", "realiza la conversion de grados celsius a fahrenheit \n", 
-                    "realiza la conversion de grados fahrenheit a celsius \n", "convierte coordenadas rectangulares en polares \n"};
+                    "realiza la conversion de grados fahrenheit a celsius \n", "convierte coordenadas rectangulares en polares \n", "imprime el estado de la memoria\n",
+                    "imprime la lista de todos los procesos con sus propiedades\n", "mata un proceso dado su ID\n",
+                    "cambia la prioridad de un proceso dado su ID y la nueva prioridad\n", 
+                    "cambia el estado de un proceso entre bloqueado y listo dado su ID\n",
+                    "imprime la lista de todos los semaforos con sus propiedades\n","imprime la lista de todos los pipes con sus propiedades\n" };
+
+char commandsNamesUserApps[5][20] = {"loop","cat", "wc", "filter", "phylo"};
+char infoUserApps[5][150] = {"imprime su ID con un saludo cada 15 segundos\n", "imprime el stdin tal como lo recibe\n", "cuenta la cantidad de lineas del input\n", "filtra las vocales del input\n", "implementa el problema de los filosofos comensales\n"};
 
 void pepe3(int argc, char ** argv)
 {
@@ -19,11 +26,17 @@ void pepe3(int argc, char ** argv)
 
 void help()
 {
-    for (int i = 0; i < 11; i++)
+    for (int i = 0; i < 18; i++)
     {
         printTitle(commandsNames[i+1]); 
         printf(": %s", info[i]);
     }
+    for (int i = 0; i < 5; i++)
+    {
+       printTitle(commandsNamesUserApps[i]); 
+        printf(": %s", infoUserApps[i]);
+    }
+    
 }
 
 void clear()
@@ -85,7 +98,7 @@ void exc6Trigger()
     _exc6Trigger();
 }
 
-int checkCommand(char *buffer, char *parameter)
+int checkCommandBuiltIn(char *buffer, char *parameter)
 {
     char aux[LENGTH_PRINTMEM];
     for (int i = 0; i < COMMANDS_SIZE; i++)
@@ -127,6 +140,66 @@ int checkCommand(char *buffer, char *parameter)
             return i;
     }
     return -1;
+}
+
+int checkCommandUserApps(char *buffer, char *parameter)
+{
+
+   /*
+      int pipeIdx = findPipe(argc, argv);
+      if (pipeIdx != -1)
+      {
+            if (pipeIdx == 0 || pipeIdx == argc - 1)
+            {
+                  print("Pipe should be between two commands\n");
+                  return;
+            }
+            if (runPipe(pipeIdx, argv, argc, fg) == -1)
+            {
+                  print("One of the pipe commands was not valid \n");
+                  return;
+            }
+            return;
+      }
+      */
+
+    int index =-1;
+    char aux[LENGTH_CAT];
+    for (int i = 0; i < APPS_SIZE; i++)
+    { 
+        /*
+        if (i == CASE_CAT)
+        {
+            int j = 0;
+            for (; j < LENGTH_CAT; j++)
+            {
+                aux[j] = buffer[j];
+            }
+            aux[j] = 0;
+            if (strcmp(aux, commandsNamesUserApps[i]) == 0 && buffer[LENGTH_CAT] == ' ')
+            {
+                int len = strlen(buffer);
+                if(len == LENGTH_CAT + 1) {
+                    printError("Escriba el texto en el formato cat TEXTO \n");
+                    return -1;
+                }
+                j = LENGTH_CAT + 1;
+                while (buffer[j] != 0)
+                {
+                        *parameter++ = buffer[j++];
+                }
+                *parameter = 0;
+                return i;
+            }
+        }
+        else 
+        */if (strcmp(buffer, commandsNamesUserApps[i]) == 0){
+           return i;
+        }
+    }
+    return index;
+
+    // createProcess(commandsNamesUserApps[i], , , , );  Hay que ver que recibe bien
 }
 
 void quadratic()
