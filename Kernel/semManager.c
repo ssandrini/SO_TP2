@@ -143,8 +143,38 @@ int semClose(uint64_t id)
 
 void semPrint()
 {
-    // FALTA SEM_PRINT
-    return;
+    char *message = "SEM_ID   VALOR:    BLOCKED_PIDS:";
+    ncPrint(message, 12);
+    ncNewline();
+
+    Semaphore *current = semList->first;
+    while(current != NULL)
+    {
+        uintToBase(current->id, aux10, 10);
+        ncPrint(aux10,15);
+        
+        ncPrint("   ",15);
+
+        uintToBase(current->value, aux10, 10);
+        ncPrint(aux10,15);
+
+        ncPrint("   ",15);
+        
+        if(current->blockedSize == 0)
+            ncPrint(" - ",15);
+        else 
+        {
+            for(int i = 0; i<current->blockedSize; i++)
+            {
+                uintToBase(current->blockedPIDs[i], aux10, 10);
+                ncPrint(aux10,15);
+                if( i+1 != current->blockedSize)
+                    ncPrint(", ",15);
+            }
+        }
+        ncNewline();
+        current = current->next;
+    }
 }
 /////////////////// static functions /////////////////////////
 
