@@ -22,7 +22,7 @@ static memoryManagerADT memMan;
 static schedulerADT scheduler;
 static SemaphoreList *semList;
 static uint64_t idCounter;
-
+static char * aux10;
 static void addInList(Semaphore *newSem);
 static Semaphore *findSem(uint64_t id);
 static void removeFromList(uint64_t id);
@@ -35,6 +35,7 @@ void initSemManager(memoryManagerADT mm, schedulerADT sch)
     semList = allocMem(memMan, sizeof(SemaphoreList));
     semList->first = semList->last = NULL;
     semList->size = 0;
+    aux10 = allocMem(memMan, 100);
 }
 
 uint64_t semCreate(uint64_t initValue)
@@ -102,9 +103,9 @@ int semPost(uint64_t id)
 
     while (_xchg(&(sem->mutex), 1) != 0)
     {
-       ;   
+        ;   
     }
-
+    
     if (sem->blockedSize > 0)
     {
         int first = sem->blockedPIDs[0];
@@ -117,8 +118,9 @@ int semPost(uint64_t id)
         unblockProcess(scheduler, first);
     }
     else
+    {
         sem->value++;
-
+    }
     _xchg(&(sem->mutex), 0);
     return 0;
 }

@@ -58,6 +58,7 @@ void keyboard_handler()
                     semPost(sem);
                     buffer[buffIndex++] = getAscii(key);
                     buffer[buffIndex] = 0;
+
                 }
                 break;
         }

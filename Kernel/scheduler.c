@@ -217,7 +217,7 @@ int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)
       // bloqueo al padre (la shell deberia bloquearse mientras se corre un ls por ejemplo)
       if (fg == 1 && scheduler->currentProcess != NULL && scheduler->currentProcess != scheduler->idle && scheduler->currentProcess->pcb->fg == 1)
       {
-            ncPrint("aca",10);
+            //ncPrint("aca",10);
             blockProcess(scheduler, scheduler->currentProcess->pcb->pid);
       }
       return aux->pid;
@@ -237,7 +237,7 @@ void *nextProcess(schedulerADT scheduler, void *currentRsp)
       else
       {
             scheduler->currentProcess->pcb->rsp = currentRsp;
-            if (scheduler->life < 1) // no le quedan mas vidas
+            if (scheduler->life < 1) 
             {
                   if (scheduler->currentProcess != scheduler->idle)
                   {
@@ -342,7 +342,7 @@ int blockProcess(schedulerADT scheduler, int pid)
             scheduler->currentProcess->pcb->state = BLOCKED;
             scheduler->processesList->qReady--;
             scheduler->life = 0;
-            enqueue(scheduler, scheduler->currentProcess);
+            //enqueue(scheduler, scheduler->currentProcess);
             _int20();
             return pid;
       }
@@ -366,7 +366,6 @@ int blockProcess(schedulerADT scheduler, int pid)
 
 int unblockProcess(schedulerADT scheduler, int pid)
 {
-      ncPrint("unblock",10);
       PNode *aux = scheduler->processesList->first;
 
       while (aux != NULL && aux->pcb->pid != pid)
@@ -504,14 +503,13 @@ static int isEmpty(PList *list)
 
 static void removeProcess(schedulerADT scheduler, PNode *node)
 {
-      return;
-      /*
+      
       freeMem(scheduler->memoryManager, node->pcb->name);
       freeMem(scheduler->memoryManager, node->pcb->argv);
       freeMem(scheduler->memoryManager, node->pcb->rbp);
       freeMem(scheduler->memoryManager, node->pcb);
       freeMem(scheduler->memoryManager, node);
-      */
+      
 }
 /*
       NO OLVIDARME DE LIBERAR TODA LA MEMORIA USADA AL MATAR UN PROCESO */
