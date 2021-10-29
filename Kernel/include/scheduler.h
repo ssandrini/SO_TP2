@@ -26,6 +26,8 @@ int getPid(schedulerADT scheduler);
 
 int killProcess(schedulerADT scheduler, int pid);
 
+int killFgProcess(schedulerADT scheduler);
+
 int setPriority(schedulerADT scheduler, int pid, int newPriority);
 
 int blockProcess(schedulerADT scheduler, int pid);

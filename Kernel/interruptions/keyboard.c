@@ -11,6 +11,7 @@
 #define OFFSET 0x80
 #define BUFFER_SIZE 50
 unsigned char mayuscFlag = 0;
+unsigned char ctrlFlag = 0;
 unsigned char buffer[BUFFER_SIZE]={0};
 unsigned int buffIndex = 0;
 static schedulerADT scheduler;
@@ -51,13 +52,25 @@ void keyboard_handler()
             case CAPSLOCK :
                 mayuscFlag = (mayuscFlag == 1) ? 0 : 1;
                 break;
-            case LEFT_CONTROL:  // por ahora no tiene funcionalidad
+            case LEFT_CONTROL: case LEFT_CONTROL + OFFSET:  // por ahora no tiene funcionalidad
+                ctrlFlag = (ctrlFlag == 1) ? 0 : 1;
                 break;
             default:
+
                 if(key < 0x56) {  
-                    semPost(sem);
-                    buffer[buffIndex++] = getAscii(key);
-                    buffer[buffIndex] = 0;
+                    if(ctrlFlag)
+                    {
+                        if(key == 46)
+                        {
+                            killFgProcess(scheduler);
+                        }
+                    }
+                    else
+                    {
+                        semPost(sem);
+                        buffer[buffIndex++] = getAscii(key);
+                        buffer[buffIndex] = 0;
+                    }
 
                 }
                 break;

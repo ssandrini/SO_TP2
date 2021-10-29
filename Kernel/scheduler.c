@@ -284,6 +284,7 @@ int killProcess(schedulerADT scheduler, int pid)
             if (scheduler->currentProcess->pcb->fg == 1 && scheduler->currentProcess->pcb->ppid != 0)
             {
                   unblockProcess(scheduler, scheduler->currentProcess->pcb->ppid);
+                  newLine();
             }
             _int20();
             return 0;
@@ -408,6 +409,16 @@ void printProcesses(schedulerADT scheduler)
             printProcessInfo(scheduler->currentProcess);
 
       newLine();
+}
+
+int killFgProcess(schedulerADT scheduler)
+{
+      if (scheduler->currentProcess != NULL && scheduler->currentProcess->pcb->fg && scheduler->currentProcess->pcb->state == READY)
+      {
+            killProcess(scheduler, scheduler->currentProcess->pcb->pid);
+            return 0;
+      }
+      return -1;
 }
 
 static void printProcessInfo(PNode *n)
