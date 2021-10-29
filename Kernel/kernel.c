@@ -50,7 +50,7 @@ void *initializeKernelBinary()
 
 int main()
 {
-	memoryManagerADT mm = newMemoryManager();
+	memoryManagerADT mm = newMemoryManager((void * )0x700000, 65536);
 	schedulerADT scheduler = newScheduler(mm);
 	initTaskManager(scheduler);
 	initSysHandler(mm,scheduler);

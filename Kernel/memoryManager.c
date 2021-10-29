@@ -31,7 +31,8 @@ int freeMem(memoryManagerADT mm, void * p)
 {
     return 0;
 }
-memoryManagerADT newMemoryManager()
+
+memoryManagerADT newMemoryManager(void *startDir, size_t size)
 {
     memoryManagerADT mm = (void *) STRUCT_POS;
     mm->current = (char *)INITIAL_POS;

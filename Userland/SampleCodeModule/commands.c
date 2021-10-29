@@ -402,10 +402,10 @@ void polar() {
 
 void mem()
 {
-    
-    char *argv[] = {"Pepe"};
+    _syscall(PRINT_STATUS_MEM, 0,0,0,0,0);
+    /* char *argv[] = {"Pepe"};
     _syscall(NEW_PROCESS, (uint64_t) pepe3, (uint64_t) argv, 1, 1, 0);
-    
+    */
     //test_processes();
 }
 void ps()

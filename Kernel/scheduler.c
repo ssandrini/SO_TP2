@@ -217,7 +217,6 @@ int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)
       // bloqueo al padre (la shell deberia bloquearse mientras se corre un ls por ejemplo)
       if (fg == 1 && scheduler->currentProcess != NULL && scheduler->currentProcess != scheduler->idle && scheduler->currentProcess->pcb->fg == 1)
       {
-            //ncPrint("aca",10);
             blockProcess(scheduler, scheduler->currentProcess->pcb->pid);
       }
       return aux->pid;
@@ -343,7 +342,6 @@ int blockProcess(schedulerADT scheduler, int pid)
             scheduler->currentProcess->pcb->state = BLOCKED;
             scheduler->processesList->qReady--;
             scheduler->life = 0;
-            //enqueue(scheduler, scheduler->currentProcess);
             _int20();
             return pid;
       }

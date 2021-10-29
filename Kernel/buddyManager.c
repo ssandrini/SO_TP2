@@ -1,7 +1,7 @@
-#ifdef BUDDY
+//#ifdef BUDDY
 #include <memoryManager.h>
 #define STRUCT_POS 0x0000000000600000
-#define MIN_BLOCK 2
+#define MIN_BLOCK 64
 
 typedef enum
 {
@@ -25,10 +25,8 @@ typedef struct memoryManagerCDT
     BNode *root;
     void *memoryDir; // primera posicion de memoria
     void *nextBNodePos;
-    size_t treeSize;
     size_t memorySize;
     size_t usedSize;
-    size_t maxLevel;
 } memoryManagerCDT;
 
 static BNode *newBNode(memoryManagerADT mm, size_t size, void *memDir, size_t level)
@@ -50,9 +48,8 @@ memoryManagerADT newMemoryManager(void *startDir, size_t size)
         return NULL;
     }
     memoryManagerADT buddyManager = (void *)STRUCT_POS;
-    buddyManager->maxLevel = 0; // hay que calcularlo
-    buddyManager->treeSize = 0; // hay que calcularlo
     buddyManager->usedSize = 0;
+    buddyManager->memorySize = size;
     buddyManager->memoryDir = startDir;
     buddyManager->root = (void *)((char *)buddyManager + sizeof(memoryManagerCDT));
     buddyManager->nextBNodePos = (void *)((char *)buddyManager->root + sizeof(BNode));
@@ -173,4 +170,29 @@ int freeMem(memoryManagerADT mm, void *p)
     return buddyFreeMemoryRec(mm, p, mm->root);
 }
 
-#endif
+void printStatus(memoryManagerADT mm)
+{
+    char aux[24];
+    ncPrint("Estado de la memoria:",12);
+    ncNewline();
+    ncPrint(" -Tipo de memoria usada: buddy.", 15);
+    ncNewline();
+    ncPrint(" -Tamanio de memoria: ", 15);
+    uintToBase( (uint64_t) mm->memorySize, aux, 10);
+    ncPrint(aux, 15);
+    ncNewline();
+    ncPrint(" -Tamanio de memoria utilizada: ", 15);
+    uintToBase( (uint64_t) mm->usedSize, aux, 10);
+    ncPrint(aux, 15);
+    ncNewline();
+    ncPrint(" -Tamanio de memoria libre: ", 15);
+    uintToBase((uint64_t) (mm->memorySize - mm->usedSize), aux, 10);
+    ncPrint(aux, 15);
+    ncNewline();
+    ncPrint(" -Tamanio minimo del bloque: ",15);
+    uintToBase((uint64_t) MIN_BLOCK, aux, 10);
+    ncPrint(aux, 15);
+    ncNewline();
+}
+
+//#endif

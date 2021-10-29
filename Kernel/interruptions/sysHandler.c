@@ -3,7 +3,6 @@
 //static char * aux3;
 static schedulerADT scheduler;
 static memoryManagerADT memoryManager;
-static char *argv6[] = {"Test"};
 void pepe6(int argc, char ** argv)
 {
 	while(1)
@@ -54,7 +53,6 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
     case 9: // sysCreateProcess(entryPoint, argv, argc, fg)
         // por defecto todos se crean con prioridad 1 (esta bien?)
         return (uint64_t) newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4);
-        //return (uint64_t) newProcess(scheduler,1,&pepe6,argv6,1,0);
         break;
     case 10: //sysKill(pid);
         return (uint64_t) killProcess(scheduler, (int) r1);
@@ -74,6 +72,10 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         break;
     case 15:
         yield(scheduler);
+        return 0;
+        break;
+    case 16:
+        printStatus(memoryManager);
         return 0;
         break;
     default:
