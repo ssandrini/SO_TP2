@@ -1,5 +1,5 @@
 #include <semManager.h>
-
+#include <naiveConsole.h>
 typedef struct Semaphore
 {
     uint64_t id;
@@ -33,7 +33,7 @@ void initSemManager(memoryManagerADT mm, schedulerADT sch)
     scheduler = sch;
     idCounter = 1;
     semList = allocMem(memMan, sizeof(SemaphoreList));
-    semList->first = NULL;
+    semList->first = semList->last = NULL;
     semList->size = 0;
 }
 
@@ -65,36 +65,45 @@ uint64_t semOpen(uint64_t id)
 
 int semWait(uint64_t id)
 {
+    //ncPrint("WAIT",14);
     Semaphore *sem = findSem(id);
     if (sem == NULL)
+    {
         return -1;
+    }
 
     while (_xchg(&(sem->mutex), 1) != 0)
         ;
 
-    if (sem->value <= 0 || sem->blockedSize > 0)
+    if (sem->value > 0)
     {
-        int currPid = getPid(scheduler);
-        sem->blockedPIDs[sem->blockedSize++] = currPid;
-        blockProcess(scheduler, currPid);
+        sem->value--;
+        _xchg(&(sem->mutex), 0);
+        return 0;
     }
     else
     {
-        sem->value--;
+        int currPid = getPid(scheduler);
+        sem->blockedPIDs[sem->blockedSize++] = currPid;
+        _xchg(&(sem->mutex), 0);
+        blockProcess(scheduler, currPid);
+        return 0;
     }
-
-    _xchg(&(sem->mutex), 0);
-    return 0;
 }
 
 int semPost(uint64_t id)
 {
+    //ncPrint("POST",13);;
     Semaphore *sem = findSem(id);
     if (sem == NULL)
+    {
         return -1;
+    }
 
     while (_xchg(&(sem->mutex), 1) != 0)
-        ;
+    {
+       ;   
+    }
 
     if (sem->blockedSize > 0)
     {
@@ -126,7 +135,7 @@ int semClose(uint64_t id)
         return 0;
     }
 
-    freeMem(memMan, sem);
+    removeFromList(id);
     return 0;
 }
 

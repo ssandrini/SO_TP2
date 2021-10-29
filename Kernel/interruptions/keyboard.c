@@ -15,6 +15,7 @@ unsigned char buffer[BUFFER_SIZE]={0};
 unsigned int buffIndex = 0;
 static schedulerADT scheduler;
 static memoryManagerADT mm;
+static uint64_t sem;
 const char ascii_values[0x56][2] =
 {
     {-1,-1},
@@ -54,10 +55,9 @@ void keyboard_handler()
                 break;
             default:
                 if(key < 0x56) {  
-                    //unblockProcess(scheduler,1);     
+                    semPost(sem);
                     buffer[buffIndex++] = getAscii(key);
                     buffer[buffIndex] = 0;
-                    
                 }
                 break;
         }
@@ -81,6 +81,7 @@ void removeBuffer()
 
 unsigned char * getBuffer() 
 {
+    semWait(sem);
     return buffer;
 }
 
@@ -91,6 +92,7 @@ unsigned int getBufferSize()
 
 void initKeyboard(schedulerADT sch, memoryManagerADT memMan) 
 {
+    sem = semCreate(0);
     scheduler = sch;
     mm = memMan;
 }

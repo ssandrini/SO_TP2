@@ -134,6 +134,7 @@ static void halt(int argc, char **argv)
 {
       while (1)
       {
+            //ncPrint("H",10);
             _hlt();
       }
 }
@@ -183,7 +184,6 @@ int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)
             // Solo un foreground puede crear a otro foreground
             if (fg == 1 && scheduler->currentProcess->pcb->fg == 0)
             {
-                  ncPrint("esto esta mal", 10);
                   return -1;
             }
       }
@@ -215,8 +215,11 @@ int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)
       scheduler->processesList->qReady++;
 
       // bloqueo al padre (la shell deberia bloquearse mientras se corre un ls por ejemplo)
-      if (fg == 1 && scheduler->currentProcess != NULL && scheduler->currentProcess != scheduler->idle)
-            blockProcess(scheduler, auxNode->pcb->ppid);
+      if (fg == 1 && scheduler->currentProcess != NULL && scheduler->currentProcess != scheduler->idle && scheduler->currentProcess->pcb->fg == 1)
+      {
+            ncPrint("aca",10);
+            blockProcess(scheduler, scheduler->currentProcess->pcb->pid);
+      }
       return aux->pid;
 }
 
@@ -335,6 +338,7 @@ int blockProcess(schedulerADT scheduler, int pid)
 {
       if (scheduler->currentProcess->pcb->pid == pid)
       {
+            
             scheduler->currentProcess->pcb->state = BLOCKED;
             scheduler->processesList->qReady--;
             scheduler->life = 0;
@@ -362,7 +366,7 @@ int blockProcess(schedulerADT scheduler, int pid)
 
 int unblockProcess(schedulerADT scheduler, int pid)
 {
-
+      ncPrint("unblock",10);
       PNode *aux = scheduler->processesList->first;
 
       while (aux != NULL && aux->pcb->pid != pid)

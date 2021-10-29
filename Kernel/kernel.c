@@ -54,8 +54,9 @@ int main()
 	schedulerADT scheduler = newScheduler(mm);
 	initTaskManager(scheduler);
 	initSysHandler(mm,scheduler);
-	initKeyboard(scheduler,mm);
 	initSemManager(mm, scheduler);
+	initKeyboard(scheduler,mm);
+	
 	/* First process */
 	char *argv[] = {"Shell"};
 	newProcess(scheduler,50,sampleCodeModuleAddress,argv,1,1);

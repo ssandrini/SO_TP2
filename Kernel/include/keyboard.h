@@ -2,6 +2,7 @@
 #define __KEYBOARD_H__
 
 #include <scheduler.h>
+#include <semManager.h>
 extern char _keyPressed();
 extern int _getKey();
 void keyboard_handler();
