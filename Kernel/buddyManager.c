@@ -1,4 +1,4 @@
-//#ifdef BUDDY
+#ifdef BUDDY
 #include <memoryManager.h>
 #define STRUCT_POS 0x0000000000600000
 #define MIN_BLOCK 64
@@ -195,4 +195,4 @@ void printStatus(memoryManagerADT mm)
     ncNewline();
 }
 
-//#endif
+#endif

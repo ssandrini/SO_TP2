@@ -23,7 +23,7 @@ typedef struct BNode {
 struct memoryManagerCDT {
    BNode * head;
   void * startDir;
-  size_t totalSize;
+  size_t memorySize;
   size_t usedSize;
 }memoryManagerCDT; //es una lista en este caso
 
@@ -105,21 +105,43 @@ int freeMem(memoryManagerADT mm, void * ptr){
   return freeMemRec(mm, mm->head, NULL, ptr);
 }
 
-memoryManagerADT newMemoryManager(void * startDir, size_t totalSize){
+memoryManagerADT newMemoryManager(void * startDir, size_t memorySize){
   memoryManagerADT memoryManager = (void *)STRUCT_POS;
 
-  memoryManager->totalSize = totalSize;
+  memoryManager->memorySize = memorySize;
   memoryManager->usedSize = 0;
   memoryManager->startDir = startDir;
   memoryManager->head = (void * ) ((char *)memoryManager + sizeof(memoryManagerCDT));
 
   memoryManager->head->next = NULL;
   memoryManager->head->memPtr = (void * ) ((char *)memoryManager->head + sizeof(BNode));
-  memoryManager->head->size = totalSize;
+  memoryManager->head->size = memorySize;
   memoryManager->head->state = FREE;
 
   memoryManager->usedSize = 0;
   return memoryManager;
+}
+
+void printStatus(memoryManagerADT mm)
+{
+    char aux[24];
+    ncPrint("Estado de la memoria:",12);
+    ncNewline();
+    ncPrint(" -Tipo de memoria usada: first fit.", 15);
+    ncNewline();
+    ncPrint(" -Tamanio de memoria: ", 15);
+    uintToBase( (uint64_t) mm->memorySize, aux, 10);
+    ncPrint(aux, 15);
+    ncNewline();
+    ncPrint(" -Tamanio de memoria utilizada: ", 15);
+    uintToBase( (uint64_t) mm->usedSize, aux, 10);
+    ncPrint(aux, 15);
+    ncNewline();
+    ncPrint(" -Tamanio de memoria libre: ", 15);
+    uintToBase((uint64_t) (mm->memorySize - mm->usedSize), aux, 10);
+    ncPrint(aux, 15);
+    ncNewline();
+  
 }
 
 #endif
