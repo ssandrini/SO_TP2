@@ -66,6 +66,8 @@ int main()
 	ncClear();
 
 
+	
+
 	return 0;
 	
 }
