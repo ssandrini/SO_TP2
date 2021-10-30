@@ -304,7 +304,7 @@ void sem(int argc, char **argv)
         printError("Cantidad de argumentos incorrecta");
         return;
     }
-    printf("Todavia no lo implementamos\n");
+    _syscall(PRINT_SEM,0,0,0,0,0);
 }
 
 int prepareArgs(char token, char **argv, char *input)

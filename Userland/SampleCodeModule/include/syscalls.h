@@ -20,6 +20,12 @@
 #define YIELD 15
 #define PRINT_STATUS_MEM 16
 #define PID 17
+#define CREATE_SEM 18
+#define OPEN_SEM 19
+#define CLOSE_SEM 20
+#define WAIT_SEM 21
+#define POST_SEM 22
+#define PRINT_SEM 23
 
 extern uint64_t _syscall(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t r4, uint64_t rsp);
 

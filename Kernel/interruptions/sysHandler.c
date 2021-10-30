@@ -1,16 +1,7 @@
 #include <sysHandler.h>
 #include <naiveConsole.h>
-//static char * aux3;
 static schedulerADT scheduler;
 static memoryManagerADT memoryManager;
-void pepe6(int argc, char ** argv)
-{
-	while(1)
-	{
-		ncPrint("a",10);
-		_hlt();
-	}
-}
 
 uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t r4, uint64_t rsp)
 {
@@ -93,6 +84,25 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
     case 17:
         return (uint64_t) getPid(scheduler);
         break;
+    case 18: // semCreate(UINT64 value)
+        return  semCreate(r1);
+        break;
+    case 19: // semOPEN(UINT64 ID)
+        return  semOpen(r1);
+        break;
+    case 20: // semClose(UINT64 ID)
+        return (uint64_t) semClose(r1);
+    case 21: //semWait(uint64_t id)
+        return (uint64_t) semWait(r1);
+        break;
+    case 22: //semPost(uint64_t id)
+        return (uint64_t) semPost(r1);
+        break;
+    case 23:
+        semPrint();
+        return 0;
+        break;
+        
     default:
         return 0;
         break;
@@ -173,5 +183,4 @@ void initSysHandler(memoryManagerADT mm, schedulerADT sch)
 {
     scheduler = sch;
     memoryManager = mm;
-    //aux3 = allocMem(mm,10);
 }
