@@ -42,12 +42,15 @@ void test_processes(int argc, char ** argv)
   uint8_t rq;
   uint8_t alive = 0;
   uint8_t action;
+  int fd[2];
+  fd[0]=0;
+  fd[1]=1;
 
   // Create MAX_PROCESSES processes
   for (rq = 0; rq < MAX_PROCESSES; rq++)
   {
     char* argAux[] = {"endless_loop"};
-    p_rqs[rq].pid = _syscall(NEW_PROCESS,(uint64_t) &endless_loop, (uint64_t) argAux,1,0,0); // TODO: Port this call as required
+    p_rqs[rq].pid = _syscall(NEW_PROCESS,(uint64_t) &endless_loop, (uint64_t) argAux,1,0,fd); // TODO: Port this call as required
    
     if (p_rqs[rq].pid == -1)
     {                                     // TODO: Port this as required

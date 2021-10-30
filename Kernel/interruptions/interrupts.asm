@@ -259,11 +259,10 @@ _int80Handler:
 	push rbp
     mov rbp,rsp
 	pushStateNoRax
-	; aca en el caso de que necesito usar r9 
-	; y no es necesario el rsp (por ejemplo para newProcess si necesito fd)
-	; hago un cmp para ver si hacer
-	; la linea mov r9, rsp
+	cmp rdi, 9
+	je .cont
 	mov r9, rsp
+.cont:
 	call sysHandler
 	;mov r15, rax
 	popStateNoRax

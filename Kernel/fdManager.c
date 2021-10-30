@@ -45,10 +45,6 @@ int fdRead(int fd, char *dest, int count)
     {
         unsigned char *KeyBuffer = getBuffer();
         unsigned int i;
-        if (KeyBuffer[0] == '\0')
-        {
-            blockProcess(scheduler, 1);
-        }
         dest[0] = 0;
         for (i = 0; KeyBuffer[i] != 0 && i < count; i++)
         {
@@ -63,14 +59,14 @@ int fdRead(int fd, char *dest, int count)
     }
 }
 
-int fdWrite(int fd, char *src)
+int fdWrite(int fd, char *src, int color)
 {
     if (fd > MAX_FD || fdList[fd] == NULL || fd == STDIN)
         return -1;
     fdADT fdAux = fdList[fd];
     if (fd == STDOUT)
     {
-        ncPrint(src, STD_COLOR);
+        ncPrint(src, color);
         return 0;
     }
     else

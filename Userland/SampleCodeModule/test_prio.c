@@ -13,7 +13,10 @@ uint64_t my_create_process(char *name)
   int argc = 0;
   char *argv[1] = {0};
   argc = prepareArgs(' ', argv, name);
-  return _syscall(NEW_PROCESS, (uint64_t) &endless_loop3, (uint64_t) argv, argc, 0, 0);
+  int fd[2];
+  fd[0] = 0;
+  fd[1] = 1;
+  return _syscall(NEW_PROCESS, (uint64_t) &endless_loop3, (uint64_t) argv, argc, 0, fd);
 }
 
 uint64_t my_nice(uint64_t pid, uint64_t newPrio)

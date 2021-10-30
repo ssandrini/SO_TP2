@@ -44,6 +44,9 @@ void shell()
                 int argc = 0;
                 char *argv[MAX_ARGS] = {0};
                 int fg = 1;
+                int fd[2];
+                fd[0] = 0;
+                fd[1] = 1;
                 argc = prepareArgs(' ', argv, buffer);
                 isCommand = checkCommandUserApps(argv[0]);
                 if (isCommand >= 0 && argc > 0 && argv[argc - 1][0] == '&')
@@ -55,67 +58,67 @@ void shell()
                 switch (isCommand)
                 {
                 case CASE_LOOP:
-                    _syscall(NEW_PROCESS, (uint64_t)&loop, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&loop, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_CAT:
-                    _syscall(NEW_PROCESS, (uint64_t)&cat, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&cat, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_WC:
-                    _syscall(NEW_PROCESS, (uint64_t)&wc, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&wc, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_FILTER:
-                    _syscall(NEW_PROCESS, (uint64_t)&filter, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&filter, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_PHYLO:
-                    _syscall(NEW_PROCESS, (uint64_t)&phylo, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&phylo, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_INFOREG:
-                    _syscall(NEW_PROCESS, (uint64_t)&inforeg, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&inforeg, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_PRINTMEM:
-                    _syscall(NEW_PROCESS, (uint64_t)&getMem, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&getMem, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_CPUID:
-                    _syscall(NEW_PROCESS, (uint64_t)&cpuid, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&cpuid, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_TRIGGER0:
-                    _syscall(NEW_PROCESS, (uint64_t)&exc0Trigger, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&exc0Trigger, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_TRIGGER6:
-                    _syscall(NEW_PROCESS, (uint64_t)&exc6Trigger, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&exc6Trigger, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_TIME:
-                    _syscall(NEW_PROCESS, (uint64_t)&getTime, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&getTime, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_MEM:
-                    _syscall(NEW_PROCESS, (uint64_t)&mem, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&mem, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_PS:
-                    _syscall(NEW_PROCESS, (uint64_t)&ps, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&ps, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_KILL:
-                    _syscall(NEW_PROCESS, (uint64_t)&kill, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&kill, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_NICE:
-                    _syscall(NEW_PROCESS, (uint64_t)&nice, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&nice, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_BLOCK:
-                    _syscall(NEW_PROCESS, (uint64_t)&block, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&block, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_SEM:
-                    _syscall(NEW_PROCESS, (uint64_t)&sem, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&sem, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_PIPE:
-                    _syscall(NEW_PROCESS, (uint64_t)&pipe, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&pipe, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_TEST_MM:
-                    _syscall(NEW_PROCESS, (uint64_t)&test_mem, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&test_mem, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_TEST_PROCESSES:
-                    _syscall(NEW_PROCESS, (uint64_t)&test_processes, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&test_processes, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 case CASE_TEST_PRIO:
-                    _syscall(NEW_PROCESS, (uint64_t)&test_prio, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&test_prio, (uint64_t)argv, (uint64_t)argc, fg, fd);
                     break;
                 default:
                     printError("El comando ingresado es invalido\n");

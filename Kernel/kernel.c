@@ -55,11 +55,15 @@ int main()
 	initTaskManager(scheduler);
 	initSysHandler(mm,scheduler);
 	initSemManager(mm, scheduler);
-	initKeyboard(scheduler,mm);
+	initKeyboard(mm, scheduler);
+	initFdManager(mm,scheduler);
 	initPipeManager(mm,scheduler);
 	/* First process */
 	char *argv[] = {"Shell"};
-	newProcess(scheduler,50,sampleCodeModuleAddress,argv,1,1);
+	int fd[2];
+	fd[0] = 0;
+	fd[1] = 1;
+	newProcess(scheduler,50,sampleCodeModuleAddress,argv,1,1, fd);
 	backAddresses((uint64_t *)sampleCodeModuleAddress, _getRSP()); // exceptions
 	
 	load_idt();	

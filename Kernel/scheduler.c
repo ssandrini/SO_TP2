@@ -9,7 +9,7 @@ typedef struct
       char *name;
       int argc;
       char **argv;
-
+      int fd[2];
       void *rsp; // aca tendria que usar el stackFrame
       void *rbp;
       State state;
@@ -164,6 +164,8 @@ schedulerADT newScheduler(memoryManagerADT mm)
       scheduler->idle->pcb->fg = 1;
       scheduler->idle->pcb->priority = 1;
       scheduler->idle->pcb->state = READY;
+      scheduler->idle->pcb->fd[0] = 0;
+      scheduler->idle->pcb->fd[1] = 1;
       scheduler->idle->pcb->rbp = allocMem(scheduler->memoryManager, STACK_SIZE);
       scheduler->idle->pcb->rbp = (void *)((char *)scheduler->idle->pcb->rbp + STACK_SIZE - 1);
       scheduler->idle->pcb->rsp = (void *)((StackFrame *)scheduler->idle->pcb->rbp - 1);
@@ -176,7 +178,7 @@ schedulerADT newScheduler(memoryManagerADT mm)
       return scheduler;
 }
 
-int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg)
+int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg, int fd[2])
 {
       if (scheduler->currentProcess != NULL)
       {
@@ -205,6 +207,8 @@ int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)
       aux->rbp = (void *)((char *)aux->rbp + STACK_SIZE - 1);
       aux->rsp = (void *)((StackFrame *)aux->rbp - 1);
       aux->fg = fg;
+      aux->fd[0] = fd[0];
+      aux->fd[1] = fd[1];
       setNewSF(entryPoint, aux->argc, aux->argv, aux->rbp);
 
       PNode *auxNode = allocMem(scheduler->memoryManager, sizeof(PNode));
@@ -437,6 +441,16 @@ int isBlocked(schedulerADT scheduler, int pid)
             return 1;
       }
       return 0;
+}
+
+int getCurrentFdRead(schedulerADT scheduler)
+{
+      return scheduler->currentProcess->pcb->fd[0];
+}
+
+int getCurrentFdWrite(schedulerADT scheduler)
+{
+      return scheduler->currentProcess->pcb->fd[1];
 }
 
 static void printProcessInfo(PNode *n)

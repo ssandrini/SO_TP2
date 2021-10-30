@@ -8,11 +8,13 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
     switch (sysNumber)
     {
     case 0: // sysRead  r1=buffer r2=bytes
-        read((unsigned char *)r1, (unsigned int)r2);
+        fdRead(getCurrentFdRead(scheduler), (char *) r1, (int) r2);
+        //read((unsigned char *)r1, (unsigned int)r2);
         return 0;
         break;
     case 1: // sysWrite
-        ncPrint((const char *)r1, (int)r2);
+        fdWrite(getCurrentFdWrite(scheduler), (char *) r1, (int) r2);
+        //ncPrint((const char *)r1, (int)r2);
         return 0;
         break;
     case 2:                 // sysGetTime
@@ -42,8 +44,7 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         return freeMem(memoryManager, (void *) r1);
         break;
     case 9: // sysCreateProcess(entryPoint, argv, argc, fg)
-        // por defecto todos se crean con prioridad 1 (esta bien?)
-        return (uint64_t) newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4);
+        return (uint64_t) newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4, (int*) rsp);
         break;
     case 10: //sysKill(pid);
         return (uint64_t) killProcess(scheduler, (int) r1);
