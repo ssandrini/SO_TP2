@@ -47,6 +47,11 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         return (uint64_t) newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4, (int*) rsp);
         break;
     case 10: //sysKill(pid);
+        if((int)r1 == 1)
+        {
+            ncPrint("No puedes matar a la shell",9);
+            return 1;
+        }
         return (uint64_t) killProcess(scheduler, (int) r1);
         break;
     case 11: //sysBLock(pid)

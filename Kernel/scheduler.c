@@ -278,6 +278,10 @@ int getPid(schedulerADT scheduler)
 
 int killProcess(schedulerADT scheduler, int pid)
 {
+      if(pid < 2)
+      {
+            return -1;
+      }
       if (scheduler->currentProcess != NULL && scheduler->currentProcess->pcb->pid == pid)
       {
             scheduler->currentProcess->pcb->state = KILLED;

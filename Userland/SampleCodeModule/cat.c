@@ -5,12 +5,13 @@ void cat(int argc, char *argv[])
       if (argc != 1)
       {
             printError("Cantidad de parametros incorrecto.\n");
-            return ;
+            return;
       }
 
       int c;
-      while ((c = getChar()) != -1){
+      while ((c = getChar()) != -1)
+      {
             putChar(c);
       }
-      return ;
+      return;
 }

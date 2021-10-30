@@ -40,6 +40,7 @@ char keyPressed()
 
 void keyboard_handler() 
 {
+    char eof[2] = {-1,0};
     if(keyPressed())
     { 
         unsigned char key = _getKey();
@@ -63,6 +64,17 @@ void keyboard_handler()
                         if(key == 46)
                         {
                             killFgProcess(scheduler);
+                        }
+                        else if(key == 44)
+                        {
+                            if(getCurrentFdWrite(scheduler) != 1)
+                                fdWrite(getCurrentFdWrite(scheduler), eof,15);
+                            else
+                            {
+                                semPost(sem);
+                                buffer[buffIndex++] = -1;
+                                buffer[buffIndex] = 0;
+                            }
                         }
                     }
                     else
