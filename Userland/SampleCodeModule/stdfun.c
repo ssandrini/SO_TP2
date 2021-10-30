@@ -415,12 +415,12 @@ uint32_t uintToString(uint64_t value, char * buffer, uint32_t base)
 	return digits;
 }
 
-void * malloc(size_t size) 
+void * myMalloc(size_t size) 
 {
     return (void * ) _syscall(MALLOC, (uint64_t)size, 0, 0, 0,0);
 }
 
-void free(void * dir)
+void myFree(void * dir)
 {
     _syscall(FREE, (uint64_t) dir, 0,0,0,0);
 }

@@ -34,7 +34,7 @@ typedef struct P_rq
   enum State state;
 } p_rq;
 
-void test_processes()
+void test_processes(int argc, char ** argv)
 {
   
   printf("Test processes\n");
@@ -118,16 +118,4 @@ void test_processes()
   
   printf("termino\n");
   return ;
-}
-
-void test_kill()
-{
-  printf("Test kill\n");
-  char* argAux[] = {"mytestkill"};
-  _syscall(NEW_PROCESS,(uint64_t) &endless_loop, (uint64_t) argAux,1,0,0);
-  _syscall(NEW_PROCESS,(uint64_t) &endless_loop2, (uint64_t) argAux,1,0,0);
-  _syscall(PS,0,0,0,0,0);
-  //_syscall(KILL_PROCESS,pid,0,0,0,0);
-  //_syscall(PS,0,0,0,0,0);
-  return;
 }

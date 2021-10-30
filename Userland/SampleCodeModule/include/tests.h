@@ -4,8 +4,7 @@
 #include <syscalls.h>
 #include <stdfun.h>
 void endless_loop(int argc, char ** argv);
-void test_processes(); 
-void test_kill();
-void test_mm();
+void test_processes(int argc, char ** argv); 
+void test_mem(int argc, char ** argv);
 extern void _hltuser();
 #endif

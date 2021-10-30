@@ -109,7 +109,7 @@ void shell()
                     _syscall(NEW_PROCESS, (uint64_t)&pipe, (uint64_t)argv, (uint64_t)argc, fg, 0);
                     break;
                 case CASE_TEST_MM:
-                    _syscall(NEW_PROCESS, (uint64_t)&test_mm, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    _syscall(NEW_PROCESS, (uint64_t)&test_mem, (uint64_t)argv, (uint64_t)argc, fg, 0);
                     break;
                 case CASE_TEST_PROCESSES:
                     _syscall(NEW_PROCESS, (uint64_t)&test_processes, (uint64_t)argv, (uint64_t)argc, fg, 0);

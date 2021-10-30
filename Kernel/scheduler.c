@@ -536,21 +536,12 @@ static int isEmpty(PList *list)
 
 static void removeProcess(schedulerADT scheduler, PNode *node)
 {
-      /*
-      for (int i = 0; i < process->pcb.argc; i++)
-            freeCust(process->pcb.argv[i]);
-      freeCust(process->pcb.argv);
-      freeCust((void *)((char *)process->pcb.rbp - STACK_SIZE + 1));
-      freeCust((void *)process);
-      */
       for (int i = 0; i < node->pcb->argc; i++)
             freeMem(scheduler->memoryManager, node->pcb->argv[i]);
       freeMem(scheduler->memoryManager, node->pcb->argv);
       freeMem(scheduler->memoryManager, node->pcb->name);
       freeMem(scheduler->memoryManager, (void *)((char *)node->pcb->rbp - STACK_SIZE + 1));
       freeMem(scheduler->memoryManager, node->pcb);
-      freeMem(scheduler->memoryManager, node);
-      
+      freeMem(scheduler->memoryManager, node);      
 }
-/*
-      NO OLVIDARME DE LIBERAR TODA LA MEMORIA USADA AL MATAR UN PROCESO */
+

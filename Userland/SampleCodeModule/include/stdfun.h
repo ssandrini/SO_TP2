@@ -25,6 +25,6 @@ void printUser(char * name);
 void printError(char * err);
 void printTitle(char * title);
 uint32_t uintToString(uint64_t value, char * buffer, uint32_t base);
-void * malloc(size_t size);
-void free(void * dir);
+void * myMalloc(size_t size);
+void myFree(void * dir);
 #endif
