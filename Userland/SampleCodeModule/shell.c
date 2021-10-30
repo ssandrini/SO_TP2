@@ -18,8 +18,6 @@ void (*func_ptr[COMMANDS_SIZE])() = {help, getTime, inforeg, getMem, cpuid, exc0
 void (*func_ptr_apps[APPS_SIZE])(int, char **) = {loop, cat, wc, filter, phylo};
 void shell()
 {
-    char *argv[] = {"App"};
-    int argc = 1;
     clear();
     requestUser();
     printUser(user);
@@ -43,6 +41,10 @@ void shell()
             int isCommand = checkCommandUserApps(buffer, parameter); //el uno por default
             if (isCommand >= 0)
             {
+                int argc = 0;
+                char *argv[MAX_ARGS] = {0};
+                int fg = 1;
+                argc = prepareArgs(' ', argv, buffer);
                 _syscall(NEW_PROCESS,(uint64_t) &loop, (uint64_t) argv, (uint64_t) argc, 0,0 );
             }
             else if (isCommand == -1)

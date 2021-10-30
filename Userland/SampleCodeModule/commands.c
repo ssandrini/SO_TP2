@@ -17,7 +17,7 @@ char testsAppsInfo[TESTS_SIZE][INFO_MAX] = {};
 
 void help()
 {
-    for (int i = 0; i < COMMANDS_SIZE -1; i++)
+    for (int i = 0; i < COMMANDS_SIZE - 1; i++)
     {
         printTitle(commandsNames[i + 1]);
         printf(": %s", info[i]);
@@ -334,7 +334,7 @@ int checkCommandUserApps(char *buffer, char *parameter)
             }
         }
         else 
-        */
+        */    
         if (strcmp(buffer, userAppsNames[i]) == 0)
         {
             return i;
@@ -358,9 +358,9 @@ void ps()
     _syscall(PS, 0, 0, 0, 0, 0);
 }
 
-void kill(char * pid)
+void kill(char *pid)
 {
-    printf("%d\n",strToInt(pid));
+    printf("%d\n", strToInt(pid));
     _syscall(KILL_PROCESS, (uint64_t)strToInt(pid), 0, 0, 0, 0);
 }
 
@@ -369,7 +369,7 @@ void nice(int pid)
     _syscall(NICE, (uint64_t)pid, (uint64_t)5, 0, 0, 0);
 }
 
-void block(char * pid)
+void block(char *pid)
 {
     _syscall(BLOCK_PROCESS, (uint64_t)strToInt(pid), 0, 0, 0, 0);
 }
@@ -380,4 +380,31 @@ void pipe()
 
 void sem()
 {
+
+}
+
+int prepareArgs(char token, char **argv, char *input)
+{
+    int i = 0;
+    if (*input != token && *input != '\0')
+        argv[i++] = input;
+
+    while (*input != '\0')
+    {
+        if (*input != token)
+        {
+            input++;
+        }
+        else
+        {
+            *input = 0;
+            if (*(input + 1) != token && (*(input + 1) != '\0'))
+            {
+                if (i >= MAX_ARGS)
+                    return i;
+                argv[i++] = input + 1;
+            }
+        }
+    }
+    return i;
 }

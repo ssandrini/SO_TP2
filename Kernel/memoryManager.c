@@ -11,43 +11,56 @@
 #define INITIAL_POS 0x0000000000700000
 #define FINAL_POS 0x000000000FFFFFFFF
 
-enum STATE {FREE = 1, NOT_FREE = 0};
+enum STATE
+{
+  FREE = 1,
+  NOT_FREE = 0
+};
 
-typedef struct BNode {
-    struct BNode * next;
-    void * memPtr;
-    size_t size;
-    enum STATE state;
-}BNode;
+typedef struct Node
+{
+  struct Node *next;
+  void *memPtr;
+  size_t size;
+  enum STATE state;
+} Node;
 
-struct memoryManagerCDT {
-   BNode * head;
-  void * startDir;
+struct memoryManagerCDT
+{
+  Node *head;
+  void *startDir;
   size_t memorySize;
   size_t usedSize;
-}memoryManagerCDT; //es una lista en este caso
+} memoryManagerCDT; //es una lista en este caso
 
-BNode * allocMemRec(memoryManagerADT mm, BNode * node, size_t size){
-  if (node == NULL || node->size == 0){
+Node *allocMemRec(memoryManagerADT mm, Node *node, size_t size)
+{
+  if (node == NULL || node->size == 0)
+  {
     return NULL;
   }
-  if (node->state == FREE){
-    if (node->size == size){
+  if (node->state == FREE)
+  {
+    if (node->size == size)
+    {
       node->state = NOT_FREE;
       mm->usedSize += node->size;
       return node;
     }
-    else if (node->size > size){
+    else if (node->size > size)
+    {
       int spaceLeft = node->size - size;
-      node->size = size;
-      if (spaceLeft > sizeof(BNode)){
-        BNode * aux = (void *)((char *)node->memPtr + size); //creo el proximo nodo
+      
+      if (spaceLeft > sizeof(Node))
+      {
+        Node *aux = (void *)((char *)node->memPtr + size); //creo el proximo nodo
         aux->next = node->next;
         aux->state = FREE;
-        aux->memPtr = (void *)((char *)aux + sizeof(BNode));
-        aux->size = spaceLeft - sizeof(BNode);
+        aux->memPtr = (void *)((char *)aux + sizeof(Node));
+        aux->size = spaceLeft - sizeof(Node);
+        node->size = size;
         node->next = aux;
-        mm->usedSize += sizeof(BNode);
+        mm->usedSize += sizeof(Node);
       }
       node->state = NOT_FREE;
       mm->usedSize += node->size;
@@ -57,91 +70,105 @@ BNode * allocMemRec(memoryManagerADT mm, BNode * node, size_t size){
   return allocMemRec(mm, node->next, size);
 }
 
-void * allocMem(memoryManagerADT mm, size_t size){
-  BNode * node = allocMemRec(mm, mm->head, size);
-  if (node == NULL){
+void *allocMem(memoryManagerADT mm, size_t size)
+{
+  Node *node = allocMemRec(mm, mm->head, size);
+  if (node == NULL)
+  {
     return NULL;
   }
   return node->memPtr;
 }
 
-int freeMemRec(memoryManagerADT mm, BNode * actual, BNode *  previous, void * ptr){
-  if (actual == NULL || ptr == NULL){
+int freeMemRec(memoryManagerADT mm, Node *actual, Node *previous, void *ptr)
+{
+  if (actual == NULL || ptr == NULL)
+  {
     return 0;
   }
-  if (actual->memPtr == ptr){
-    if ((previous == NULL || (previous != NULL && previous->state == NOT_FREE)) && ((actual->next != NULL && actual->next->state == NOT_FREE) || actual->next == NULL)){ //el que le sigue es null
+  if (actual->memPtr == ptr)
+  {
+    if ((previous == NULL || (previous != NULL && previous->state == NOT_FREE)) && ((actual->next != NULL && actual->next->state == NOT_FREE) || actual->next == NULL))
+    { //el que le sigue es null
       actual->state = FREE;
       mm->usedSize -= actual->size;
       return 1;
     }
-    else if (previous != NULL && previous->state == FREE && ((actual->next != NULL && actual->next->state == NOT_FREE) || actual->next == NULL)){ //el que le sigue no es null
-      previous->size = previous->size + actual->size + sizeof(BNode);
+    else if (previous != NULL && previous->state == FREE && ((actual->next != NULL && actual->next->state == NOT_FREE) || actual->next == NULL))
+    { //el que le sigue no es null
+      previous->size = previous->size + actual->size + sizeof(Node);
       previous->next = actual->next;
-      mm->usedSize -= (actual->size + sizeof(BNode));
+      mm->usedSize -= (actual->size + sizeof(Node));
       return 1;
     }
-    else if (previous != NULL && actual->next != NULL && previous->state == FREE && actual->next->state == FREE){ //cuando apuntan a algo pero son free
-      previous->size = previous->size + actual->size + actual->next->size + (2 * sizeof(BNode));
+    else if (previous != NULL && actual->next != NULL && previous->state == FREE && actual->next->state == FREE)
+    { //cuando apuntan a algo pero son free
+      previous->size = previous->size + actual->size + actual->next->size + (2 * sizeof(Node));
       previous->next = actual->next->next;
-      mm->usedSize -= (actual->size + 2*sizeof(BNode));
+      mm->usedSize -= (actual->size + 2 * sizeof(Node));
       return 1;
     }
-    else if ((previous == NULL || (previous->state == NOT_FREE)) && actual->next!= NULL && actual->next->state == FREE){ //el siguiente apunta a algo pero es free
-      mm->usedSize -= (actual->size + sizeof(BNode));
-      actual->size = actual->size + actual->next->size + sizeof(BNode);
+    else if ((previous == NULL || (previous->state == NOT_FREE)) && actual->next != NULL && actual->next->state == FREE)
+    { //el siguiente apunta a algo pero es free
+      mm->usedSize -= (actual->size + sizeof(Node));
+      actual->size = actual->size + actual->next->size + sizeof(Node);
       actual->next = actual->next->next;
       actual->state = FREE;
       return 1;
-    } else {
+    }
+    else
+    {
       return 0;
     }
-  } else {
+  }
+  else
+  {
     return freeMemRec(mm, actual->next, actual, ptr);
   }
 }
 
-int freeMem(memoryManagerADT mm, void * ptr){
+int freeMem(memoryManagerADT mm, void *ptr)
+{
   return freeMemRec(mm, mm->head, NULL, ptr);
 }
 
-memoryManagerADT newMemoryManager(void * startDir, size_t memorySize){
-  memoryManagerADT memoryManager = (void *)STRUCT_POS;
+memoryManagerADT newMemoryManager(void *startDir, size_t memorySize)
+{
+  memoryManagerADT memoryManager = startDir;
 
   memoryManager->memorySize = memorySize;
-  memoryManager->usedSize = 0;
   memoryManager->startDir = startDir;
-  memoryManager->head = (void * ) ((char *)memoryManager + sizeof(memoryManagerCDT));
+  memoryManager->head = (void *)((char *)startDir + sizeof(memoryManagerCDT));
 
   memoryManager->head->next = NULL;
-  memoryManager->head->memPtr = (void * ) ((char *)memoryManager->head + sizeof(BNode));
-  memoryManager->head->size = memorySize;
+  memoryManager->head->memPtr = (void *)((char *)memoryManager->head + sizeof(Node));
+  memoryManager->head->size = memorySize - sizeof(memoryManagerCDT) - sizeof(Node);
   memoryManager->head->state = FREE;
 
-  memoryManager->usedSize = 0;
+   memoryManager->usedSize = sizeof(memoryManagerCDT) + sizeof(Node);
+
   return memoryManager;
 }
 
 void printStatus(memoryManagerADT mm)
 {
-    char aux[24];
-    ncPrint("Estado de la memoria:",12);
-    ncNewline();
-    ncPrint(" -Tipo de memoria usada: first fit.", 15);
-    ncNewline();
-    ncPrint(" -Tamanio de memoria: ", 15);
-    uintToBase( (uint64_t) mm->memorySize, aux, 10);
-    ncPrint(aux, 15);
-    ncNewline();
-    ncPrint(" -Tamanio de memoria utilizada: ", 15);
-    uintToBase( (uint64_t) mm->usedSize, aux, 10);
-    ncPrint(aux, 15);
-    ncNewline();
-    ncPrint(" -Tamanio de memoria libre: ", 15);
-    uintToBase((uint64_t) (mm->memorySize - mm->usedSize), aux, 10);
-    ncPrint(aux, 15);
-    ncNewline();
-  
+  char aux[24];
+  ncPrint("Estado de la memoria:", 12);
+  ncNewline();
+  ncPrint(" -Tipo de memoria usada: first fit.", 15);
+  ncNewline();
+  ncPrint(" -Tamanio de memoria: ", 15);
+  uintToBase((uint64_t)mm->memorySize, aux, 10);
+  ncPrint(aux, 15);
+  ncNewline();
+  ncPrint(" -Tamanio de memoria utilizada: ", 15);
+  uintToBase((uint64_t)mm->usedSize, aux, 10);
+  ncPrint(aux, 15);
+  ncNewline();
+  ncPrint(" -Tamanio de memoria libre: ", 15);
+  uintToBase((uint64_t)(mm->memorySize - mm->usedSize), aux, 10);
+  ncPrint(aux, 15);
+  ncNewline();
 }
 
 #endif

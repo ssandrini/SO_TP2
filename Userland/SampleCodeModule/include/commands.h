@@ -25,6 +25,7 @@
 #define LENGTH_CAT 3
 #define SPECIAL_FEATURES_ID 7
 #define FEATURES_ID 1
+#define MAX_ARGS 5
 //#define EPSILON 0.00000001
 
 // --------------------------------------COMMANDS------------------------------------------//
@@ -52,6 +53,7 @@ void block(char * pid);
 //---------------------------------------AUX FUNCTIONS---------------------------------------
 int checkCommandBuiltIn(char * buffer, char * parameter);
 int checkCommandUserApps(char * buffer, char * parameter);
+int prepareArgs(char token, char **argv, char *input);
 //-------------------------------------------------------------------------------------------
 
 //---------------------------------------ASM FUNCTIONS----------------------------------------

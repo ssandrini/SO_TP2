@@ -494,6 +494,7 @@ static void printProcessInfo(PNode *n)
       {
             ncPrint("Killed", COLOR);
       }
+      freeMem(sch->memoryManager, buff);
 }
 
 static void enqueue(schedulerADT scheduler, PNode *newProcess)
