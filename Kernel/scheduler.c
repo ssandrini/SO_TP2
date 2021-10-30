@@ -330,9 +330,10 @@ int setPriority(schedulerADT scheduler, int pid, int newPriority)
             current = current->next;
       }
       if (current == NULL)
+      {
             return -1;
-
-      scheduler->currentProcess->pcb->priority = newPriority;
+      }
+      current->pcb->priority = newPriority;
       return 0;
 }
 

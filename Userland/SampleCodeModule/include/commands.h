@@ -11,48 +11,60 @@
 #include <tests.h>
 #define NAME_MAX 20
 #define INFO_MAX 150
-#define COMMANDS_SIZE 15
-#define APPS_SIZE 5
-#define TESTS_SIZE 5
+#define BUILTIN_SIZE 2
+#define APPS_SIZE 20
+#define MAX_ARGS 5
+
+#define CASE_LOOP 0
 #define CASE_CAT 1
-#define CASE_KILL 10
-#define CASE_NICE 11
-#define CASE_BLOCK 12
-#define LENGTH_KILL 4
-#define LENGTH_BLOCK 5
-#define CASE_GETMEM 3
-#define LENGTH_PRINTMEM 8
-#define LENGTH_CAT 3
+#define CASE_WC 2
+#define CASE_FILTER 3
+#define CASE_PHYLO 4
+#define CASE_INFOREG 5
+#define CASE_PRINTMEM 6
+#define CASE_CPUID 7
+#define CASE_TRIGGER0 8
+#define CASE_TRIGGER6 9
+#define CASE_TIME 10
+#define CASE_MEM 11
+#define CASE_PS 12
+#define CASE_KILL 13
+#define CASE_NICE 14
+#define CASE_BLOCK 15
+#define CASE_SEM 16
+#define CASE_PIPE 17
+#define CASE_TEST_MM 18
+#define CASE_TEST_PROCESSES 19
+
+
 #define SPECIAL_FEATURES_ID 7
 #define FEATURES_ID 1
-#define MAX_ARGS 5
-//#define EPSILON 0.00000001
 
 // --------------------------------------COMMANDS------------------------------------------//
 void help(); 
-void inforeg();
-void getMem(char * param);
-void getTime();
-void exc0Trigger();
-void exc6Trigger();
+void inforeg(int argc, char ** argv);
+void getMem(int argc, char ** argv);
+void getTime(int argc, char ** argv);
+void exc0Trigger(int argc, char ** argv);
+void exc6Trigger(int argc, char ** argv);
 void clear();
-void cpuid();
+void cpuid(int argc, char ** argv);
 //void quadratic();
 //void celsius();
 //void fahrenheit();
 //void polar();
-void mem();
-void ps();
-void sem();
-void pipe();
-void kill(char * pid);
-void nice(int pid);
-void block(char * pid);
+void mem(int argc, char ** argv);
+void ps(int argc, char ** argv);
+void sem(int argc, char ** argv);
+void pipe(int argc, char ** argv);
+void kill(int argc, char ** argv);
+void nice(int argc, char ** argv);
+void block(int argc, char ** argv);
 //int cat(int argc, char *argv[]);
 //-------------------------------------------------------------------------------------------
 //---------------------------------------AUX FUNCTIONS---------------------------------------
-int checkCommandBuiltIn(char * buffer, char * parameter);
-int checkCommandUserApps(char * buffer, char * parameter);
+int checkCommandBuiltIn(char * buffer);
+int checkCommandUserApps(char * buffer);
 int prepareArgs(char token, char **argv, char *input);
 int checkTests(char *buffer, char *parameter);
 //-------------------------------------------------------------------------------------------

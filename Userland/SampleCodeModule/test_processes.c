@@ -52,7 +52,7 @@ void test_processes()
     if (p_rqs[rq].pid == -1)
     {                                     // TODO: Port this as required
       printf("Error creating process\n"); // TODO: Port this as required
-      return -1;
+      return;
     }
     else
     {
@@ -80,7 +80,7 @@ void test_processes()
           if (_syscall(KILL_PROCESS, (uint64_t) p_rqs[rq].pid,0,0,0,0) == -1)
           {                                    // TODO: Port this as required
             printf("Error killing process\n"); // TODO: Port this as required
-            return -1;
+            return;
           }
           p_rqs[rq].state = KILLED;
           alive--;
@@ -93,7 +93,7 @@ void test_processes()
           if (_syscall(BLOCK_PROCESS, (uint64_t) p_rqs[rq].pid,0,0,0,0) == -1)
           {                                     // TODO: Port this as required
             printf("Error blocking process\n"); // TODO: Port this as required
-            return -1;
+            return;
           }
           p_rqs[rq].state = BLOCKED;
         }
@@ -108,7 +108,7 @@ void test_processes()
         if (_syscall(UNBLOCK_PROCESS,(uint64_t) p_rqs[rq].pid,0,0,0,0) == -1)
         {                                       // TODO: Port this as required
           printf("Error unblocking process\n"); // TODO: Port this as required
-          return -1;
+          return;
         }
         p_rqs[rq].state = RUNNING;
       }
@@ -117,7 +117,7 @@ void test_processes()
   _syscall(PS,0,0,0,0,0);
   
   printf("termino\n");
-  return 0;
+  return ;
 }
 
 void test_kill()
@@ -129,5 +129,5 @@ void test_kill()
   _syscall(PS,0,0,0,0,0);
   //_syscall(KILL_PROCESS,pid,0,0,0,0);
   //_syscall(PS,0,0,0,0,0);
-  return 0;
+  return;
 }

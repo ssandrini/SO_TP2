@@ -1,36 +1,29 @@
 #include <commands.h>
 
-char commandsNames[COMMANDS_SIZE][NAME_MAX] = {"help", "time", "inforeg", "printmem", "cpuid", "trigger0", "trigger6", "clear", "mem", "ps", "kill", "nice", "block", "sem", "pipe"};
-char info[COMMANDS_SIZE - 1][INFO_MAX] = {"desplega el dia y la hora del sistema\n", "imprime en pantalla el valor de todos los registros\n",
-                                          "realiza un volcado de memoria de 32 bytes a partir de la direccion recibida como argumento \n",
-                                          "despliega los features del procesador\n", "demuestra la excepcion de division por cero\n",
-                                          "demuestra la excepcion de operacion invalida\n", "borra toda la pantalla\n", "imprime el estado de la memoria\n",
-                                          "imprime la lista de todos los procesos con sus propiedades\n", "mata un proceso dado su ID\n",
-                                          "cambia la prioridad de un proceso dado su ID y la nueva prioridad\n", "cambia el estado de un proceso entre bloqueado y listo dado su ID\n",
-                                          "imprime la lista de todos los semaforos con sus propiedades\n", "imprime la lista de todos los pipes con sus propiedades\n"};
-
-char userAppsNames[APPS_SIZE][NAME_MAX] = {"loop", "cat", "wc", "filter", "phylo"};
-char userAppsInfo[APPS_SIZE][INFO_MAX] = {"imprime su ID con un saludo cada 15 segundos\n", "imprime el stdin tal como lo recibe\n", "cuenta la cantidad de lineas del input\n", "filtra las vocales del input\n", "implementa el problema de los filosofos comensales\n"};
-
-char testsAppsNames[TESTS_SIZE][NAME_MAX] = {"test_mm", "test_processes", "test_kill", "", ""};
-char testsAppsInfo[TESTS_SIZE][INFO_MAX] = {};
+char commandsNames[BUILTIN_SIZE][NAME_MAX] = {"help", "clear"};
+char info[BUILTIN_SIZE + APPS_SIZE][INFO_MAX] = {"muestra todos los comandos con sus explicaciones\n", "borra toda la pantalla\n", "imprime su ID con un saludo cada 15 segundos\n", "imprime el stdin tal como lo recibe\n", "cuenta la cantidad de lineas del input\n",
+                                                 "filtra las vocales del input\n", "implementa el problema de los filosofos comensales\n", "imprime en pantalla el valor de todos los registros\n",
+                                                 "realiza un volcado de memoria de 32 bytes a partir de la direccion recibida como argumento \n",
+                                                 "despliega los features del procesador\n", "demuestra la excepcion de division por cero\n",
+                                                 "demuestra la excepcion de operacion invalida\n", "desplega el dia y la hora del sistema\n", "imprime el estado de la memoria\n",
+                                                 "imprime la lista de todos los procesos con sus propiedades\n", "mata un proceso dado su ID\n",
+                                                 "cambia la prioridad de un proceso dado su ID y la nueva prioridad\n", "cambia el estado de un proceso entre bloqueado y listo dado su ID\n",
+                                                 "imprime la lista de todos los semaforos con sus propiedades\n", "imprime la lista de todos los pipes con sus propiedades\n",
+                                                 "chequea el correcto funcionamiento del manejo de memoria\n", "chequea el correcto funcionamiento del manejo de procesos\n"};
+char userAppsNames[APPS_SIZE][NAME_MAX] = {"loop", "cat", "wc", "filter", "phylo", "inforeg", "printmem", "cpuid", "trigger0", "trigger6", "time", "mem", "ps", "kill", "nice", "block", "sem", "pipe", "test_mm", "test_processes"};
 
 void help()
 {
-    for (int i = 0; i < COMMANDS_SIZE - 1; i++)
+    int i=0;
+    for (; i < BUILTIN_SIZE; i++)
     {
-        printTitle(commandsNames[i + 1]);
+        printTitle(commandsNames[i]);
         printf(": %s", info[i]);
     }
-    for (int i = 0; i < APPS_SIZE; i++)
+    for (i= 0; i < APPS_SIZE; i++)
     {
         printTitle(userAppsNames[i]);
-        printf(": %s", userAppsInfo[i]);
-    }
-    for (int i = 0; i < TESTS_SIZE; i++)
-    {
-        printTitle(testsAppsNames[i]);
-        printf(": %s", testsAppsInfo[i]);
+        printf(": %s", info[i+2]);
     }
 }
 
@@ -39,8 +32,13 @@ void clear()
     _syscall(CLEAR_SCREEN, 0, 0, 0, 0, 0);
 }
 
-void getTime()
+void getTime(int argc, char **argv)
 {
+    if (argc != 1)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
     int date[3];
     int hour[3];
     _syscall(GET_TIME, (uint64_t)date, (uint64_t)hour, 0, 0, 0);
@@ -50,8 +48,13 @@ void getTime()
     printf(" %d : %d : %d \n", hour[0], hour[1], hour[2]);
 }
 
-void cpuid()
+void cpuid(int argc, char **argv)
 {
+    if (argc != 1)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
     //para poner en el run.sh y ver si cambian los features
     //-cpu qemu64,mmx=on,sse2=on,f16c=on,sse=off,vaes=on
 
@@ -134,8 +137,13 @@ void cpuid()
     printf(" : %s  \n", aux == 1 ? "SI" : "NO");
 }
 
-void inforeg()
+void inforeg(int argc, char **argv)
 {
+    if (argc != 1)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
     uint64_t registers[19];
     static char *registersName[] = {"R15    ", "R14    ", "R13    ", "R12    ", "R11    ", "R10    ", "R9     ", "R8     ", "RSI    ", "RDI    ", "RBP    ", "RDX    ", "RCX    ", "RBX    ", "RAX    ", "RIP    ", "CS     ", "FLAGS  ", "RSP    "};
     _syscall(GET_REG, (uint64_t)registers, 0, 0, 0, 0);
@@ -149,9 +157,30 @@ void inforeg()
     printf("\n");
 }
 
-void getMem(char *param)
+void getMem(int argc, char **argv)
 {
-    uint8_t *dir = (uint8_t *)hexaStrToDir(param);
+    if (argc != 2)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
+    int j = 0;
+    while (argv[1][j] != 0)
+    {
+        if (!((argv[1][j] >= '0' && argv[1][j] <= '9') || (argv[1][j] >= 'A' && argv[1][j] <= 'F')))
+        {
+            printError("La direccion debe ser hexadecimal\n");
+            return;
+        }
+        else
+            j++;
+    }
+    if (j >= 8)
+    {
+        printError("La direccion debe estar entre 00000000 y FFFFFFF\n");
+        return;
+    }
+    uint8_t *dir = (uint8_t *)hexaStrToDir(argv[1]);
     uint8_t vec[32]; // 32 "registros" de 1 byte
     _syscall(GET_MEM, (uint64_t)dir, (uint64_t)vec, 0, 0, 0);
     printTitle("Volcado de memoria byte a byte a partir de la direccion solicitada: \n");
@@ -164,7 +193,7 @@ void getMem(char *param)
     printf("\n");
 }
 
-void exc0Trigger()
+void exc0Trigger(int argc, char **argv)
 {
     int a = 5;
     int b = 0;
@@ -172,249 +201,144 @@ void exc0Trigger()
     printf("%d \n", c);
 }
 
-void exc6Trigger()
+void exc6Trigger(int argc, char **argv)
 {
     _exc6Trigger();
 }
 
-int checkCommandBuiltIn(char *buffer, char *parameter)
+int checkCommandBuiltIn(char *buffer)
 {
-    char aux[LENGTH_PRINTMEM];
-    for (int i = 0; i < COMMANDS_SIZE; i++)
+    for (int i = 0; i < BUILTIN_SIZE; i++)
     {
-        if (i == CASE_GETMEM)
-        {
-            int j = 0;
-            for (; j < LENGTH_PRINTMEM; j++)
-            {
-                aux[j] = buffer[j];
-            }
-            aux[j] = 0;
-            if (strcmp(aux, commandsNames[i]) == 0 && buffer[LENGTH_PRINTMEM] == ' ')
-            {
-                int len = strlen(buffer);
-                if (len == LENGTH_PRINTMEM + 1)
-                {
-                    printError("Indique la direccion como parametro de la forma printmem DIR (hexa) \n");
-                    return -1;
-                }
-                j = LENGTH_PRINTMEM + 1;
-                while (buffer[j] != 0)
-                {
-                    if ((buffer[j] >= '0' && buffer[j] <= '9') || (buffer[j] >= 'A' && buffer[j] <= 'F'))
-                    {
-                        *parameter++ = buffer[j++];
-                    }
-                    else
-                        return -1;
-                }
-                if (j >= LENGTH_PRINTMEM + 1 + 8)
-                {
-                    printError("La direccion debe estar entre 00000000 y FFFFFFF\n");
-                    return -1;
-                }
-                *parameter = 0;
-                return i;
-            }
-        }
-        else if (i == CASE_KILL || i == CASE_NICE)
-        {
-            int j = 0;
-            for (; j < LENGTH_KILL; j++)
-            {
-                aux[j] = buffer[j];
-            }
-            aux[j] = 0;
-            if (strcmp(aux, commandsNames[i]) == 0 && buffer[LENGTH_KILL] == ' ')
-            {
-                int len = strlen(buffer);
-                if (len == LENGTH_KILL + 1)
-                {
-                    printError("Indique el PID como parametro \n");
-                    return -1;
-                }
-                j = LENGTH_KILL + 1;
-                while (buffer[j] != 0)
-                {
-                    if (buffer[j] >= '0' && buffer[j] <= '9')
-                    {
-                        *parameter++ = buffer[j++];
-                    }
-                    else
-                        return -1;
-                }
-                *parameter = 0;
-                return i;
-            }
-        }
-        else if (i == CASE_BLOCK)
-        {
-            int j = 0;
-            for (; j < LENGTH_BLOCK; j++)
-            {
-                aux[j] = buffer[j];
-            }
-            aux[j] = 0;
-            if (strcmp(aux, commandsNames[i]) == 0 && buffer[LENGTH_BLOCK] == ' ')
-            {
-                int len = strlen(buffer);
-                if (len == LENGTH_BLOCK + 1)
-                {
-                    printError("Indique el PID como parametro \n");
-                    return -1;
-                }
-                j = LENGTH_BLOCK + 1;
-                while (buffer[j] != 0)
-                {
-                    if (buffer[j] >= '0' && buffer[j] <= '9')
-                    {
-                        *parameter++ = buffer[j++];
-                    }
-                    else
-                        return -1;
-                }
-                *parameter = 0;
-                return i;
-            }
-        }
-        else if (strcmp(buffer, commandsNames[i]) == 0)
+        if (strcmp(buffer, commandsNames[i]) == 0)
             return i;
     }
     return -1;
 }
 
-int checkTests(char *buffer, char *parameter)
+int checkCommandUserApps(char *buffer)
 {
-    for (int i = 0; i < TESTS_SIZE; i++)
-    {
-       if (strcmp(buffer, testsAppsNames[i]) == 0)
-            return i;
-    }
-    return -1;
-}
-
-int checkCommandUserApps(char *buffer, char *parameter)
-{
-
-    /*
-      int pipeIdx = findPipe(argc, argv);
-      if (pipeIdx != -1)
-      {
-            if (pipeIdx == 0 || pipeIdx == argc - 1)
-            {
-                  print("Pipe should be between two commands\n");
-                  return;
-            }
-            if (runPipe(pipeIdx, argv, argc, fg) == -1)
-            {
-                  print("One of the pipe commands was not valid \n");
-                  return;
-            }
-            return;
-      }
-      */
-
-    int index = -1;
-    char aux[LENGTH_CAT];
     for (int i = 0; i < APPS_SIZE; i++)
     {
-        /*
-        if (i == CASE_CAT)
-        {
-            int j = 0;
-            for (; j < LENGTH_CAT; j++)
-            {
-                aux[j] = buffer[j];
-            }
-            aux[j] = 0;
-            if (strcmp(aux, userAppsNames[i]) == 0 && buffer[LENGTH_CAT] == ' ')
-            {
-                int len = strlen(buffer);
-                if(len == LENGTH_CAT + 1) {
-                    printError("Escriba el texto en el formato cat TEXTO \n");
-                    return -1;
-                }
-                j = LENGTH_CAT + 1;
-                while (buffer[j] != 0)
-                {
-                        *parameter++ = buffer[j++];
-                }
-                *parameter = 0;
-                return i;
-            }
-        }
-        else 
-        */    
         if (strcmp(buffer, userAppsNames[i]) == 0)
         {
             return i;
         }
     }
-    return index;
-
-    // createProcess(userAppsNames[i], , , , );  Hay que ver que recibe bien
+    return -1;
 }
 
-void mem()
+void mem(int argc, char **argv)
 {
+    if (argc != 1)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
     _syscall(PRINT_STATUS_MEM, 0, 0, 0, 0, 0);
-    /* char *argv[] = {"Pepe"};
-    _syscall(NEW_PROCESS, (uint64_t) pepe3, (uint64_t) argv, 1, 1, 0);
-    */
-    //test_processes();
 }
-void ps()
+
+void ps(int argc, char **argv)
 {
+    if (argc != 1)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
     _syscall(PS, 0, 0, 0, 0, 0);
 }
 
-void kill(char *pid)
+void kill(int argc, char **argv)
 {
-    printf("%d\n", strToInt(pid));
-    _syscall(KILL_PROCESS, (uint64_t)strToInt(pid), 0, 0, 0, 0);
+    if (argc != 2)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
+    _syscall(KILL_PROCESS, (uint64_t)strToInt(argv[1]), 0, 0, 0, 0);
 }
 
-void nice(int pid)
+void nice(int argc, char **argv)
 {
-    _syscall(NICE, (uint64_t)pid, (uint64_t)5, 0, 0, 0);
+    if (argc != 3)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
+    if (strToInt(argv[2]) < 1 || strToInt(argv[2]) > 99)
+    {
+        printError("La prioridad debe estar entre 1 y 99");
+        return;
+    }
+    printf("pid: %d, newPriority: %d\n", strToInt(argv[1]), strToInt(argv[2]));
+
+    _syscall(NICE, (uint64_t)strToInt(argv[1]), (uint64_t)strToInt(argv[2]), 0, 0, 0);
 }
 
-void block(char *pid)
+void block(int argc, char **argv)
 {
-    _syscall(BLOCK_PROCESS, (uint64_t)strToInt(pid), 0, 0, 0, 0);
+    if (argc != 2)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
+    
+    _syscall(BLOCK_PROCESS, (uint64_t)strToInt(argv[1]), 0, 0, 0, 0);
 }
 
-void pipe()
+void pipe(int argc, char **argv)
 {
+    if (argc != 1)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
+    printf("Todavia no lo implementamos\n");
 }
 
-void sem()
+void sem(int argc, char **argv)
 {
-
+    if (argc != 1)
+    {
+        printError("Cantidad de argumentos incorrecta");
+        return;
+    }
+    printf("Todavia no lo implementamos\n");
 }
 
 int prepareArgs(char token, char **argv, char *input)
 {
-    int i = 0;
+    int index = 0;
+
     if (*input != token && *input != '\0')
-        argv[i++] = input;
+        argv[index++] = input;
 
     while (*input != '\0')
     {
-        if (*input != token)
-        {
-            input++;
-        }
-        else
+        if (*input == token)
         {
             *input = 0;
             if (*(input + 1) != token && (*(input + 1) != '\0'))
             {
-                if (i >= MAX_ARGS)
-                    return i;
-                argv[i++] = input + 1;
+                if (index >= MAX_ARGS)
+                    return index;
+                argv[index++] = input + 1;
             }
         }
+        input++;
     }
-    return i;
+    return index;
 }
+// loop 1
+
+
+/*
+char info[COMMANDS_SIZE][INFO_MAX] = {"desplega el dia y la hora del sistema\n", "imprime en pantalla el valor de todos los registros\n",
+                                          "realiza un volcado de memoria de 32 bytes a partir de la direccion recibida como argumento \n",
+                                          "despliega los features del procesador\n", "demuestra la excepcion de division por cero\n",
+                                          "demuestra la excepcion de operacion invalida\n", "borra toda la pantalla\n", "imprime el estado de la memoria\n",
+                                          "imprime la lista de todos los procesos con sus propiedades\n", "mata un proceso dado su ID\n",
+                                          "cambia la prioridad de un proceso dado su ID y la nueva prioridad\n", "cambia el estado de un proceso entre bloqueado y listo dado su ID\n",
+                                          "imprime la lista de todos los semaforos con sus propiedades\n", "imprime la lista de todos los pipes con sus propiedades\n"};
+
+*/
