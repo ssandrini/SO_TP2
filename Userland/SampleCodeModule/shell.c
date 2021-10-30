@@ -16,6 +16,7 @@ int exitUser;
 void (*func_ptr[COMMANDS_SIZE])() = {help, getTime, inforeg, getMem, cpuid, exc0Trigger, exc6Trigger, clear, mem, ps, kill, nice, block, sem, pipe};
 //int (*func_ptr_apps[APPS_SIZE])() = {loop, cat, wc, filter, phylo};
 void (*func_ptr_apps[APPS_SIZE])(int, char **) = {loop, cat, wc, filter, phylo};
+void (*func_ptr_tests[APPS_SIZE])() = {test_mm, test_processes, test_kill };
 void shell()
 {
     clear();
@@ -46,14 +47,15 @@ void shell()
                 int fg = 1;
                 argc = prepareArgs(' ', argv, buffer);
                 _syscall(NEW_PROCESS,(uint64_t) &loop, (uint64_t) argv, (uint64_t) argc, 0,0 );
+                buffer[0] = 0;
             }
             else if (isCommand == -1)
             {
                 isCommand = checkCommandBuiltIn(buffer, parameter);
-                buffer[0] = 0;
                 bIndex = 0;
                 if (isCommand >= 0)
                 {
+                    buffer[0] = 0;
                     if (isCommand == CASE_GETMEM || isCommand==CASE_KILL || isCommand==CASE_BLOCK)
                         func_ptr[isCommand](parameter);
                     else
@@ -62,7 +64,12 @@ void shell()
                 }
                 else
                 {
-                    printError("El comando ingresado es invalido\n");
+                    isCommand = checkTests(buffer, parameter);
+                    if(isCommand>=0){
+                        func_ptr_tests[isCommand]();
+                    }
+                    else
+                        printError("El comando ingresado es invalido\n");
                 }
             }
             printUser(user);

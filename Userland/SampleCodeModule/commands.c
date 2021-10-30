@@ -12,7 +12,7 @@ char info[COMMANDS_SIZE - 1][INFO_MAX] = {"desplega el dia y la hora del sistema
 char userAppsNames[APPS_SIZE][NAME_MAX] = {"loop", "cat", "wc", "filter", "phylo"};
 char userAppsInfo[APPS_SIZE][INFO_MAX] = {"imprime su ID con un saludo cada 15 segundos\n", "imprime el stdin tal como lo recibe\n", "cuenta la cantidad de lineas del input\n", "filtra las vocales del input\n", "implementa el problema de los filosofos comensales\n"};
 
-char testsAppsNames[TESTS_SIZE][NAME_MAX] = {};
+char testsAppsNames[TESTS_SIZE][NAME_MAX] = {"test_mm", "test_processes", "test_kill", "", ""};
 char testsAppsInfo[TESTS_SIZE][INFO_MAX] = {};
 
 void help()
@@ -278,6 +278,16 @@ int checkCommandBuiltIn(char *buffer, char *parameter)
             }
         }
         else if (strcmp(buffer, commandsNames[i]) == 0)
+            return i;
+    }
+    return -1;
+}
+
+int checkTests(char *buffer, char *parameter)
+{
+    for (int i = 0; i < TESTS_SIZE; i++)
+    {
+       if (strcmp(buffer, testsAppsNames[i]) == 0)
             return i;
     }
     return -1;

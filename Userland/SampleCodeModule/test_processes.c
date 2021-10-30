@@ -34,7 +34,7 @@ typedef struct P_rq
   enum State state;
 } p_rq;
 
-int test_processes()
+void test_processes()
 {
   
   printf("Test processes\n");
@@ -120,7 +120,7 @@ int test_processes()
   return 0;
 }
 
-int test_kill()
+void test_kill()
 {
   printf("Test kill\n");
   char* argAux[] = {"mytestkill"};

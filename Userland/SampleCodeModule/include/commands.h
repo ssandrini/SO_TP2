@@ -54,6 +54,7 @@ void block(char * pid);
 int checkCommandBuiltIn(char * buffer, char * parameter);
 int checkCommandUserApps(char * buffer, char * parameter);
 int prepareArgs(char token, char **argv, char *input);
+int checkTests(char *buffer, char *parameter);
 //-------------------------------------------------------------------------------------------
 
 //---------------------------------------ASM FUNCTIONS----------------------------------------
