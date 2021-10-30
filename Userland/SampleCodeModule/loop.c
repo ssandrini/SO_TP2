@@ -1,5 +1,5 @@
 #include "loop.h"
-
+#include "tests.h"
 void waitSeconds(int seconds)
 {
     // int time = ticks_elapsed() + seconds;
@@ -8,17 +8,18 @@ void waitSeconds(int seconds)
     //me tira error pero ticks_elapsed esta en time. Hay que ver que onda eso
 }
 
-int loop(int argc, char *argv[])
+void loop(int argc, char *argv[])
 {
     while(1)
     {
         printf("a");
+        _hltuser();
     }
     /*
     if (argc != 1)
     {
         printError("Cantidad de parametros incorrecto.\n");
-        return -1;
+        return ;
     }
     //int pid = getPID();
     while (1)
@@ -26,6 +27,6 @@ int loop(int argc, char *argv[])
         waitSeconds(15);
         //print("%d\n", pid);
     }
-    return 1;
+    return ;
     */
 }

@@ -4,6 +4,6 @@
 #include "stdfun.h"
 #include <stdint.h>
 #include "syscalls.h"
-int phylo(int argc, char *argv[]);
+void phylo(int argc, char *argv[]);
 
 #endif

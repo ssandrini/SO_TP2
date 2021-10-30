@@ -10,11 +10,11 @@ int isVowel(char letter){
     return -1;
 }
 
-int filter(int argc, char *argv[])
+void filter(int argc, char *argv[])
 {
  if (argc != 1){
      printError("Cantidad de parametros incorrecto.\n");
-     return -1;
+     return ;
  }
  int c;
  while ((c=getChar()) != -1)
@@ -23,5 +23,5 @@ int filter(int argc, char *argv[])
          putChar(c);
      }
  }
- return 1;
+ return ;
 }

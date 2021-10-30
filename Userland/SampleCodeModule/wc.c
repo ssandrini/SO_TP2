@@ -1,10 +1,10 @@
 #include "wc.h"
 
-int wc(int argc, char *argv[])
+void wc(int argc, char *argv[])
 {
  if (argc != 1){
      printError("Cantidad de parametros incorrecto.\n");
-     return -1;
+    return;
  }
  int c;
  int count =0;
@@ -15,5 +15,5 @@ int wc(int argc, char *argv[])
      }
  }
  printf("La cantidad de lineas es: %d.\n", count);
- return 1;
+ return;
 }

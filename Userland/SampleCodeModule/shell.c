@@ -13,11 +13,13 @@ int bIndex;
 int uIndex;
 int exit = 0;
 int exitUser;
-void (*func_ptr[COMMANDS_SIZE])() = {help, getTime, inforeg, getMem, cpuid, exc0Trigger, exc6Trigger, quadratic, clear, celsius, fahrenheit, polar, mem, ps, kill, nice, block};
-int (*func_ptr_apps[APPS_SIZE])() = {loop, cat, wc, filter, phylo};
-
+void (*func_ptr[COMMANDS_SIZE])() = {help, getTime, inforeg, getMem, cpuid, exc0Trigger, exc6Trigger, clear, mem, ps, kill, nice, block, sem, pipe};
+//int (*func_ptr_apps[APPS_SIZE])() = {loop, cat, wc, filter, phylo};
+void (*func_ptr_apps[APPS_SIZE])(int, char **) = {loop, cat, wc, filter, phylo};
 void shell()
 {
+    char *argv[] = {"App"};
+    int argc = 1;
     clear();
     requestUser();
     printUser(user);
@@ -41,7 +43,7 @@ void shell()
             int isCommand = checkCommandUserApps(buffer, parameter); //el uno por default
             if (isCommand >= 0)
             {
-                func_ptr_apps[isCommand]();
+                _syscall(NEW_PROCESS,(uint64_t) &loop, (uint64_t) argv, (uint64_t) argc, 0,0 );
             }
             else if (isCommand == -1)
             {
@@ -50,7 +52,7 @@ void shell()
                 bIndex = 0;
                 if (isCommand >= 0)
                 {
-                    if (isCommand == 3)
+                    if (isCommand == CASE_GETMEM || isCommand==CASE_KILL || isCommand==CASE_BLOCK)
                         func_ptr[isCommand](parameter);
                     else
                         func_ptr[isCommand]();

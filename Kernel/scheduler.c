@@ -275,8 +275,10 @@ int getPid(schedulerADT scheduler)
 
 int killProcess(schedulerADT scheduler, int pid)
 {
+      ncPrint("bien",10);
       if (scheduler->currentProcess != NULL && scheduler->currentProcess->pcb->pid == pid)
       {
+            ncPrint("mal",10);
             scheduler->currentProcess->pcb->state = KILLED;
             scheduler->life = 0;
             scheduler->processesList->qReady--;
@@ -295,7 +297,10 @@ int killProcess(schedulerADT scheduler, int pid)
             current = current->next;
       }
       if (current == NULL)
+      {
+            ncPrint("bien",10);
             return -1;
+      }
 
       if (current->pcb->state == READY)
             scheduler->processesList->qReady--;

@@ -4,6 +4,6 @@
 #include "stdfun.h"
 #include <stdint.h>
 #include "syscalls.h"
-int wc(int argc, char *argv[]);
+void wc(int argc, char *argv[]);
 
 #endif

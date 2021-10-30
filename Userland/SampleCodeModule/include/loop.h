@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "time.h"
 #include "syscalls.h"
-int loop(int argc, char *argv[]);
+void loop(int argc, char *argv[]);
 
 
 #endif
