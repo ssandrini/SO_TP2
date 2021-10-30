@@ -275,10 +275,8 @@ int getPid(schedulerADT scheduler)
 
 int killProcess(schedulerADT scheduler, int pid)
 {
-      ncPrint("bien",10);
       if (scheduler->currentProcess != NULL && scheduler->currentProcess->pcb->pid == pid)
       {
-            ncPrint("mal",10);
             scheduler->currentProcess->pcb->state = KILLED;
             scheduler->life = 0;
             scheduler->processesList->qReady--;
@@ -298,7 +296,6 @@ int killProcess(schedulerADT scheduler, int pid)
       }
       if (current == NULL)
       {
-            ncPrint("bien",10);
             return -1;
       }
 
@@ -424,6 +421,24 @@ int killFgProcess(schedulerADT scheduler)
       return -1;
 }
 
+int isBlocked(schedulerADT scheduler, int pid)
+{
+      PNode *aux = scheduler->processesList->first;
+      while (aux != NULL && aux->pcb->pid != pid)
+      {
+            aux = aux->next;
+      }
+      if (aux == NULL)
+      {
+            return 0;
+      }
+      if (aux->pcb->state == BLOCKED)
+      {
+            return 1;
+      }
+      return 0;
+}
+
 static void printProcessInfo(PNode *n)
 {
 
@@ -491,6 +506,7 @@ static void enqueue(schedulerADT scheduler, PNode *newProcess)
       {
             scheduler->processesList->last->next = newProcess;
             scheduler->processesList->last = newProcess;
+            scheduler->processesList->last->next = NULL;
       }
 
       scheduler->processesList->size++;
@@ -507,6 +523,8 @@ static PNode *dequeue(schedulerADT scheduler)
       scheduler->processesList->first = scheduler->processesList->first->next;
       scheduler->processesList->size--;
 
+      if(ans == scheduler->processesList->last)
+            scheduler->processesList->first = scheduler->processesList->last = NULL;
       return ans;
 }
 

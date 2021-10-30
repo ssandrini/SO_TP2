@@ -44,9 +44,9 @@ void mem();
 void ps();
 void sem();
 void pipe();
-void kill(int pid);
+void kill(char * pid);
 void nice(int pid);
-void block(int pid);
+void block(char * pid);
 //int cat(int argc, char *argv[]);
 //-------------------------------------------------------------------------------------------
 //---------------------------------------AUX FUNCTIONS---------------------------------------

@@ -39,4 +39,6 @@ void printProcesses(schedulerADT scheduler);
 
 void yield(schedulerADT scheduler);
 
+int isBlocked(schedulerADT scheduler, int pid);
+
 #endif

@@ -263,7 +263,7 @@ int checkCommandBuiltIn(char *buffer, char *parameter)
                     printError("Indique el PID como parametro \n");
                     return -1;
                 }
-                j = LENGTH_BLOCK;
+                j = LENGTH_BLOCK + 1;
                 while (buffer[j] != 0)
                 {
                     if (buffer[j] >= '0' && buffer[j] <= '9')
@@ -358,10 +358,10 @@ void ps()
     _syscall(PS, 0, 0, 0, 0, 0);
 }
 
-void kill(int pid)
+void kill(char * pid)
 {
-    printf("%d\n",pid);
-    _syscall(KILL_PROCESS, (uint64_t)pid, 0, 0, 0, 0);
+    printf("%d\n",strToInt(pid));
+    _syscall(KILL_PROCESS, (uint64_t)strToInt(pid), 0, 0, 0, 0);
 }
 
 void nice(int pid)
@@ -369,9 +369,9 @@ void nice(int pid)
     _syscall(NICE, (uint64_t)pid, (uint64_t)5, 0, 0, 0);
 }
 
-void block(int pid)
+void block(char * pid)
 {
-    _syscall(BLOCK_PROCESS, (uint64_t)pid, 0, 0, 0, 0);
+    _syscall(BLOCK_PROCESS, (uint64_t)strToInt(pid), 0, 0, 0, 0);
 }
 
 void pipe()

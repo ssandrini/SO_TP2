@@ -58,10 +58,13 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         return (uint64_t) killProcess(scheduler, (int) r1);
         break;
     case 11: //sysBLock(pid)
-        return (uint64_t) blockProcess(scheduler, (int) r1);
+        if(isBlocked(scheduler, (int) r1))
+            return (uint64_t) unblockProcess(scheduler, (int) r1);
+        else
+            return (uint64_t) blockProcess(scheduler, (int) r1);
         break;
-    case 12: //sysUnblock(pid)
-        return (uint64_t) unblockProcess(scheduler, (int) r1);
+    case 12: // POR AHORA ESTA VACIA
+        return 0;
         break;
     case 13: //sysNice(pid, priorioty)
         return (uint64_t) setPriority(scheduler, (int) r1, (int) r2);
