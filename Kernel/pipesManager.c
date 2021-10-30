@@ -96,9 +96,12 @@ int pipeRead(int pipeId, char *dest, int count)
 int closePipe(int pipeId)
 {
     if (pipeId < 0 || pipeId > MAX_PIPES || pipeList[pipeId] == NULL)
+    {
         return -1;
+    }
     pipeADT pipe = pipeList[pipeId];
-    return putS(pipe->pipeQueue, EOF);
+    char eof[2] = {-1,0};
+    return putS(pipe->pipeQueue, eof);
 }
 
 int freePipe(int pipeId)
@@ -116,5 +119,32 @@ int freePipe(int pipeId)
 
 void printPipes()
 {
-    return;
+    char *message = "PIPE_ID    ESTADO:     PID DEL PROCESO EN ESPERA:    ";
+    ncPrint(message, 12);
+    ncNewline();
+
+    char * aux = allocMem(memoryManager, 10);
+    
+    for(int i = 0; i < MAX_PIPES; i++)
+    {
+        if(pipeList[i] != NULL)
+        {
+            uintToBase((uint64_t) pipeList[i]->pipeId, aux, 10);
+            ncPrint(aux,15);
+
+            ncPrint("   ",15);
+            if(pipeList[i]->beingAccessed)
+                ncPrint("En uso",15);
+            else
+                ncPrint("Libre",15);
+
+            ncPrint("   ",15);
+
+            uintToBase((uint64_t) pipeList[i]->waitingProcess, aux, 10);
+            ncPrint(aux,15);
+        }
+    }
+    ncNewline();
+    freeMem(memoryManager,aux);
+    
 }

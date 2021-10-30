@@ -104,7 +104,7 @@ unsigned int getBufferSize()
     return buffIndex;
 }
 
-void initKeyboard(schedulerADT sch, memoryManagerADT memMan) 
+void initKeyboard(memoryManagerADT memMan, schedulerADT sch) 
 {
     sem = semCreate(0);
     scheduler = sch;

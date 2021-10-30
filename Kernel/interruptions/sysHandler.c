@@ -1,5 +1,5 @@
 #include <sysHandler.h>
-#include <naiveConsole.h>
+
 static schedulerADT scheduler;
 static memoryManagerADT memoryManager;
 
@@ -102,7 +102,24 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         semPrint();
         return 0;
         break;
-        
+    case 24:
+        return (uint64_t) newPipe();
+        break;
+    case 25:
+        return (uint64_t) closePipe((int) r1);
+        break;
+    case 26:
+        return (uint64_t) freePipe((int) r1);
+    case 27:
+        return (uint64_t) pipeWrite((int) r1, (char *) r2);
+        break;
+    case 28:
+        return (uint64_t) pipeRead((int) r1, (char *) r2, (int) r3);
+        break;
+    case 29:
+        printPipes();
+        return 0;
+        break;
     default:
         return 0;
         break;

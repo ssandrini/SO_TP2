@@ -26,6 +26,12 @@
 #define WAIT_SEM 21
 #define POST_SEM 22
 #define PRINT_SEM 23
+#define CREATE_PIPE 24
+#define CLOSE_PIPE 25
+#define FREE_PIPE 26
+#define WRTIE_PIPE 27
+#define READ_PIPE 28
+#define PRINT_PIPE 29
 
 extern uint64_t _syscall(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t r4, uint64_t rsp);
 

@@ -11,7 +11,7 @@
 #define STDIN 0
 #define STDOUT 1
 #define NO_PIPE -1
-#define EOF {-1,0}
+
 
 typedef struct fdCDT * fdADT;
 int initFdManager(memoryManagerADT mm, schedulerADT sch);

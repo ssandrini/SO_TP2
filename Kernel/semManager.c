@@ -129,11 +129,15 @@ int semClose(uint64_t id)
 {
     Semaphore *sem = findSem(id);
     if (sem == NULL)
+    {   
         return -1;
+    }
 
     if (sem->attachedProcesses > 0)
     {
         sem->attachedProcesses--;
+        if(sem->attachedProcesses == 0)
+            removeFromList(id);
         return 0;
     }
 

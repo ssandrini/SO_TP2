@@ -10,5 +10,5 @@ char getAscii(unsigned int key);
 void removeBuffer();
 unsigned char * getBuffer();
 unsigned int getBufferSize();
-void initKeyboard(schedulerADT sch, memoryManagerADT memMan);
+void initKeyboard(memoryManagerADT memMan, schedulerADT sch);
 #endif

@@ -56,7 +56,7 @@ int main()
 	initSysHandler(mm,scheduler);
 	initSemManager(mm, scheduler);
 	initKeyboard(scheduler,mm);
-	
+	initPipeManager(mm,scheduler);
 	/* First process */
 	char *argv[] = {"Shell"};
 	newProcess(scheduler,50,sampleCodeModuleAddress,argv,1,1);
