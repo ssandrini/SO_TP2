@@ -3,6 +3,8 @@
 
 #include <videoDriver.h>
 
+#define STD_COLOR 15
+
 void ncPrint(const char * string, int color);
 void ncPrintChar(char character, int color);
 void intToHexaStr(char *buff);
