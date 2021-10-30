@@ -114,6 +114,9 @@ void shell()
                 case CASE_TEST_PROCESSES:
                     _syscall(NEW_PROCESS, (uint64_t)&test_processes, (uint64_t)argv, (uint64_t)argc, fg, 0);
                     break;
+                case CASE_TEST_PRIO:
+                    _syscall(NEW_PROCESS, (uint64_t)&test_prio, (uint64_t)argv, (uint64_t)argc, fg, 0);
+                    break;
                 default:
                     printError("El comando ingresado es invalido\n");
                     break;

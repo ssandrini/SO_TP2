@@ -17,6 +17,12 @@ uint32_t GetUniform(uint32_t max)
   return (u + 1.0) * 2.328306435454494e-10 * max;
 }
 
+void busyWait(uint64_t n)
+{
+  for (uint64_t  i = 0; i < n; i++)
+    ;
+}
+
 void *memoryset(void *b, int c, int len)
 {
       unsigned char *p = b;

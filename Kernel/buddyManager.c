@@ -120,12 +120,6 @@ static void *allocRecursive(BNode *current, size_t size, memoryManagerADT mm)
 void *allocMem(memoryManagerADT mm, size_t size)
 {
     void *toReturn = allocRecursive(mm->root, size, mm);
-    /*
-    if (toReturn != NULL)
-    {
-        mm->usedSize += size;
-    }
-    */
     return toReturn;
 }
 

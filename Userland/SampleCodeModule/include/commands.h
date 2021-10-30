@@ -12,7 +12,7 @@
 #define NAME_MAX 20
 #define INFO_MAX 150
 #define BUILTIN_SIZE 2
-#define APPS_SIZE 20
+#define APPS_SIZE 21
 #define MAX_ARGS 5
 
 #define CASE_LOOP 0
@@ -35,6 +35,7 @@
 #define CASE_PIPE 17
 #define CASE_TEST_MM 18
 #define CASE_TEST_PROCESSES 19
+#define CASE_TEST_PRIO 20
 
 
 #define SPECIAL_FEATURES_ID 7

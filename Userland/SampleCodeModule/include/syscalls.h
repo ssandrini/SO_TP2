@@ -19,6 +19,7 @@
 #define PS 14
 #define YIELD 15
 #define PRINT_STATUS_MEM 16
+#define PID 17
 
 extern uint64_t _syscall(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t r4, uint64_t rsp);
 

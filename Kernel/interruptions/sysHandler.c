@@ -90,6 +90,9 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         printStatus(memoryManager);
         return 0;
         break;
+    case 17:
+        return (uint64_t) getPid(scheduler);
+        break;
     default:
         return 0;
         break;
