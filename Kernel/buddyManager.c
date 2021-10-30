@@ -33,11 +33,11 @@ static BNode *newBNode(memoryManagerADT mm, size_t size, void *memDir, size_t le
 {
     BNode *aux = mm->nextBNodePos;
     mm->nextBNodePos = (void *)((char *)mm->nextBNodePos + sizeof(BNode));
-    aux->size = size; //node->size / 2;
+    aux->size = size; 
     aux->left = aux->right = NULL;
-    aux->memDir = memDir; //node->memDir;
+    aux->memDir = memDir; 
     aux->state = FREE;
-    aux->level = level; //node->level + 1;
+    aux->level = level; 
     return aux;
 }
 
@@ -88,6 +88,7 @@ static void *allocRecursive(BNode *current, size_t size, memoryManagerADT mm)
         if (current->size == MIN_BLOCK)
         {
             current->state = USED;
+            mm->usedSize += current->size;
             return current->memDir;
         }
 
@@ -108,6 +109,7 @@ static void *allocRecursive(BNode *current, size_t size, memoryManagerADT mm)
         else
         {
             current->state = USED;
+            mm->usedSize += current->size;
             return current->memDir;
         }
     }
@@ -118,10 +120,12 @@ static void *allocRecursive(BNode *current, size_t size, memoryManagerADT mm)
 void *allocMem(memoryManagerADT mm, size_t size)
 {
     void *toReturn = allocRecursive(mm->root, size, mm);
+    /*
     if (toReturn != NULL)
     {
         mm->usedSize += size;
     }
+    */
     return toReturn;
 }
 

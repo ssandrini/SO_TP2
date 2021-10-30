@@ -5,7 +5,7 @@
 #include <lib.h>
 #include <interrupts.h>
 
-#define STACK_SIZE 4096
+#define STACK_SIZE 2048
 #define SIZE_REGISTER 16
 #define COLOR 15    
 
