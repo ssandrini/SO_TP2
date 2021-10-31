@@ -205,7 +205,7 @@ int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)
       argsCpy(scheduler->memoryManager, argvAux, argv, argc);
       aux->argc = argc;
       aux->argv = argvAux;
-      aux->name = allocMem(scheduler->memoryManager, strlen(argv[0]));
+      aux->name = allocMem(scheduler->memoryManager, strlen(argv[0]) + 3);
       strcpy(argv[0], aux->name);
       aux->priority = priority;
       aux->state = READY;
