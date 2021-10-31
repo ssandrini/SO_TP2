@@ -22,7 +22,7 @@ static memoryManagerADT memMan;
 static schedulerADT scheduler;
 static SemaphoreList *semList;
 static uint64_t idCounter;
-static char * aux10;
+static char *aux10;
 static void addInList(Semaphore *newSem);
 static Semaphore *findSem(uint64_t id);
 static void removeFromList(uint64_t id);
@@ -42,7 +42,7 @@ uint64_t semCreate(uint64_t initValue)
 {
     Semaphore *sem = allocMem(memMan, sizeof(Semaphore));
     if (sem == NULL)
-        return (uint64_t) NULL;
+        return (uint64_t)NULL;
 
     sem->value = initValue;
     sem->blockedSize = 0;
@@ -59,14 +59,14 @@ uint64_t semOpen(uint64_t id)
     Semaphore *sem = findSem(id);
     // hay que chequear si el semaforo ya está lleno?
     if (sem == NULL)
-        return (uint64_t) NULL;
+        return (uint64_t)NULL;
     sem->attachedProcesses++;
     return sem->id;
 }
 
 int semWait(uint64_t id)
 {
-    //ncPrint("WAIT",14);
+    // ncPrint("WAIT",14);
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
@@ -94,7 +94,7 @@ int semWait(uint64_t id)
 
 int semPost(uint64_t id)
 {
-    //ncPrint("POST",13);;
+    // ncPrint("POST",13);;
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
@@ -103,9 +103,9 @@ int semPost(uint64_t id)
 
     while (_xchg(&(sem->mutex), 1) != 0)
     {
-        ;   
+        ;
     }
-    
+
     if (sem->blockedSize > 0)
     {
         int first = sem->blockedPIDs[0];
@@ -129,14 +129,14 @@ int semClose(uint64_t id)
 {
     Semaphore *sem = findSem(id);
     if (sem == NULL)
-    {   
+    {
         return -1;
     }
 
     if (sem->attachedProcesses > 0)
     {
         sem->attachedProcesses--;
-        if(sem->attachedProcesses == 0)
+        if (sem->attachedProcesses == 0)
             removeFromList(id);
         return 0;
     }
@@ -147,33 +147,44 @@ int semClose(uint64_t id)
 
 void semPrint()
 {
-    char *message = "SEM_ID   VALOR:    BLOCKED_PIDS:";
+    char *message = "SEM_ID  VALOR  BLOCKED_PIDS";
     ncPrint(message, 12);
     ncNewline();
 
     Semaphore *current = semList->first;
-    while(current != NULL)
+    int space = strlen(current->id);
+    while (current != NULL)
     {
         uintToBase(current->id, aux10, 10);
-        ncPrint(aux10,15);
-        
-        ncPrint("   ",15);
+        space = current->id >= 10 ? 2 : 1;
+        space = current->id >= 100 ? 3 : space;
+        ncPrint(aux10, COLOR);
+        while (space < 8)
+        {
+            ncPrint(" ", COLOR);
+            space++;
+        }
 
         uintToBase(current->value, aux10, 10);
-        ncPrint(aux10,15);
-
-        ncPrint("   ",15);
-        
-        if(current->blockedSize == 0)
-            ncPrint(" - ",15);
-        else 
+        space = current->id >= 10 ? 2 : 1;
+        space = current->id >= 100 ? 3 : space;
+        ncPrint(aux10, COLOR);
+        while (space < 6)
         {
-            for(int i = 0; i<current->blockedSize; i++)
+            ncPrint(" ", COLOR);
+            space++;
+        }
+
+        if (current->blockedSize == 0)
+            ncPrint(" - ", 15);
+        else
+        {
+            for (int i = 0; i < current->blockedSize; i++)
             {
                 uintToBase(current->blockedPIDs[i], aux10, 10);
-                ncPrint(aux10,15);
-                if( i+1 != current->blockedSize)
-                    ncPrint(", ",15);
+                ncPrint(aux10, 15);
+                if (i + 1 != current->blockedSize)
+                    ncPrint(", ", 15);
             }
         }
         ncNewline();

@@ -33,7 +33,7 @@ int newPipe()
     newPipe->pipeId = i;
     pipeList[i] = newPipe;
 
-    ncPrint("cree pipe",11);
+    ncPrint("cree pipe", 11);
     return newPipe->pipeId;
 }
 
@@ -101,7 +101,7 @@ int closePipe(int pipeId)
         return -1;
     }
     pipeADT pipe = pipeList[pipeId];
-    char eof[2] = {-1,0};
+    char eof[2] = {-1, 0};
     return putS(pipe->pipeQueue, eof);
 }
 
@@ -120,32 +120,39 @@ int freePipe(int pipeId)
 
 void printPipes()
 {
-    char *message = "PIPE_ID    ESTADO:     PID DEL PROCESO EN ESPERA:    ";
+    char *message = "PIPE_ID  ESTADO  PID DEL PROCESO EN ESPERA";
     ncPrint(message, 12);
     ncNewline();
 
-    char * aux = allocMem(memoryManager, 10);
-    
-    for(int i = 0; i < MAX_PIPES; i++)
+    char *aux = allocMem(memoryManager, 10);
+    int space =0;
+
+    for (int i = 0; i < MAX_PIPES; i++)
     {
-        if(pipeList[i] != NULL)
+        if (pipeList[i] != NULL)
         {
-            uintToBase((uint64_t) pipeList[i]->pipeId, aux, 10);
-            ncPrint(aux,15);
+            uintToBase((uint64_t)pipeList[i]->pipeId, aux, 10);
+            space = pipeList[i]->pipeId >= 10 ? 2 : 1;
+            space = pipeList[i]->pipeId >= 100 ? 3 : space;
+            ncPrint(aux, COLOR);
+            while (space < 9)
+            {
+                ncPrint(" ", COLOR);
+                space++;
+            }
 
-            ncPrint("   ",15);
-            if(pipeList[i]->beingAccessed)
-                ncPrint("En uso",15);
+            if (pipeList[i]->beingAccessed)
+                ncPrint("En uso", 15);
             else
-                ncPrint("Libre",15);
+                ncPrint("Libre", 15);
+                ncPrint(" ", 15);
 
-            ncPrint("   ",15);
+            ncPrint("  ", 15);
 
-            uintToBase((uint64_t) pipeList[i]->waitingProcess, aux, 10);
-            ncPrint(aux,15);
+            uintToBase((uint64_t)pipeList[i]->waitingProcess, aux, 10);
+            ncPrint(aux, 15);
         }
     }
     ncNewline();
-    freeMem(memoryManager,aux);
-    
+    freeMem(memoryManager, aux);
 }
