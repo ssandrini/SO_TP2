@@ -410,7 +410,7 @@ void yield(schedulerADT scheduler)
 void printProcesses(schedulerADT scheduler)
 {
       PNode *node = scheduler->processesList->first;
-      char *message = "NAME               PID:   PPID:   PRIORITY:    RSP:     RBP:   GROUND:  STATE:";
+      char *message = "NAME               PID  PPID  PRIORITY  RSP      RBP     GROUND  STATE";
       ncPrint(message, 12);
       newLine();
       int i = 0;
@@ -498,31 +498,58 @@ static void printProcessInfo(PNode *n)
       space = n->pcb->pid >= 10 ? 2 : 1;
       space = n->pcb->pid >= 100 ? 3 : space;
       ncPrint(buff, COLOR);
-      while (space < 7)
+      while (space < 6)
       {
             ncPrint(" ", COLOR);
             space++;
       }
 
       uintToBase((uint64_t)n->pcb->ppid, buff, 10);
+      space = n->pcb->ppid >= 10 ? 2 : 1;
+      space = n->pcb->ppid >= 100 ? 3 : space;
       ncPrint(buff, COLOR);
-      ncPrint("   ", COLOR);
+      while (space < 5)
+      {
+            ncPrint(" ", COLOR);
+            space++;
+      }
 
       uintToBase((uint64_t)n->pcb->priority, buff, 10);
+      space = n->pcb->priority >= 10 ? 2 : 1;
+      space = n->pcb->priority >= 100 ? 3 : space;
       ncPrint(buff, COLOR);
-      ncPrint("   ", COLOR);
+      while (space < 10)
+      {
+            ncPrint(" ", COLOR);
+            space++;
+      }
 
       uintToBase((uint64_t)n->pcb->rsp, buff, 10);
+      space = 0;
       ncPrint(buff, COLOR);
-      ncPrint("   ", COLOR);
+      while (space < 2)
+      {
+            ncPrint(" ", COLOR);
+            space++;
+      }
 
       uintToBase((uint64_t)n->pcb->rbp, buff, 16);
+      space = 0;
       ncPrint(buff, COLOR);
-      ncPrint("   ", COLOR);
+      while (space < 2)
+      {
+            ncPrint(" ", COLOR);
+            space++;
+      }
 
       uintToBase((uint64_t)n->pcb->fg, buff, 10);
+      space = 0;
       ncPrint(buff, COLOR);
-      ncPrint("   ", COLOR);
+      while (space < 7)
+      {
+            ncPrint(" ", COLOR);
+            space++;
+      }
 
       if (n->pcb->state == READY)
       {
