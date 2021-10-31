@@ -12,7 +12,7 @@
 #define NAME_MAX 20
 #define INFO_MAX 150
 #define BUILTIN_SIZE 2
-#define APPS_SIZE 21
+#define APPS_SIZE 19
 #define MAX_ARGS 5
 
 #define CASE_LOOP 0
@@ -23,19 +23,17 @@
 #define CASE_INFOREG 5
 #define CASE_PRINTMEM 6
 #define CASE_CPUID 7
-#define CASE_TRIGGER0 8
-#define CASE_TRIGGER6 9
-#define CASE_TIME 10
-#define CASE_MEM 11
-#define CASE_PS 12
-#define CASE_KILL 13
-#define CASE_NICE 14
-#define CASE_BLOCK 15
-#define CASE_SEM 16
-#define CASE_PIPE 17
-#define CASE_TEST_MM 18
-#define CASE_TEST_PROCESSES 19
-#define CASE_TEST_PRIO 20
+#define CASE_TIME 8
+#define CASE_MEM 9
+#define CASE_PS 10
+#define CASE_KILL 11
+#define CASE_NICE 12
+#define CASE_BLOCK 13
+#define CASE_SEM 14
+#define CASE_PIPE 15
+#define CASE_TEST_MM 16
+#define CASE_TEST_PROCESSES 17
+#define CASE_TEST_PRIO 18
 
 
 #define SPECIAL_FEATURES_ID 7
@@ -46,8 +44,6 @@ void help();
 void inforeg(int argc, char ** argv);
 void getMem(int argc, char ** argv);
 void getTime(int argc, char ** argv);
-void exc0Trigger(int argc, char ** argv);
-void exc6Trigger(int argc, char ** argv);
 void clear();
 void cpuid(int argc, char ** argv);
 //void quadratic();
@@ -71,7 +67,7 @@ int checkTests(char *buffer, char *parameter);
 //-------------------------------------------------------------------------------------------
 
 //---------------------------------------ASM FUNCTIONS----------------------------------------
-extern void _exc6Trigger();
+//extern void _exc6Trigger();
 /*
 extern int _quadratic(long double * a, long double * b, long double * c, long double * r1, long double * r2);
 extern void _FtoCelcius(long double * deg_f, long double * c1, long double * c2 , long double * res);

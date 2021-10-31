@@ -228,12 +228,6 @@ static uint64_t newProcess(int isCommand, int argc, char **argv, int fg, int *fd
     case CASE_CPUID:
         return _syscall(NEW_PROCESS, (uint64_t)&cpuid, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
         break;
-    case CASE_TRIGGER0:
-        return _syscall(NEW_PROCESS, (uint64_t)&exc0Trigger, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
-        break;
-    case CASE_TRIGGER6:
-        return _syscall(NEW_PROCESS, (uint64_t)&exc6Trigger, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
-        break;
     case CASE_TIME:
         return _syscall(NEW_PROCESS, (uint64_t)&getTime, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
         break;

@@ -4,14 +4,13 @@ char commandsNames[BUILTIN_SIZE][NAME_MAX] = {"help", "clear"};
 char info[BUILTIN_SIZE + APPS_SIZE][INFO_MAX] = {"muestra todos los comandos con sus explicaciones\n", "borra toda la pantalla\n", "imprime su ID con un saludo cada 15 segundos\n", "imprime el stdin tal como lo recibe\n", "cuenta la cantidad de lineas del input\n",
                                                  "filtra las vocales del input\n", "implementa el problema de los filosofos comensales\n", "imprime en pantalla el valor de todos los registros\n",
                                                  "realiza un volcado de memoria de 32 bytes a partir de la direccion recibida como argumento \n",
-                                                 "despliega los features del procesador\n", "demuestra la excepcion de division por cero\n",
-                                                 "demuestra la excepcion de operacion invalida\n", "desplega el dia y la hora del sistema\n", "imprime el estado de la memoria\n",
+                                                 "despliega los features del procesador\n", "desplega el dia y la hora del sistema\n", "imprime el estado de la memoria\n",
                                                  "imprime la lista de todos los procesos con sus propiedades\n", "mata un proceso dado su ID\n",
                                                  "cambia la prioridad de un proceso dado su ID y la nueva prioridad\n", "cambia el estado de un proceso entre bloqueado y listo dado su ID\n",
                                                  "imprime la lista de todos los semaforos con sus propiedades\n", "imprime la lista de todos los pipes con sus propiedades\n",
                                                  "chequea el correcto funcionamiento del manejo de memoria\n", "chequea el correcto funcionamiento del manejo de procesos\n",
                                                  "chequea el correcto funcionamiendo del manejo de prioridades\n"};
-char userAppsNames[APPS_SIZE][NAME_MAX] = {"loop", "cat", "wc", "filter", "phylo", "inforeg", "printmem", "cpuid", "trigger0", "trigger6", "time", "mem", "ps", "kill", "nice", "block", "sem", "pipe", "test_mm", "test_processes", "test_prio"};
+char userAppsNames[APPS_SIZE][NAME_MAX] = {"loop", "cat", "wc", "filter", "phylo", "inforeg", "printmem", "cpuid", "time", "mem", "ps", "kill", "nice", "block", "sem", "pipe", "test_mm", "test_processes", "test_prio"};
 
 void help()
 {
@@ -192,19 +191,6 @@ void getMem(int argc, char **argv)
         printf("%Xh  ", vec[i]);
     }
     printf("\n");
-}
-
-void exc0Trigger(int argc, char **argv)
-{
-    int a = 5;
-    int b = 0;
-    int c = a / b;
-    printf("%d \n", c);
-}
-
-void exc6Trigger(int argc, char **argv)
-{
-    _exc6Trigger();
 }
 
 int checkCommandBuiltIn(char *buffer)
