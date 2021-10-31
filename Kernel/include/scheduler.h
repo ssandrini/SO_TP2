@@ -5,8 +5,7 @@
 #include <lib.h>
 #include <interrupts.h>
 
-#define STACK_SIZE 2048
-#define SIZE_REGISTER 16
+#define STACK_SIZE 4096
 #define COLOR 15    
 
 typedef enum
@@ -45,4 +44,5 @@ void yield(schedulerADT scheduler);
 
 int isBlocked(schedulerADT scheduler, int pid);
 
+int wait(schedulerADT scheduler, int pid);
 #endif

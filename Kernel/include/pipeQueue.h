@@ -3,12 +3,12 @@
 #include <lib.h>
 #include <memoryManager.h>
 
-#define BUFFER_SIZE 1024
+#define PIPE_BUFFER_SIZE 1024
 #define EOF -1
 
 typedef struct pipeQueueCDT * pipeQueueADT;
 
-pipeQueueADT newPipeQueue();
+pipeQueueADT newPipeQueue(memoryManagerADT memoryManager);
 
 int isEmpty(pipeQueueADT pipeQueue);
 

@@ -180,6 +180,12 @@ schedulerADT newScheduler(memoryManagerADT mm)
 
 int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)(int, char **), char **argv, int argc, int fg, int fd[2])
 {
+      /*
+      uintToBase(fd[0],aux2,10);
+      ncPrint(aux2,10);
+      uintToBase(fd[1],aux2,10);
+      ncPrint(aux2,11);
+      */
       if (scheduler->currentProcess != NULL)
       {
             // Solo un foreground puede crear a otro foreground
@@ -218,10 +224,12 @@ int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)
       scheduler->processesList->qReady++;
 
       // bloqueo al padre (la shell deberia bloquearse mientras se corre un ls por ejemplo)
+
       if (fg == 1 && scheduler->currentProcess != NULL && scheduler->currentProcess != scheduler->idle && scheduler->currentProcess->pcb->fg == 1)
       {
             blockProcess(scheduler, scheduler->currentProcess->pcb->pid);
       }
+
       return aux->pid;
 }
 
@@ -239,7 +247,7 @@ void *nextProcess(schedulerADT scheduler, void *currentRsp)
       else
       {
             scheduler->currentProcess->pcb->rsp = currentRsp;
-            if (scheduler->life < 1) 
+            if (scheduler->life < 1)
             {
                   if (scheduler->currentProcess != scheduler->idle)
                   {
@@ -255,7 +263,7 @@ void *nextProcess(schedulerADT scheduler, void *currentRsp)
                                     removeProcess(scheduler, scheduler->currentProcess);
                               }
                               else if (scheduler->currentProcess->pcb->state == BLOCKED)
-                              {     
+                              {
                                     enqueue(scheduler, scheduler->currentProcess);
                               }
                         } while (scheduler->processesList->qReady > 0 && scheduler->currentProcess->pcb->state != READY);
@@ -278,7 +286,7 @@ int getPid(schedulerADT scheduler)
 
 int killProcess(schedulerADT scheduler, int pid)
 {
-      if(pid < 2)
+      if (pid < 2)
       {
             return -1;
       }
@@ -348,7 +356,7 @@ int blockProcess(schedulerADT scheduler, int pid)
 {
       if (scheduler->currentProcess->pcb->pid == pid)
       {
-            
+
             scheduler->currentProcess->pcb->state = BLOCKED;
             scheduler->processesList->qReady--;
             scheduler->life = 0;
@@ -406,12 +414,11 @@ void printProcesses(schedulerADT scheduler)
       ncPrint(message, 12);
       newLine();
       int i = 0;
-      for (i= 0; i < scheduler->processesList->size; node = node->next, i++)
+      for (i = 0; i < scheduler->processesList->size; node = node->next, i++)
       {
             printProcessInfo(node);
             newLine();
       }
-
 
       if (scheduler->currentProcess != NULL)
             printProcessInfo(scheduler->currentProcess);
@@ -457,6 +464,23 @@ int getCurrentFdWrite(schedulerADT scheduler)
       return scheduler->currentProcess->pcb->fd[1];
 }
 
+int wait(schedulerADT scheduler, int pid)
+{
+      PNode *aux = scheduler->processesList->first;
+      while (aux != NULL && aux->pcb->pid != pid)
+      {
+            aux = aux->next;
+      }
+      if (aux == NULL)
+      {
+            return 0;
+      }
+      aux->pcb->fg = 1;
+      blockProcess(scheduler, scheduler->currentProcess->pcb->pid);
+      return 0;
+     
+}
+
 static void printProcessInfo(PNode *n)
 {
 
@@ -470,7 +494,7 @@ static void printProcessInfo(PNode *n)
             space++;
       }
 
-      uintToBase((uint64_t) n->pcb->pid, buff, 10);
+      uintToBase((uint64_t)n->pcb->pid, buff, 10);
       space = n->pcb->pid >= 10 ? 2 : 1;
       space = n->pcb->pid >= 100 ? 3 : space;
       ncPrint(buff, COLOR);
@@ -480,23 +504,23 @@ static void printProcessInfo(PNode *n)
             space++;
       }
 
-      uintToBase((uint64_t) n->pcb->ppid, buff, 10);
+      uintToBase((uint64_t)n->pcb->ppid, buff, 10);
       ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      uintToBase((uint64_t) n->pcb->priority, buff, 10);
+      uintToBase((uint64_t)n->pcb->priority, buff, 10);
       ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      uintToBase((uint64_t) n->pcb->rsp, buff, 10);
+      uintToBase((uint64_t)n->pcb->rsp, buff, 10);
       ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      uintToBase((uint64_t) n->pcb->rbp, buff, 16);
+      uintToBase((uint64_t)n->pcb->rbp, buff, 16);
       ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
-      uintToBase((uint64_t) n->pcb->fg, buff, 10);
+      uintToBase((uint64_t)n->pcb->fg, buff, 10);
       ncPrint(buff, COLOR);
       ncPrint("   ", COLOR);
 
@@ -542,7 +566,7 @@ static PNode *dequeue(schedulerADT scheduler)
       scheduler->processesList->first = scheduler->processesList->first->next;
       scheduler->processesList->size--;
 
-      if(ans == scheduler->processesList->last)
+      if (ans == scheduler->processesList->last)
             scheduler->processesList->first = scheduler->processesList->last = NULL;
       return ans;
 }
@@ -560,6 +584,5 @@ static void removeProcess(schedulerADT scheduler, PNode *node)
       freeMem(scheduler->memoryManager, node->pcb->name);
       freeMem(scheduler->memoryManager, (void *)((char *)node->pcb->rbp - STACK_SIZE + 1));
       freeMem(scheduler->memoryManager, node->pcb);
-      freeMem(scheduler->memoryManager, node);      
+      freeMem(scheduler->memoryManager, node);
 }
-

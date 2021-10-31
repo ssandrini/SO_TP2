@@ -14,6 +14,10 @@ int uIndex;
 int exit = 0;
 int exitUser;
 void (*func_ptr[BUILTIN_SIZE])() = {help, clear};
+static int getPipeIndex(int argc, char **argv);
+static void runPipe(int argc, char **argv, int pipeIndex);
+static uint64_t newProcess(int isCommand, int argc, char **argv, int fg, int *fd);
+static void waitPipe(uint64_t pipe, uint64_t pid1, uint64_t pid2);
 
 void shell()
 {
@@ -48,81 +52,29 @@ void shell()
                 fd[0] = 0;
                 fd[1] = 1;
                 argc = prepareArgs(' ', argv, buffer);
-                isCommand = checkCommandUserApps(argv[0]);
-                if (isCommand >= 0 && argc > 0 && argv[argc - 1][0] == '&')
+
+                int pipeIndex = getPipeIndex(argc, argv);
+
+                if (pipeIndex != -1)
                 {
-                    fg = 0;
-                    argc--;
+                    if (pipeIndex == 0 || pipeIndex == argc - 1)
+                    {
+                        printError("El pipe debe colocarse entre dos comandos\n");
+                    }
+                    else
+                    {
+                        runPipe(argc, argv, pipeIndex);
+                    }
                 }
-                // {"loop", "cat", "wc", "filter", "phylo", "inforeg", "printmem", "cpuid", "trigger0", "trigger6", "time", "mem", "ps", "kill", "nice", "block", "sem", "pipe", "test_mm", "test_processes"};
-                switch (isCommand)
+                else
                 {
-                case CASE_LOOP:
-                    _syscall(NEW_PROCESS, (uint64_t)&loop, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_CAT:
-                    _syscall(NEW_PROCESS, (uint64_t)&cat, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_WC:
-                    _syscall(NEW_PROCESS, (uint64_t)&wc, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_FILTER:
-                    _syscall(NEW_PROCESS, (uint64_t)&filter, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_PHYLO:
-                    _syscall(NEW_PROCESS, (uint64_t)&phylo, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_INFOREG:
-                    _syscall(NEW_PROCESS, (uint64_t)&inforeg, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_PRINTMEM:
-                    _syscall(NEW_PROCESS, (uint64_t)&getMem, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_CPUID:
-                    _syscall(NEW_PROCESS, (uint64_t)&cpuid, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_TRIGGER0:
-                    _syscall(NEW_PROCESS, (uint64_t)&exc0Trigger, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_TRIGGER6:
-                    _syscall(NEW_PROCESS, (uint64_t)&exc6Trigger, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_TIME:
-                    _syscall(NEW_PROCESS, (uint64_t)&getTime, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_MEM:
-                    _syscall(NEW_PROCESS, (uint64_t)&mem, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_PS:
-                    _syscall(NEW_PROCESS, (uint64_t)&ps, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_KILL:
-                    _syscall(NEW_PROCESS, (uint64_t)&kill, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_NICE:
-                    _syscall(NEW_PROCESS, (uint64_t)&nice, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_BLOCK:
-                    _syscall(NEW_PROCESS, (uint64_t)&block, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_SEM:
-                    _syscall(NEW_PROCESS, (uint64_t)&sem, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_PIPE:
-                    _syscall(NEW_PROCESS, (uint64_t)&pipe, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_TEST_MM:
-                    _syscall(NEW_PROCESS, (uint64_t)&test_mem, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_TEST_PROCESSES:
-                    _syscall(NEW_PROCESS, (uint64_t)&test_processes, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                case CASE_TEST_PRIO:
-                    _syscall(NEW_PROCESS, (uint64_t)&test_prio, (uint64_t)argv, (uint64_t)argc, fg, fd);
-                    break;
-                default:
-                    printError("El comando ingresado es invalido\n");
-                    break;
+                    isCommand = checkCommandUserApps(argv[0]);
+                    if (isCommand >= 0 && argc > 0 && argv[argc - 1][0] == '&')
+                    {
+                        fg = 0;
+                        argc--;
+                    }
+                    newProcess(isCommand, argc, argv, fg, fd);
                 }
             }
             buffer[0] = 0;
@@ -198,4 +150,139 @@ void requestUser()
     clear();
     printf("Bienvenido %s, Puedes escribir el comando help para ver los diferentes comandos del sistema\n", user);
     printf("Para finalizar la shell oprima ESC\n");
+}
+
+static int getPipeIndex(int argc, char **argv)
+{
+    for (int i = 0; i < argc; i++)
+    {
+        if (strcmp(argv[i], "-") == 0)
+            return i;
+    }
+    return -1;
+}
+
+static void runPipe(int argc, char **argv, int pipeIndex)
+{
+    if (argc != 3)
+    {
+        printError("mal\n");
+    }
+    else
+    {
+        printf("aca todo bien\n");
+        int leftCommand = checkCommandUserApps(argv[0]);
+        int rightCommand = checkCommandUserApps(argv[2]);
+        if (leftCommand && rightCommand)
+        {
+            uint64_t pipeId = _syscall(CREATE_PIPE, 0, 0, 0, 0, 0);
+            uint64_t newfd = _syscall(CREATE_FD, pipeId, 0, 0, 0, 0);
+            int leftFd[2];
+            leftFd[0] = 0;
+            leftFd[1] = (int)newfd;
+            int rightFd[2];
+            rightFd[0] = (int)newfd;
+            rightFd[1] = 1;
+            char *newArgv[MAX_ARGS];
+            int newArgc = 1;
+            newArgv[0] = argv[0];
+
+            uint64_t pid1 = newProcess(leftCommand, newArgc, newArgv, 0, leftFd);
+            newArgv[0] = argv[2];
+            uint64_t pid2 = newProcess(rightCommand, newArgc, newArgv, 0, rightFd);
+            
+            //waitPipe(pipeId, pid1, pid2);
+        }
+        else
+        {
+            printf("comandos invalidos\n");
+        }
+    }
+}
+
+static uint64_t newProcess(int isCommand, int argc, char **argv, int fg, int *fd)
+{
+    switch (isCommand)
+    {
+    case CASE_LOOP:
+        return _syscall(NEW_PROCESS, (uint64_t)&loop, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_CAT:
+        return _syscall(NEW_PROCESS, (uint64_t)&cat, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_WC:
+        return _syscall(NEW_PROCESS, (uint64_t)&wc, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_FILTER:
+        return _syscall(NEW_PROCESS, (uint64_t)&filter, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_PHYLO:
+        return _syscall(NEW_PROCESS, (uint64_t)&phylo, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_INFOREG:
+        return _syscall(NEW_PROCESS, (uint64_t)&inforeg, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_PRINTMEM:
+        return _syscall(NEW_PROCESS, (uint64_t)&getMem, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_CPUID:
+        return _syscall(NEW_PROCESS, (uint64_t)&cpuid, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_TRIGGER0:
+        return _syscall(NEW_PROCESS, (uint64_t)&exc0Trigger, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_TRIGGER6:
+        return _syscall(NEW_PROCESS, (uint64_t)&exc6Trigger, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_TIME:
+        return _syscall(NEW_PROCESS, (uint64_t)&getTime, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_MEM:
+        return _syscall(NEW_PROCESS, (uint64_t)&mem, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_PS:
+        return _syscall(NEW_PROCESS, (uint64_t)&ps, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_KILL:
+        return _syscall(NEW_PROCESS, (uint64_t)&kill, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_NICE:
+        return _syscall(NEW_PROCESS, (uint64_t)&nice, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_BLOCK:
+        return _syscall(NEW_PROCESS, (uint64_t)&block, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_SEM:
+        return _syscall(NEW_PROCESS, (uint64_t)&sem, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_PIPE:
+        return _syscall(NEW_PROCESS, (uint64_t)&pipe, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_TEST_MM:
+        return _syscall(NEW_PROCESS, (uint64_t)&test_mem, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_TEST_PROCESSES:
+        return _syscall(NEW_PROCESS, (uint64_t)&test_processes, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_TEST_PRIO:
+        return _syscall(NEW_PROCESS, (uint64_t)&test_prio, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    default:
+        printError("El comando ingresado es invalido\n");
+        return 0;
+        break;
+    }
+}
+
+static void waitPipe(uint64_t pipe, uint64_t pid1, uint64_t pid2)
+{
+    char eof[2] = {-1, 0};
+    _syscall(WAIT_PID, pid1,0,0,0,0);
+
+    _syscall(WRTIE_PIPE, pipe,eof,0,0,0);
+
+    _syscall(WAIT_PID, pid2,0,0,0,0);
+
+    _syscall(CLOSE_PIPE, pipe,0,0,0,0);
+    _syscall(FREE_PIPE, pid1,0,0,0,0);
 }

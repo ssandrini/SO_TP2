@@ -50,7 +50,7 @@ void test_processes(int argc, char ** argv)
   for (rq = 0; rq < MAX_PROCESSES; rq++)
   {
     char* argAux[] = {"endless_loop"};
-    p_rqs[rq].pid = _syscall(NEW_PROCESS,(uint64_t) &endless_loop, (uint64_t) argAux,1,0,fd); // TODO: Port this call as required
+    p_rqs[rq].pid = _syscall(NEW_PROCESS,(uint64_t) &endless_loop, (uint64_t) argAux,1,0,(uint64_t) fd); // TODO: Port this call as required
    
     if (p_rqs[rq].pid == -1)
     {                                     // TODO: Port this as required

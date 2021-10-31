@@ -32,7 +32,8 @@
 #define WRTIE_PIPE 27
 #define READ_PIPE 28
 #define PRINT_PIPE 29
-
+#define CREATE_FD 30
+#define WAIT_PID 31
 extern uint64_t _syscall(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t r4, uint64_t rsp);
 
 #endif

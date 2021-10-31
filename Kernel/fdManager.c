@@ -10,7 +10,7 @@ static fdADT fdList[MAX_FD] = {NULL};
 static memoryManagerADT memoryManager;
 static schedulerADT scheduler;
 
-int initFdManager(memoryManagerADT mm, schedulerADT sch)
+void initFdManager(memoryManagerADT mm, schedulerADT sch)
 {
     memoryManager = mm;
     scheduler = sch;
@@ -56,6 +56,8 @@ int fdRead(int fd, char *dest, int count)
     else
     {
         return pipeRead(fdAux->pipeId, dest, count);
+        //dest[0] = 0;
+       // return 0;
     }
 }
 
@@ -71,6 +73,7 @@ int fdWrite(int fd, char *src, int color)
     }
     else
     {
+        ncPrint(src, 10);
         return pipeWrite(fdAux->pipeId, src);
     }
 }

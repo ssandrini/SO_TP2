@@ -33,6 +33,7 @@ int newPipe()
     newPipe->pipeId = i;
     pipeList[i] = newPipe;
 
+    ncPrint("cree pipe",11);
     return newPipe->pipeId;
 }
 

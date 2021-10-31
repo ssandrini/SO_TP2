@@ -16,7 +16,7 @@ uint64_t my_create_process(char *name)
   int fd[2];
   fd[0] = 0;
   fd[1] = 1;
-  return _syscall(NEW_PROCESS, (uint64_t) &endless_loop3, (uint64_t) argv, argc, 0, fd);
+  return _syscall(NEW_PROCESS, (uint64_t) &endless_loop3, (uint64_t) argv, argc, 0, (uint64_t) fd);
 }
 
 uint64_t my_nice(uint64_t pid, uint64_t newPrio)

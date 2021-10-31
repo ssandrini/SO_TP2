@@ -124,8 +124,11 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         break;
     case 29:
         printPipes();
-        return 0;
+    case 30:
+        return (uint64_t) newFd((int) r1);
         break;
+    case 31:
+        return (uint64_t) wait(scheduler, (int) r1);
     default:
         return 0;
         break;

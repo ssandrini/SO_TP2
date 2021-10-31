@@ -3,7 +3,7 @@
 typedef struct pipeQueueCDT
 {
     int head, tail, size;
-    char buff[BUFFER_SIZE];
+    char buff[PIPE_BUFFER_SIZE];
 } pipeQueueCDT;
 
 pipeQueueADT newPipeQueue(memoryManagerADT memoryManager)
@@ -18,15 +18,15 @@ int putS(pipeQueueADT pipeQueue, char *string)
     int i = 0;
     int count = strlen(string);
 
-    while (pipeQueue->size < BUFFER_SIZE - 1 && i < count && string[i] != 0)
+    while (pipeQueue->size < PIPE_BUFFER_SIZE - 1 && i < count && string[i] != 0)
     {
-        pipeQueue->buff[pipeQueue->tail % BUFFER_SIZE] = string[i++];
-        pipeQueue->tail = (pipeQueue->tail + 1) % BUFFER_SIZE;
+        pipeQueue->buff[pipeQueue->tail % PIPE_BUFFER_SIZE] = string[i++];
+        pipeQueue->tail = (pipeQueue->tail + 1) % PIPE_BUFFER_SIZE;
         pipeQueue->size++;
     }
 
     pipeQueue->buff[pipeQueue->tail] = 0;
-    pipeQueue->tail = (pipeQueue->tail + 1) % BUFFER_SIZE;
+    pipeQueue->tail = (pipeQueue->tail + 1) % PIPE_BUFFER_SIZE;
 
     return 0;
 }
@@ -40,7 +40,7 @@ int getS(pipeQueueADT pipeQueue, char *dest, int count)
         if (pipeQueue->size > 0 && pipeQueue->buff[pipeQueue->head] != 0)
         {
             dest[i] = pipeQueue->buff[pipeQueue->head];
-            pipeQueue->head = (pipeQueue->head + 1) % BUFFER_SIZE;
+            pipeQueue->head = (pipeQueue->head + 1) % PIPE_BUFFER_SIZE;
             i++;
             pipeQueue->size--;
         }
@@ -58,9 +58,6 @@ int getS(pipeQueueADT pipeQueue, char *dest, int count)
         pipeQueue->head = pipeQueue->tail = pipeQueue->size = 0;
         return EOF;
     }
-
-    pipeQueue->head = (pipeQueue->head + 1) % BUFFER_SIZE;
-    dest[i] = 0;
     return 0;
 }
 

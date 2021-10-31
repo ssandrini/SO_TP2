@@ -67,14 +67,19 @@ void keyboard_handler()
                         }
                         else if(key == 44)
                         {
+                            /*
                             if(getCurrentFdWrite(scheduler) != 1)
+                            {   
+                                ncPrint("eof",11);
                                 fdWrite(getCurrentFdWrite(scheduler), eof,15);
-                            else
-                            {
-                                semPost(sem);
-                                buffer[buffIndex++] = -1;
-                                buffer[buffIndex] = 0;
                             }
+                            */
+                            
+                            pipeWrite(0,eof);
+                            semPost(sem);
+                            buffer[buffIndex++] = -1;
+                            buffer[buffIndex] = 0;
+                        
                         }
                     }
                     else
