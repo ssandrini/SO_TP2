@@ -27,4 +27,9 @@ void printTitle(char * title);
 uint32_t uintToString(uint64_t value, char * buffer, uint32_t base);
 void * myMalloc(size_t size);
 void myFree(void * dir);
+uint64_t mySemOpen(uint64_t id);
+uint64_t mySemCreate(uint64_t value);
+void mySemClose(uint64_t id);
+void mySemWait(uint64_t id);
+void mySemPost(uint64_t id);
 #endif
