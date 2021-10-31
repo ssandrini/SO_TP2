@@ -1,8 +1,8 @@
 #include <tests.h>
 #include <commands.h>
 #define MINOR_WAIT 1000000 // TODO: To prevent a process from flooding the screen
-#define WAIT 10000000      // TODO: Long enough to see theese processes beeing run at least twice
-
+#define WAIT 20000000      // TODO: Long enough to see theese processes beeing run at least twice
+#define TOTAL_PROCESSES 3
 uint64_t my_getpid()
 {
   return _syscall(PID,0, 0,0,0,0);
@@ -57,7 +57,7 @@ void endless_loop3()
   }
 }
 
-#define TOTAL_PROCESSES 3
+
 
 void test_prio(int argc, char **argv)
 {
@@ -68,6 +68,7 @@ void test_prio(int argc, char **argv)
     pids[i] = my_create_process("endless_loop");
 
   bussy_wait(WAIT);
+
   printf("\nCHANGING PRIORITIES...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)

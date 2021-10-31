@@ -17,7 +17,7 @@ void (*func_ptr[BUILTIN_SIZE])() = {help, clear};
 static int getPipeIndex(int argc, char **argv);
 static void runPipe(int argc, char **argv, int pipeIndex);
 static uint64_t newProcess(int isCommand, int argc, char **argv, int fg, int *fd);
-static void waitPipe(uint64_t pipe, uint64_t pid1, uint64_t pid2);
+//static void waitPipe(uint64_t pipe, uint64_t pid1, uint64_t pid2);
 
 void shell()
 {
@@ -175,6 +175,7 @@ static void runPipe(int argc, char **argv, int pipeIndex)
         int rightCommand = checkCommandUserApps(argv[2]);
         if (leftCommand && rightCommand)
         {
+            /*
             uint64_t pipeId = _syscall(CREATE_PIPE, 0, 0, 0, 0, 0);
             uint64_t newfd = _syscall(CREATE_FD, pipeId, 0, 0, 0, 0);
             int leftFd[2];
@@ -192,6 +193,7 @@ static void runPipe(int argc, char **argv, int pipeIndex)
             uint64_t pid2 = newProcess(rightCommand, newArgc, newArgv, 0, rightFd);
             
             //waitPipe(pipeId, pid1, pid2);
+            */
         }
         else
         {
@@ -267,16 +269,17 @@ static uint64_t newProcess(int isCommand, int argc, char **argv, int fg, int *fd
         break;
     }
 }
-
+/*
 static void waitPipe(uint64_t pipe, uint64_t pid1, uint64_t pid2)
 {
     char eof[2] = {-1, 0};
     _syscall(WAIT_PID, pid1,0,0,0,0);
 
-    _syscall(WRTIE_PIPE, pipe,eof,0,0,0);
+    _syscall(WRTIE_PIPE, pipe,(uint64_t) eof,0,0,0);
 
     _syscall(WAIT_PID, pid2,0,0,0,0);
 
     _syscall(CLOSE_PIPE, pipe,0,0,0,0);
     _syscall(FREE_PIPE, pid1,0,0,0,0);
 }
+*/

@@ -152,7 +152,7 @@ void semPrint()
     ncNewline();
 
     Semaphore *current = semList->first;
-    int space = strlen(current->id);
+    int space = 0;
     while (current != NULL)
     {
         uintToBase(current->id, aux10, 10);

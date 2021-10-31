@@ -13,7 +13,6 @@ void loop(int argc, char *argv[])
     while(1)
     {
         printf("a");
-        _hltuser();
     }
     /*
     if (argc != 1)
