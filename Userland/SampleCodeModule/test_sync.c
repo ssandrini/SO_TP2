@@ -66,12 +66,16 @@ void test_sync(int argc, char **argv)
     char *argv2[] = {"inc", "1", "-1", "100000"};
 
     sem_id = my_sem_create(1);
+
+    uint64_t pid1;
     
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
         my_create_process2(argv1);
-        my_create_process2(argv2);
+        pid1 = my_create_process2(argv2);
     }
+
+    _syscall(WAIT_PID,pid1,0,0,0,0);
 }
 
 void test_no_sync(int argc, char **argv)

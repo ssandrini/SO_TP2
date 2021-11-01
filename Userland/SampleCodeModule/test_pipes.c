@@ -3,7 +3,7 @@
 void lector(int argc, char ** argv)
 {
     char * aux = myMalloc(10);
-    _syscall(READ_PIPE,(uint64_t) strToInt(argv[1]),aux,1,0,0);
+    _syscall(READ_PIPE,(uint64_t) strToInt(argv[1]),(uint64_t) aux,1,0,0);
     _syscall(PRINT_PIPE, 0,0,0,0,0);
     myFree(aux);
 }
@@ -19,8 +19,7 @@ void test_pipes(int argc, char ** argv)
     rightFd[1] = 1;
     char * aux = myMalloc(10);
     uintToString(pipeId,aux,10);
-    char *newArgv[1] = {"Lector", aux};
-    int newArgc = 2;
+    char *newArgv[2] = {"Lector", aux};
 
     _syscall(NEW_PROCESS, (uint64_t) &(lector), (uint64_t) newArgv, 1,0, (uint64_t)rightFd);
     sleep(1);

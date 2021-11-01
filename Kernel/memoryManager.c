@@ -3,14 +3,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memoryManager.h>
-/*
-    Dejo estos comentarios para que después revisemos bien las direcciones
-    de los defines. Además tengo dudas si está bien lo de STRUCT POS
-    y me gustaría ver si se puede armar algo tipo patron singleton.
-*/
 #define STRUCT_POS 0x0000000000600000
-#define INITIAL_POS 0x0000000000700000
-#define FINAL_POS 0x000000000FFFFFFFF
 
 struct memoryManagerCDT
 {

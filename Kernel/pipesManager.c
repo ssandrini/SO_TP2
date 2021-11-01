@@ -102,7 +102,7 @@ int closePipe(int pipeId)
 
 void printPipes()
 {
-    char *message = "PIPE_ID  ESTADO    PROCESOS BLOQUEADOS:";
+    char *message = "PIPE_ID  ESTADO    PIDS DE PROCESOS BLOQUEADOS:";
     ncPrint(message, 12);
     ncNewline();
 
