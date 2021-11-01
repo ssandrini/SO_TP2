@@ -263,6 +263,12 @@ static uint64_t newProcess(int isCommand, int argc, char **argv, int fg, int *fd
     case CASE_TEST_PRIO:
         return _syscall(NEW_PROCESS, (uint64_t)&test_prio, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
         break;
+    case CASE_TEST_SYNC:
+        return _syscall(NEW_PROCESS, (uint64_t)&test_sync, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
+    case CASE_TEST_NOSYNC:
+        return _syscall(NEW_PROCESS, (uint64_t)&test_no_sync, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
     default:
         printError("El comando ingresado es invalido\n");
         return 0;

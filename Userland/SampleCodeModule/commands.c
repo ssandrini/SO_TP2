@@ -9,8 +9,9 @@ char info[BUILTIN_SIZE + APPS_SIZE][INFO_MAX] = {"muestra todos los comandos con
                                                  "cambia la prioridad de un proceso dado su ID y la nueva prioridad\n", "cambia el estado de un proceso entre bloqueado y listo dado su ID\n",
                                                  "imprime la lista de todos los semaforos con sus propiedades\n", "imprime la lista de todos los pipes con sus propiedades\n",
                                                  "chequea el correcto funcionamiento del manejo de memoria\n", "chequea el correcto funcionamiento del manejo de procesos\n",
-                                                 "chequea el correcto funcionamiendo del manejo de prioridades\n"};
-char userAppsNames[APPS_SIZE][NAME_MAX] = {"loop", "cat", "wc", "filter", "phylo", "inforeg", "printmem", "cpuid", "time", "mem", "ps", "kill", "nice", "block", "sem", "pipe", "test_mm", "test_processes", "test_prio"};
+                                                 "chequea el correcto funcionamiendo del manejo de prioridades\n", "chequea el correcto funcionamiendo del manejo de sincronizacion\n",
+                                                 "chequea el correcto funcionamiendo del manejo de sincronizacion\n"};
+char userAppsNames[APPS_SIZE][NAME_MAX] = {"loop", "cat", "wc", "filter", "phylo", "inforeg", "printmem", "cpuid", "time", "mem", "ps", "kill", "nice", "block", "sem", "pipe", "test_mm", "test_processes", "test_prio", "test_sync", "test_no_sync"};
 
 void help()
 {

@@ -48,7 +48,7 @@ uint64_t semCreate(uint64_t initValue)
     sem->blockedSize = 0;
     sem->id = idCounter++;
     sem->mutex = 0;
-    sem->attachedProcesses = 1;
+    sem->attachedProcesses = 0;
 
     addInList(sem);
     return sem->id;
@@ -59,14 +59,16 @@ uint64_t semOpen(uint64_t id)
     Semaphore *sem = findSem(id);
     // hay que chequear si el semaforo ya está lleno?
     if (sem == NULL)
-        return (uint64_t)NULL;
+    {
+        ncPrint("MAL",11);
+         return (uint64_t)NULL;
+    }
     sem->attachedProcesses++;
     return sem->id;
 }
 
 int semWait(uint64_t id)
 {
-    // ncPrint("WAIT",14);
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
@@ -94,7 +96,6 @@ int semWait(uint64_t id)
 
 int semPost(uint64_t id)
 {
-    // ncPrint("POST",13);;
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
@@ -130,6 +131,7 @@ int semClose(uint64_t id)
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
+       
         return -1;
     }
 
@@ -137,10 +139,12 @@ int semClose(uint64_t id)
     {
         sem->attachedProcesses--;
         if (sem->attachedProcesses == 0)
+        {
+            ncPrint("B",10);
             removeFromList(id);
+        }
         return 0;
     }
-
     removeFromList(id);
     return 0;
 }
@@ -217,10 +221,10 @@ static void addInList(Semaphore *newSem)
 
 static void removeFromList(uint64_t id)
 {
-    if (semList->size == 0)
+    Semaphore *current = semList->first;
+    if(current == NULL)
         return;
 
-    Semaphore *current = semList->first;
     while (current->next != NULL && current->next->id != id)
         current = current->next;
     if (current->next == NULL)
@@ -228,4 +232,12 @@ static void removeFromList(uint64_t id)
     Semaphore *aux = current->next;
     current->next = current->next->next;
     freeMem(memMan, aux);
+}
+
+static Semaphore *findSem(uint64_t id)
+{
+    Semaphore *current = semList->first;
+    while (current != NULL && current->id != id)
+        current = current->next;
+    return current;
 }
