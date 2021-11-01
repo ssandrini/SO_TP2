@@ -1,5 +1,3 @@
-
-#include <stdint.h>
 #include <tests.h>
 #define TOTAL_PAIR_PROCESSES 2
 int64_t global; //shared memory
@@ -16,30 +14,6 @@ static uint64_t my_create_process2(char **argv)
     return _syscall(NEW_PROCESS, (uint64_t)&inc, (uint64_t)argv, argc, 0, (uint64_t)fd);
 }
 
-static uint64_t my_sem_create(uint64_t initialValue)
-{
-    return _syscall(CREATE_SEM, initialValue, 0, 0, 0, 0);
-}
-static uint64_t my_sem_open(uint64_t sem_id)
-{
-    return _syscall(OPEN_SEM, sem_id, 0, 0, 0, 0);
-}
-
-static uint64_t my_sem_wait(uint64_t sem_id)
-{
-    return _syscall(WAIT_SEM, sem_id, 0, 0, 0, 0);
-}
-
-static uint64_t my_sem_post(uint64_t sem_id)
-{
-    return _syscall(POST_SEM, sem_id, 0, 0, 0, 0);
-}
-
-static uint64_t my_sem_close(uint64_t sem_id)
-{
-    return _syscall(CLOSE_SEM, sem_id, 0,0,0,0);
-}
-
 void yield()
 {
     _syscall(YIELD, 0, 0, 0, 0, 0);
@@ -53,13 +27,11 @@ void slowInc(int64_t *p, int64_t inc)
     *p = aux;
 }
 
-//void inc(uint64_t sem, int64_t value, uint64_t N)
 void inc(int argc, char **argv)
 {
     int sem = strToInt(argv[1]);
     int value = strToInt(argv[2]);
     int N = strToInt(argv[3]);
-    void *aux;
     uint64_t i;
 
     if (sem && !my_sem_open(sem_id))

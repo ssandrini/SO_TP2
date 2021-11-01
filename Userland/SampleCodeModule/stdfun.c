@@ -425,6 +425,32 @@ void myFree(void * dir)
     _syscall(FREE, (uint64_t) dir, 0,0,0,0);
 }
 
+uint64_t my_sem_create(uint64_t initialValue)
+{
+    return _syscall(CREATE_SEM, initialValue, 0, 0, 0, 0);
+}
+uint64_t my_sem_open(uint64_t sem_id)
+{
+    return _syscall(OPEN_SEM, sem_id, 0, 0, 0, 0);
+}
+
+uint64_t my_sem_wait(uint64_t sem_id)
+{
+    return _syscall(WAIT_SEM, sem_id, 0, 0, 0, 0);
+}
+
+uint64_t my_sem_post(uint64_t sem_id)
+{
+    return _syscall(POST_SEM, sem_id, 0, 0, 0, 0);
+}
+
+uint64_t my_sem_close(uint64_t sem_id)
+{
+    return _syscall(CLOSE_SEM, sem_id, 0,0,0,0);
+}
+
+/*
+
 uint64_t mySemOpen(uint64_t id){
     return _syscall(OPEN_SEM, id, 0,0,0,0);
 }
@@ -444,3 +470,4 @@ void mySemWait(uint64_t id){
 void mySemPost(uint64_t id){
     _syscall(POST_SEM, id, 0, 0,0,0);
 }
+*/

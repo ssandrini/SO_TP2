@@ -1,7 +1,7 @@
 #include "loop.h"
 #include "tests.h"
 
-static void sleep(int seconds)
+void sleep(int seconds)
 {
     int totalTime = (int) _syscall(GET_SEC,0,0,0,0,0) + seconds;
     while ((int) _syscall(GET_SEC,0,0,0,0,0) <= totalTime)

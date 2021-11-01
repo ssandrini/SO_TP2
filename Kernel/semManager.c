@@ -43,6 +43,7 @@ uint64_t semCreate(uint64_t initValue)
     Semaphore *sem = allocMem(memMan, sizeof(Semaphore));
     if (sem == NULL)
     {
+        ncPrint("malC",11);
         return (uint64_t)NULL;
     }
 
@@ -62,6 +63,7 @@ uint64_t semOpen(uint64_t id)
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
+        ncPrint("malO",11);
         return (uint64_t)NULL;
     }
     sem->attachedProcesses++;
@@ -73,6 +75,7 @@ int semWait(uint64_t id)
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
+        ncPrint("malW",11);
         return -1;
     }
 
@@ -100,6 +103,7 @@ int semPost(uint64_t id)
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
+        ncPrint("malP",11);
         return -1;
     }
 
