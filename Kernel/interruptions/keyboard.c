@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <keyboard.h>
 #include <naiveConsole.h>
 #define LEFT_SHIFT 0x2A
@@ -15,7 +17,7 @@ unsigned char ctrlFlag = 0;
 unsigned char buffer[BUFFER_SIZE]={0};
 unsigned int buffIndex = 0;
 static schedulerADT scheduler;
-static memoryManagerADT mm;
+static memoryManagerADT memoryManager;
 static uint64_t sem;
 const char ascii_values[0x56][2] =
 {
@@ -108,6 +110,6 @@ void initKeyboard(memoryManagerADT memMan, schedulerADT sch)
 {
     sem = semCreate(0);
     scheduler = sch;
-    mm = memMan;
+    memoryManager = memMan;
 }
 

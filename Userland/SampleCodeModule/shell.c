@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <shell.h>
 
 #define MAX_SIZE 100
@@ -8,7 +10,7 @@
 char buffer[MAX_SIZE];
 char parameter[MAX_SIZE];
 char user[MAX_SIZE / 2];
-char c = 0;
+char character = 0;
 int bIndex;
 int uIndex;
 int exit = 0;
@@ -29,15 +31,15 @@ void shell()
 
     while (!exit)
     {
-        c = getChar();
+        character = getChar();
 
-        if (c == ESC)
+        if (character == ESC)
         {
             exit = 1;
         }
-        else if (c == '\n')
+        else if (character == '\n')
         {
-            putChar(c);
+            putChar(character);
             int isCommand = checkCommandBuiltIn(buffer);
             if (isCommand >= 0)
             {
@@ -82,13 +84,13 @@ void shell()
             printUser(user);
             printUser(":$ ");
         }
-        else if (c != 0)
+        else if (character != 0)
         {
-            if (c == BSPACE)
+            if (character == BSPACE)
             {
                 if (bIndex > 0)
                 {
-                    putChar(c);
+                    putChar(character);
                     buffer[--bIndex] = 0;
                 }
             }
@@ -96,8 +98,8 @@ void shell()
             {
                 if (bIndex < MAX_SIZE)
                 {
-                    putChar(c);
-                    buffer[bIndex++] = c;
+                    putChar(character);
+                    buffer[bIndex++] = character;
                     buffer[bIndex] = 0;
                 }
             }
@@ -115,35 +117,35 @@ void requestUser()
     printf("Bienvenido, ingrese su usuario: ");
     while (!exitUser)
     {
-        c = getChar();
+        character = getChar();
 
-        if (c == '\n' || c == ESC)
+        if (character == '\n' || character == ESC)
         {
             exitUser = 1;
-            if (c == ESC)
+            if (character == ESC)
             {
                 exit = 1;
             }
         }
-        else if (c == BSPACE)
+        else if (character == BSPACE)
         {
             if (uIndex > 0)
             {
-                putChar(c);
+                putChar(character);
                 user[--uIndex] = 0;
             }
         }
-        else if (c == TAB)
+        else if (character == TAB)
         {
             ; // no se permite el tab mientras se escribe usuario
         }
-        else if (c != 0)
+        else if (character != 0)
         {
             if (uIndex < MAX_SIZE / 2 - 1)
             {
-                user[uIndex++] = c;
+                user[uIndex++] = character;
                 user[uIndex] = 0;
-                putChar(c);
+                putChar(character);
             }
         }
     }
@@ -164,7 +166,7 @@ static int getPipeIndex(int argc, char **argv)
 
 static void runPipe(int argc, char **argv, int pipeIndex)
 {
-    if (argc < 3 || argc > 4)
+    if (argc != 3)
     {
         printError("Comando incorrecto\n");
     }
@@ -172,9 +174,6 @@ static void runPipe(int argc, char **argv, int pipeIndex)
     {
         int leftCommand = checkCommandUserApps(argv[0]);
         int rightCommand = checkCommandUserApps(argv[2]);
-        int fg = 1;
-        if(argc == 4 && argv[3] == '&')
-            fg = 0;
 
         if (leftCommand && rightCommand)
         {
@@ -193,7 +192,7 @@ static void runPipe(int argc, char **argv, int pipeIndex)
 
             newProcess(leftCommand, newArgc, newArgv, 0, leftFd);
             newArgv[0] = argv[2];
-            newProcess(rightCommand, newArgc, newArgv, fg, rightFd);
+            newProcess(rightCommand, newArgc, newArgv, 1, rightFd);
 
             _syscall(CLOSE_FD, newfd, 0,0,0,0);
             

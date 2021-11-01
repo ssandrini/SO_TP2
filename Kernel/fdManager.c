@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <fdManager.h>
 
 typedef struct fdCDT
@@ -21,9 +23,9 @@ void initFdManager(memoryManagerADT mm, schedulerADT sch)
 int newFd(int pipeId)
 {
     int i = 0;
-    while (i < MAX_FD && fdList[i] != NULL)
+    while (i < MAX_FD-1 && fdList[i] != NULL)
         i++;
-    if (i > MAX_FD)
+    if (i >= MAX_FD)
         return -1;
 
     fdADT aux = allocMem(memoryManager, sizeof(fdCDT));
@@ -37,7 +39,7 @@ int newFd(int pipeId)
 
 int fdRead(int fd, char *dest, int count)
 {
-    if (fd > MAX_FD || fdList[fd] == NULL || fd == STDOUT)
+    if (fd >= MAX_FD || fdList[fd] == NULL || fd == STDOUT)
         return -1;
 
     fdADT fdAux = fdList[fd];
@@ -61,7 +63,7 @@ int fdRead(int fd, char *dest, int count)
 
 int fdWrite(int fd, char *src, int color)
 {
-    if (fd > MAX_FD || fdList[fd] == NULL || fd == STDIN)
+    if (fd >= MAX_FD || fdList[fd] == NULL || fd == STDIN)
         return -1;
     fdADT fdAux = fdList[fd];
     if (fd == STDOUT)
@@ -77,7 +79,7 @@ int fdWrite(int fd, char *src, int color)
 
 int freeFd(int fd)
 {
-    if (fd > MAX_FD || fd < 0)
+    if (fd >= MAX_FD || fd < 0)
         return -1;
 
     fdADT fdAux = fdList[fd];
@@ -97,7 +99,7 @@ int freeFd(int fd)
 
 int closeFd(int fd)
 {
-    if (fd <= STDOUT || fd > MAX_FD)
+    if (fd <= STDOUT || fd >= MAX_FD)
         return -1;
     fdADT aux = fdList[fd];
     closePipe(aux->pipeId);

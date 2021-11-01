@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <pipesManager.h>
 
 static memoryManagerADT memoryManager;
@@ -45,7 +47,7 @@ int newPipe()
 int pipeWrite(int pipeId, char *src)
 {
 
-    if (pipeId < 0 || pipeId > MAX_PIPES || pipeList[pipeId] == NULL)
+    if (pipeId < 0 || pipeId >= MAX_PIPES || pipeList[pipeId] == NULL)
         return -1;
     pipeADT pipe = pipeList[pipeId];
 
@@ -70,7 +72,7 @@ static int pipePutChar(pipeADT pipe, char c)
 
 int pipeRead(int pipeId, char *dest, int count)
 {
-    if (pipeId < 0 || pipeId > MAX_PIPES || pipeList[pipeId] == NULL)
+    if (pipeId < 0 || pipeId >= MAX_PIPES || pipeList[pipeId] == NULL)
         return -1;
     pipeADT pipe = pipeList[pipeId];
 
@@ -86,7 +88,7 @@ int pipeRead(int pipeId, char *dest, int count)
 
 int closePipe(int pipeId)
 {
-    if (pipeId < 0 || pipeId > MAX_PIPES || pipeList[pipeId] == NULL)
+    if (pipeId < 0 || pipeId >= MAX_PIPES || pipeList[pipeId] == NULL)
     {
         return -1;
     }
