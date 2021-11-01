@@ -104,11 +104,6 @@ unsigned char * getBuffer()
     return buffer;
 }
 
-unsigned int getBufferSize() 
-{
-    return buffIndex;
-}
-
 void initKeyboard(memoryManagerADT memMan, schedulerADT sch) 
 {
     sem = semCreate(0);

@@ -107,12 +107,12 @@ void printPipes()
     ncNewline();
 
     char *aux = allocMem(memoryManager, 10);
-    int space = 0;
 
     for (int i = 0; i < MAX_PIPES; i++)
     {
         if (pipeList[i] != NULL)
         {
+            int space;
             uintToBase((uint64_t)pipeList[i]->pipeId, aux, 10);
             space = pipeList[i]->pipeId >= 10 ? 2 : 1;
             space = pipeList[i]->pipeId >= 100 ? 3 : space;

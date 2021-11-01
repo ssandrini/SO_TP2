@@ -52,7 +52,7 @@ void inc(int argc, char **argv)
     if (sem)
         my_sem_close(sem_id);
 
-    printf("Final value: %d\n", global);
+    printf("Final value: %d\n", (int) global);
 }
 
 void test_sync(int argc, char **argv)

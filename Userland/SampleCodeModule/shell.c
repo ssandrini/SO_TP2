@@ -47,7 +47,6 @@ void shell()
             {
                 int argc = 0;
                 char *argv[MAX_ARGS] = {0};
-                int fg = 1;
                 int fd[2];
                 fd[0] = 0;
                 fd[1] = 1;
@@ -68,6 +67,7 @@ void shell()
                 }
                 else
                 {
+                    int fg = 1;
                     isCommand = checkCommandUserApps(argv[0]);
                     if (isCommand >= 0 && argc > 0 && argv[argc - 1][0] == '&')
                     {
@@ -139,7 +139,7 @@ void requestUser()
         }
         else if (c != 0)
         {
-            if (uIndex < MAX_SIZE / 2)
+            if (uIndex < MAX_SIZE / 2 - 1)
             {
                 user[uIndex++] = c;
                 user[uIndex] = 0;

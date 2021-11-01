@@ -173,9 +173,9 @@ void semPrint()
     ncNewline();
 
     Semaphore *current = semList->first;
-    int space = 0;
     while (current != NULL)
     {
+        int space;
         uintToBase(current->id, aux10, 10);
         space = current->id >= 10 ? 2 : 1;
         space = current->id >= 100 ? 3 : space;

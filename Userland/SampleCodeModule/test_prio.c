@@ -52,7 +52,7 @@ void endless_loop3()
 
   while (1)
   {
-    printf("%d ", pid);
+    printf("%d ", (int) pid);
     bussy_wait(MINOR_WAIT);
   }
 }

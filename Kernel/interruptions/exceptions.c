@@ -71,13 +71,13 @@ void registerPrint(uint64_t *stackFrame)
 	char buff[3] = {0};
 	_hlt(); // aca lo cortamos hasta que el timer tick nos interrumpa
 	int init_time = seconds_elapsed();
-	int aux = 10;
 	int i = 10;
 	uintToBase(i, buff, 10);
 	ncPrint(buff, 4);
 	//deleteCursor();
 	while (i > 0)
 	{
+		int aux;
 		_hlt();
 		aux = 10 - (seconds_elapsed() - init_time);
 		if (i != aux)

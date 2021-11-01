@@ -46,7 +46,7 @@ int fdRead(int fd, char *dest, int count)
         unsigned char *KeyBuffer = getBuffer();
         unsigned int i;
         dest[0] = 0;
-        for (i = 0; KeyBuffer[i] != 0 && i < count; i++)
+        for (i = 0; i < count && KeyBuffer[i] != 0; i++)
         {
             dest[i] = KeyBuffer[i];
         }
@@ -86,7 +86,6 @@ int freeFd(int fd)
 
     if (fd > 1)
     {
-        freeMem(memoryManager, fdAux);
         return closePipe(fdAux->pipeId);
     }
     else

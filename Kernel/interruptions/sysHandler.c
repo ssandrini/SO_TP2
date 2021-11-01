@@ -154,7 +154,7 @@ void read(unsigned char *r1, unsigned int r2)
     
     
     r1[0] = 0;
-    for (i = 0; KeyBuffer[i] != 0 && i < r2; i++)
+    for (i = 0; i < r2 && KeyBuffer[i] != 0; i++)
     {
         r1[i] = KeyBuffer[i];
     }

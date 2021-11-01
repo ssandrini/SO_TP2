@@ -10,6 +10,5 @@ void keyboard_handler();
 char getAscii(unsigned int key);
 void removeBuffer();
 unsigned char * getBuffer();
-unsigned int getBufferSize();
 void initKeyboard(memoryManagerADT memMan, schedulerADT sch);
 #endif
