@@ -28,7 +28,7 @@
 #define PRINT_SEM 23
 #define CREATE_PIPE 24
 #define CLOSE_PIPE 25
-#define FREE_PIPE 26
+#define CLOSE_FD 26
 #define WRTIE_PIPE 27
 #define READ_PIPE 28
 #define PRINT_PIPE 29

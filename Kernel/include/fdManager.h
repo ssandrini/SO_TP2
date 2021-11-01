@@ -18,7 +18,7 @@ void initFdManager(memoryManagerADT mm, schedulerADT sch);
 int newFd(int pipeId);
 int fdRead(int fd, char * dest, int count);
 int fdWrite(int fd, char * src, int color);
-void closeFd(int fd);
+int closeFd(int fd);
 int freeFd(int fd);
 
 #endif

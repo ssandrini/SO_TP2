@@ -56,8 +56,6 @@ int fdRead(int fd, char *dest, int count)
     else
     {
         return pipeRead(fdAux->pipeId, dest, count);
-        //dest[0] = 0;
-       // return 0;
     }
 }
 
@@ -73,7 +71,6 @@ int fdWrite(int fd, char *src, int color)
     }
     else
     {
-        ncPrint(src, 10);
         return pipeWrite(fdAux->pipeId, src);
     }
 }
@@ -89,7 +86,7 @@ int freeFd(int fd)
 
     if (fd > 1)
     {
-        return freePipe(fdAux->pipeId);
+        return closePipe(fdAux->pipeId);
     }
     else
     {
@@ -98,10 +95,12 @@ int freeFd(int fd)
     }
 }
 
-void closeFd(int fd)
+int closeFd(int fd)
 {
     if (fd <= STDOUT || fd > MAX_FD)
-        return;
+        return -1;
     fdADT aux = fdList[fd];
     closePipe(aux->pipeId);
+    freeFd(fd);
+    return 0;
 }

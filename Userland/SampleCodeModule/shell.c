@@ -164,18 +164,21 @@ static int getPipeIndex(int argc, char **argv)
 
 static void runPipe(int argc, char **argv, int pipeIndex)
 {
-    if (argc != 3)
+    if (argc < 3 || argc > 4)
     {
-        printError("mal\n");
+        printError("Comando incorrecto\n");
     }
     else
     {
-        printf("aca todo bien\n");
         int leftCommand = checkCommandUserApps(argv[0]);
         int rightCommand = checkCommandUserApps(argv[2]);
+        int fg = 1;
+        if(argc == 4 && argv[3] == '&')
+            fg = 0;
+
         if (leftCommand && rightCommand)
         {
-            /*
+            
             uint64_t pipeId = _syscall(CREATE_PIPE, 0, 0, 0, 0, 0);
             uint64_t newfd = _syscall(CREATE_FD, pipeId, 0, 0, 0, 0);
             int leftFd[2];
@@ -188,12 +191,12 @@ static void runPipe(int argc, char **argv, int pipeIndex)
             int newArgc = 1;
             newArgv[0] = argv[0];
 
-            uint64_t pid1 = newProcess(leftCommand, newArgc, newArgv, 0, leftFd);
+            newProcess(leftCommand, newArgc, newArgv, 0, leftFd);
             newArgv[0] = argv[2];
-            uint64_t pid2 = newProcess(rightCommand, newArgc, newArgv, 0, rightFd);
+            newProcess(rightCommand, newArgc, newArgv, fg, rightFd);
+
+            _syscall(CLOSE_FD, newfd, 0,0,0,0);
             
-            //waitPipe(pipeId, pid1, pid2);
-            */
         }
         else
         {
@@ -269,23 +272,12 @@ static uint64_t newProcess(int isCommand, int argc, char **argv, int fg, int *fd
     case CASE_TEST_NOSYNC:
         return _syscall(NEW_PROCESS, (uint64_t)&test_no_sync, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
         break;
+    case CASE_TEST_PIPES:
+        return _syscall(NEW_PROCESS, (uint64_t)&test_pipes, (uint64_t)argv, (uint64_t)argc, fg, (uint64_t)fd);
+        break;
     default:
         printError("El comando ingresado es invalido\n");
         return 0;
         break;
     }
 }
-/*
-static void waitPipe(uint64_t pipe, uint64_t pid1, uint64_t pid2)
-{
-    char eof[2] = {-1, 0};
-    _syscall(WAIT_PID, pid1,0,0,0,0);
-
-    _syscall(WRTIE_PIPE, pipe,(uint64_t) eof,0,0,0);
-
-    _syscall(WAIT_PID, pid2,0,0,0,0);
-
-    _syscall(CLOSE_PIPE, pipe,0,0,0,0);
-    _syscall(FREE_PIPE, pid1,0,0,0,0);
-}
-*/

@@ -9,12 +9,10 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
     {
     case 0: // sysRead  r1=buffer r2=bytes
         fdRead(getCurrentFdRead(scheduler), (char *) r1, (int) r2);
-        //read((unsigned char *)r1, (unsigned int)r2);
         return 0;
         break;
     case 1: // sysWrite
         fdWrite(getCurrentFdWrite(scheduler), (char *) r1, (int) r2);
-        //ncPrint((const char *)r1, (int)r2);
         return 0;
         break;
     case 2:                 // sysGetTime
@@ -115,7 +113,8 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         return (uint64_t) closePipe((int) r1);
         break;
     case 26:
-        return (uint64_t) freePipe((int) r1);
+        return (uint64_t) closeFd((int) r1);
+        break;
     case 27:
         return (uint64_t) pipeWrite((int) r1, (char *) r2);
         break;

@@ -8,14 +8,15 @@ void wc(int argc, char *argv[])
         return;
     }
     int c;
-    int count = 0;
+    int count = 1;
     while ((c = getChar()) != -1)
-    {
+    {   
+        putChar(c);
         if (c == '\n')
         {
             count++;
         }
     }
-    printf("La cantidad de lineas es: %d.\n", count);
+    printf("\nLa cantidad de lineas es: %d.\n", count);
     return;
 }

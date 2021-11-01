@@ -7,14 +7,18 @@ typedef struct pipeCDT
 {
     int pipeId;
     int beingAccessed;
-    int waitingProcess;
-    pipeQueueADT pipeQueue;
+
+    char buffer[PIPE_BUFFER_SIZE];
+    int readIndex;
+    int writeIndex;
+    uint64_t writeSemId;
+    uint64_t readSemId;
 } pipeCDT;
 
 static pipeADT pipeList[MAX_PIPES] = {NULL};
 static memoryManagerADT memoryManager;
 static schedulerADT scheduler;
-
+static int pipePutChar(pipeADT pipe, char c);
 void initPipeManager(memoryManagerADT mm, schedulerADT sch)
 {
     memoryManager = mm;
@@ -28,40 +32,38 @@ int newPipe()
         i++;
 
     pipeADT newPipe = allocMem(memoryManager, sizeof(pipeCDT));
-    newPipe->beingAccessed = newPipe->waitingProcess = 0;
-    newPipe->pipeQueue = newPipeQueue(memoryManager);
     newPipe->pipeId = i;
-    pipeList[i] = newPipe;
+    newPipe->beingAccessed = 1;
+    newPipe->readIndex = newPipe->writeIndex = 0;
+    newPipe->writeSemId = semCreate(PIPE_BUFFER_SIZE);
+    newPipe->readSemId = semCreate(0);
 
-    ncPrint("cree pipe", 11);
+    pipeList[i] = newPipe;
     return newPipe->pipeId;
 }
 
 int pipeWrite(int pipeId, char *src)
 {
+
     if (pipeId < 0 || pipeId > MAX_PIPES || pipeList[pipeId] == NULL)
         return -1;
-
     pipeADT pipe = pipeList[pipeId];
 
-    if (pipe->beingAccessed)
-    {
-        int pid = getPid(scheduler);
-        pipe->waitingProcess = pid;
-        blockProcess(scheduler, pid);
+    while (*src != 0)
+        pipePutChar(pipe, *src++);
+    
+    return 0;
+}
 
-        pipe->waitingProcess = 0;
-    }
-    pipe->beingAccessed = 1;
+static int pipePutChar(pipeADT pipe, char c)
+{
 
-    putS(pipe->pipeQueue, src);
+    semWait(pipe->writeSemId);
 
-    pipe->beingAccessed = 0;
+    pipe->buffer[pipe->writeIndex] = c;
+    pipe->writeIndex = (pipe->writeIndex + 1) % PIPE_BUFFER_SIZE;
 
-    if (pipe->waitingProcess)
-    {
-        unblockProcess(scheduler, pipe->waitingProcess);
-    }
+    semPost(pipe->readSemId);
 
     return 0;
 }
@@ -72,26 +74,14 @@ int pipeRead(int pipeId, char *dest, int count)
         return -1;
     pipeADT pipe = pipeList[pipeId];
 
-    if (pipe->beingAccessed || isEmpty(pipe->pipeQueue))
+    for(int i = 0; i < count; i++)
     {
-        int pid = getPid(scheduler);
-        pipe->waitingProcess = pid;
-        blockProcess(scheduler, pid);
-
-        pipe->waitingProcess = 0;
+        semWait(pipe->readSemId);
+        dest[i] = pipe->buffer[pipe->readIndex];
+        pipe->readIndex = (pipe->readIndex + 1) % PIPE_BUFFER_SIZE;
+        semPost(pipe->writeSemId);
     }
-
-    pipe->beingAccessed = 1;
-
-    getS(pipe->pipeQueue, dest, count);
-    pipe->beingAccessed = 0;
-
-    if (pipe->waitingProcess)
-    {
-        unblockProcess(scheduler, pipe->waitingProcess);
-    }
-
-    return 0;
+    return count;
 }
 
 int closePipe(int pipeId)
@@ -101,31 +91,23 @@ int closePipe(int pipeId)
         return -1;
     }
     pipeADT pipe = pipeList[pipeId];
-    char eof[2] = {-1, 0};
-    return putS(pipe->pipeQueue, eof);
-}
 
-int freePipe(int pipeId)
-{
-    if (pipeId < 0 || pipeId > MAX_PIPES || pipeList[pipeId] == NULL)
-        return -1;
+    semClose(pipe->writeSemId);
+    semClose(pipe->readSemId);
 
-    pipeADT pipe = pipeList[pipeId];
-    freeMem(memoryManager, pipe->pipeQueue);
     freeMem(memoryManager, pipe);
     pipeList[pipeId] = NULL;
-
     return 0;
 }
 
 void printPipes()
 {
-    char *message = "PIPE_ID  ESTADO  PID DEL PROCESO EN ESPERA";
+    char *message = "PIPE_ID  ESTADO    PROCESOS BLOQUEADOS:";
     ncPrint(message, 12);
     ncNewline();
 
     char *aux = allocMem(memoryManager, 10);
-    int space =0;
+    int space = 0;
 
     for (int i = 0; i < MAX_PIPES; i++)
     {
@@ -142,15 +124,17 @@ void printPipes()
             }
 
             if (pipeList[i]->beingAccessed)
+            {
                 ncPrint("En uso", 15);
+                ncPrint("     ", 15);
+            }   
             else
+            {
                 ncPrint("Libre", 15);
-                ncPrint(" ", 15);
-
-            ncPrint("  ", 15);
-
-            uintToBase((uint64_t)pipeList[i]->waitingProcess, aux, 10);
-            ncPrint(aux, 15);
+                ncPrint("      ", 15);
+            }
+            
+            printBlockedPids(pipeList[i]->readSemId);
         }
     }
     ncNewline();

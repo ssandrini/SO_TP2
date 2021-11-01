@@ -58,39 +58,28 @@ void keyboard_handler()
                 break;
             default:
 
-                if(key < 0x56) {  
-                    if(ctrlFlag)
+            if(key < 0x56) {  
+                if(ctrlFlag)
+                {
+                    if(key == 46)
                     {
-                        if(key == 46)
-                        {
-                            killFgProcess(scheduler);
-                        }
-                        else if(key == 44)
-                        {
-                            /*
-                            if(getCurrentFdWrite(scheduler) != 1)
-                            {   
-                                ncPrint("eof",11);
-                                fdWrite(getCurrentFdWrite(scheduler), eof,15);
-                            }
-                            */
-                            
-                            pipeWrite(0,eof);
-                            semPost(sem);
-                            buffer[buffIndex++] = -1;
-                            buffer[buffIndex] = 0;
-                        
-                        }
+                        killFgProcess(scheduler);
                     }
-                    else
+                    else if(key == 44)
                     {
                         semPost(sem);
-                        buffer[buffIndex++] = getAscii(key);
+                        buffer[buffIndex++] = -1;
                         buffer[buffIndex] = 0;
                     }
-
                 }
-                break;
+                else
+                {
+                    semPost(sem);
+                    buffer[buffIndex++] = getAscii(key);
+                    buffer[buffIndex] = 0;
+                }
+            }
+            break;
         }
     }
     return;

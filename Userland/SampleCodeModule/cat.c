@@ -13,5 +13,6 @@ void cat(int argc, char *argv[])
       {
             putChar(c);
       }
+      putChar(c);
       return;
 }

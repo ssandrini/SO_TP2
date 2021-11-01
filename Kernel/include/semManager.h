@@ -18,5 +18,6 @@ int semWait(uint64_t id);
 int semPost(uint64_t id);
 int semClose(uint64_t id);
 void semPrint();
+void printBlockedPids(uint64_t semId);
 
 #endif

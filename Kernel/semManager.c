@@ -43,7 +43,6 @@ uint64_t semCreate(uint64_t initValue)
     Semaphore *sem = allocMem(memMan, sizeof(Semaphore));
     if (sem == NULL)
     {
-        ncPrint("malC",11);
         return (uint64_t)NULL;
     }
 
@@ -63,7 +62,6 @@ uint64_t semOpen(uint64_t id)
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
-        ncPrint("malO",11);
         return (uint64_t)NULL;
     }
     sem->attachedProcesses++;
@@ -75,7 +73,6 @@ int semWait(uint64_t id)
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
-        ncPrint("malW",11);
         return -1;
     }
 
@@ -103,7 +100,6 @@ int semPost(uint64_t id)
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
-        ncPrint("malP",11);
         return -1;
     }
 
@@ -153,6 +149,23 @@ int semClose(uint64_t id)
     return 0;
 }
 
+void printBlockedPids(uint64_t semId)
+{
+    Semaphore *current = findSem(semId);
+    if (current->blockedSize == 0)
+        ncPrint(" - ", 15);
+    else
+    {
+        for (int i = 0; i < current->blockedSize; i++)
+        {
+            uintToBase(current->blockedPIDs[i], aux10, 10);
+            ncPrint(aux10, 15);
+            if (i + 1 != current->blockedSize)
+                ncPrint(", ", 15);
+        }
+    }
+}
+
 void semPrint()
 {
     char *message = "SEM_ID  VALOR  BLOCKED_PIDS";
@@ -182,19 +195,7 @@ void semPrint()
             ncPrint(" ", COLOR);
             space++;
         }
-
-        if (current->blockedSize == 0)
-            ncPrint(" - ", 15);
-        else
-        {
-            for (int i = 0; i < current->blockedSize; i++)
-            {
-                uintToBase(current->blockedPIDs[i], aux10, 10);
-                ncPrint(aux10, 15);
-                if (i + 1 != current->blockedSize)
-                    ncPrint(", ", 15);
-            }
-        }
+        printBlockedPids(current->id);
         ncNewline();
         current = current->next;
     }
@@ -234,8 +235,8 @@ static void removeFromList(uint64_t id)
     }
     if (current == NULL)
         return;
-    if (prev == NULL)// era el first
-    { 
+    if (prev == NULL) // era el first
+    {
         semList->first = current->next;
     }
     else
