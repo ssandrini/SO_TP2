@@ -9,44 +9,44 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
 {
     switch (sysNumber)
     {
-    case 0: // sysRead  r1=buffer r2=bytes
+    case 0:
         fdRead(getCurrentFdRead(scheduler), (char *) r1, (int) r2);
         return 0;
         break;
-    case 1: // sysWrite
+    case 1:
         fdWrite(getCurrentFdWrite(scheduler), (char *) r1, (int) r2);
         return 0;
         break;
-    case 2:                 // sysGetTime
-        getTimeRTC(r1, r2); // en r1 dia mes año y en r2 horas min seg
+    case 2:                
+        getTimeRTC(r1, r2); 
         return 0;
         break;
-    case 3: // sysGetReg
+    case 3: 
         getReg((uint64_t *)r1, (uint64_t *)rsp);
         return 0;
         break;
-    case 4: // sysGetMem
+    case 4:
         getMem((uint8_t *)r1, (uint8_t *)r2);
         return 0;
         break;
-    case 5: // sysMalloc 
+    case 5: 
         return (uint64_t) allocMem(memoryManager, (size_t) r1);
         break;
-    case 6: // sysClearScreen
+    case 6: 
         ncClear();
         return 0;
         break;
-    case 7: // sysGetCpuInfo (en este caso el tercer parametro representa el ID)
+    case 7: 
         getInfo((uint32_t *)r1, (uint32_t *)r2, (int *)r3);
         return 0;
         break;
     case 8:
         return freeMem(memoryManager, (void *) r1);
         break;
-    case 9: // sysCreateProcess(entryPoint, argv, argc, fg)
+    case 9: 
         return (uint64_t) newProcess(scheduler, 1, (void (*)(int, char **)) r1, (char **) r2, (int) r3, (int) r4, (int*) rsp);
         break;
-    case 10: //sysKill(pid);
+    case 10: 
         if((int)r1 == 1)
         {
             ncPrint("No puedes matar a la shell",9);
@@ -54,7 +54,7 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         }
         return (uint64_t) killProcess(scheduler, (int) r1);
         break;
-    case 11: //sysBLock(pid)
+    case 11: 
         if((int)r1 == getPid(scheduler))
         {
             ncPrint("No puedes bloquearte a ti mismo",9);
@@ -69,10 +69,10 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
             return (uint64_t) blockProcess(scheduler, (int) r1);
         }
         break;
-    case 12: // POR AHORA ESTA VACIA
+    case 12: 
         return 0;
         break;
-    case 13: //sysNice(pid, priorioty)
+    case 13: 
         return (uint64_t) setPriority(scheduler, (int) r1, (int) r2);
         break;
     case 14:
@@ -90,18 +90,18 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
     case 17:
         return (uint64_t) getPid(scheduler);
         break;
-    case 18: // semCreate(UINT64 value)
+    case 18: 
         return  semCreate(r1);
         break;
-    case 19: // semOPEN(UINT64 ID)
+    case 19: 
         return  semOpen(r1);
         break;
-    case 20: // semClose(UINT64 ID)
+    case 20: 
         return (uint64_t) semClose(r1);
-    case 21: //semWait(uint64_t id)
+    case 21: 
         return (uint64_t) semWait(r1);
         break;
-    case 22: //semPost(uint64_t id)
+    case 22:
         return (uint64_t) semPost(r1);
         break;
     case 23:
@@ -147,14 +147,6 @@ void read(unsigned char *r1, unsigned int r2)
     unsigned char *KeyBuffer = getBuffer();
     unsigned int i;
     
-    /*
-    if(KeyBuffer[0] == '\0')
-    {
-        blockProcess(scheduler,1);
-    }
-    */
-    
-    
     r1[0] = 0;
     for (i = 0; i < r2 && KeyBuffer[i] != 0; i++)
     {
@@ -170,12 +162,12 @@ void getTimeRTC(uint64_t r1, uint64_t r2)
 {
     int *buffer1 = (int *)r1;
     int *buffer2 = (int *)r2;
-    buffer1[0] = _RTC(9); //año
-    buffer1[1] = _RTC(8); //mes
-    buffer1[2] = _RTC(7); //dia
-    buffer2[0] = _RTC(4); //hora
-    buffer2[1] = _RTC(2); //minuto
-    buffer2[2] = _RTC(0); //segundo
+    buffer1[0] = _RTC(9);
+    buffer1[1] = _RTC(8); 
+    buffer1[2] = _RTC(7); 
+    buffer2[0] = _RTC(4); 
+    buffer2[1] = _RTC(2); 
+    buffer2[2] = _RTC(0); 
 
     buffer2[2] = (buffer2[2] & 0x0F) + ((buffer2[2] / 16) * 10);
     buffer2[1] = (buffer2[1] & 0x0F) + ((buffer2[1] / 16) * 10);

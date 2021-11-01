@@ -2,7 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <videoDriver.h>
 
-// aca estaría mejor armar un TAD
 #define DEL 127
 #define CURSOR 222
 
@@ -16,7 +15,6 @@ static int getInformation(uint8_t * dir)
 	return *(dir+1);
 }
 
-// habria que tocar el color? podria usar directamente la de imprimir el char con el color negro
 static void clearLine(uint8_t * p) 
 {
 	for(int i = 0; i < width; i++)
@@ -56,10 +54,8 @@ void writeAscii(char character, int color)
 	}
 } 
 
-// 
-
 void clearScreen()
-{ // este deberia aprovechar clearLine
+{ 
 	int i;
 	for (i = 0; i < height * width; i++)
 		video[i * 2] = ' ';
@@ -70,7 +66,7 @@ void newLine()
 {
 	do
 	{
-		writeAscii(' ', 0); // podria definir BLACK
+		writeAscii(' ', 0);
 	} while((uint64_t)(currentVideo - video) % (width * 2) != 0);
 }
 

@@ -48,10 +48,6 @@ void getMem(int argc, char ** argv);
 void getTime(int argc, char ** argv);
 void clear();
 void cpuid(int argc, char ** argv);
-//void quadratic();
-//void celsius();
-//void fahrenheit();
-//void polar();
 void mem(int argc, char ** argv);
 void ps(int argc, char ** argv);
 void sem(int argc, char ** argv);
@@ -59,23 +55,10 @@ void pipe(int argc, char ** argv);
 void kill(int argc, char ** argv);
 void nice(int argc, char ** argv);
 void block(int argc, char ** argv);
-//int cat(int argc, char *argv[]);
-//-------------------------------------------------------------------------------------------
 //---------------------------------------AUX FUNCTIONS---------------------------------------
 int checkCommandBuiltIn(char * buffer);
 int checkCommandUserApps(char * buffer);
 int prepareArgs(char token, char **argv, char *input);
 int checkTests(char *buffer, char *parameter);
-//-------------------------------------------------------------------------------------------
-
-//---------------------------------------ASM FUNCTIONS----------------------------------------
-//extern void _exc6Trigger();
-/*
-extern int _quadratic(long double * a, long double * b, long double * c, long double * r1, long double * r2);
-extern void _FtoCelcius(long double * deg_f, long double * c1, long double * c2 , long double * res);
-extern void _CtoFahren(long double * deg_c, long double * c1, long double * c2 , long double * res);
-extern void _rectToPolar(long double * x, long double * y, long double * mod, long double * angle, long double * c);
-//---------------------------------------------------------------------------------------------
-*/
 #endif
     

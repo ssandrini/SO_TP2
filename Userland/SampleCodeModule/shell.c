@@ -19,7 +19,6 @@ void (*func_ptr[BUILTIN_SIZE])() = {help, clear};
 static int getPipeIndex(int argc, char **argv);
 static void runPipe(int argc, char **argv, int pipeIndex);
 static uint64_t newProcess(int isCommand, int argc, char **argv, int fg, int *fd);
-//static void waitPipe(uint64_t pipe, uint64_t pid1, uint64_t pid2);
 
 void shell()
 {
@@ -137,7 +136,7 @@ void requestUser()
         }
         else if (character == TAB)
         {
-            ; // no se permite el tab mientras se escribe usuario
+            ;
         }
         else if (character != 0)
         {

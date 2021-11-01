@@ -7,28 +7,23 @@
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPERATION_ID 6
 
-// valores de retorno de la excepcion
 uint64_t *ipReturn;
 uint64_t *rspReturn;
 
 void exceptionDispatcher(uint64_t exception, uint64_t *stackFrame)
 {
-	// por ahora manejamos estas dos excepciones
 	if (exception == (uint64_t)0)
 	{
 		zero_division();
 	}
 	else if (exception == INVALID_OPERATION_ID)
 		invalid_operation();
-	// en todas se imprimen los registros y se resetea
 	registerPrint(stackFrame);
-	// para resetear cambiamos aca los valoress de los registros
 	stackFrame[0xF] = (uint64_t)ipReturn;
 	stackFrame[0x12] = (uint64_t)rspReturn;
 	return;
 }
 
-// setea los registros de retorno
 void backAddresses(uint64_t *ip, uint64_t *rsp)
 {
 	ipReturn = ip;
@@ -48,9 +43,7 @@ void zero_division()
 }
 
 void registerPrint(uint64_t *stackFrame)
-{
-	// TUVE QUE COMENTAR TODO ESTO PORQUE NO TENEMOS DELETECURSOR Y ESO
-	
+{	
 	char buffer[9];
 	static const char *registersName[] = {"R15:   ", "R14:   ", "R13:   ", "R12:   ", "R11:   ", "R10:   ", "R9:    ", "R8:    ", "RSI:   ", "RDI:   ", "RBP:   ", "RDX:   ", "RCX:   ", "RBX:   ", "RAX:   ", "RIP:   ", "CS:    ", "FLAGS: ", "RSP:   "};
 	for (int i = 0; i < 19; i++)
@@ -71,12 +64,11 @@ void registerPrint(uint64_t *stackFrame)
 	_sti();
 	ncPrint("La pantalla se reiniciara en ", 4);
 	char buff[3] = {0};
-	_hlt(); // aca lo cortamos hasta que el timer tick nos interrumpa
+	_hlt(); 
 	int init_time = seconds_elapsed();
 	int i = 10;
 	uintToBase(i, buff, 10);
 	ncPrint(buff, 4);
-	//deleteCursor();
 	while (i > 0)
 	{
 		int aux;
@@ -93,7 +85,6 @@ void registerPrint(uint64_t *stackFrame)
 			i = aux;
 			uintToBase(i, buff, 10);
 			ncPrint(buff, 4);
-			//deleteCursor();
 		}
 	}
 	ncNewline();

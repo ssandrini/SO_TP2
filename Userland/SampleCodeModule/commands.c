@@ -58,27 +58,21 @@ void cpuid(int argc, char **argv)
         printError("Cantidad de argumentos incorrecta");
         return;
     }
-    //para poner en el run.sh y ver si cambian los features
-    //-cpu qemu64,mmx=on,sse2=on,f16c=on,sse=off,vaes=on
 
     uint32_t r1;
     uint32_t r2;
 
     uint32_t masks1[8] = {0x1, 0x2, 0x1000, 0x80000, 0x100000, 0x2000000, 0x10000000, 0x20000000};
     char namesr1[8][20] = {"sse3", "pclmulqdq", "fma", "sse41", "sse42", "aesni", "avx", "f16c"};
-    //              bit =        0       1            12      19       20       25        28           29
 
     uint32_t masks2[3] = {0x800000, 0x2000000, 0x4000000};
     char namesr2[3][20] = {"mx", "sse", "sse2"};
-    //              bit =       23         25          26
 
     uint32_t sMasks1[2] = {0x200, 0x400};
     char snamesr1[2][20] = {"vaesni", "vpclmulqdq"};
-    //              bit =           9         10
 
     uint32_t sMasks2 = 0x20;
     char snamesr2[13] = "avx2";
-    //              bit =      5
 
     int ok = FEATURES_ID;
     uint32_t aux = 0;
@@ -184,7 +178,7 @@ void getMem(int argc, char **argv)
         return;
     }
     uint8_t *dir = (uint8_t *)hexaStrToDir(argv[1]);
-    uint8_t vec[32]; // 32 "registros" de 1 byte
+    uint8_t vec[32];
     _syscall(GET_MEM, (uint64_t)dir, (uint64_t)vec, 0, 0, 0);
     printTitle("Volcado de memoria byte a byte a partir de la direccion solicitada: \n");
     for (int i = 0; i < 32; i++)
@@ -319,16 +313,3 @@ int prepareArgs(char token, char **argv, char *input)
     }
     return index;
 }
-// loop 1
-
-
-/*
-char info[COMMANDS_SIZE][INFO_MAX] = {"desplega el dia y la hora del sistema\n", "imprime en pantalla el valor de todos los registros\n",
-                                          "realiza un volcado de memoria de 32 bytes a partir de la direccion recibida como argumento \n",
-                                          "despliega los features del procesador\n", "demuestra la excepcion de division por cero\n",
-                                          "demuestra la excepcion de operacion invalida\n", "borra toda la pantalla\n", "imprime el estado de la memoria\n",
-                                          "imprime la lista de todos los procesos con sus propiedades\n", "mata un proceso dado su ID\n",
-                                          "cambia la prioridad de un proceso dado su ID y la nueva prioridad\n", "cambia el estado de un proceso entre bloqueado y listo dado su ID\n",
-                                          "imprime la lista de todos los semaforos con sus propiedades\n", "imprime la lista de todos los pipes con sus propiedades\n"};
-
-*/

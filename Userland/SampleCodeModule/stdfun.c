@@ -118,7 +118,7 @@ void printf(char *str, ...)
                 }
                 case 'd':
                 {
-                    numToStr(va_arg(args, int), tmp, 10); //base 10
+                    numToStr(va_arg(args, int), tmp, 10);
                     strcpy(&buff[j], tmp);
                     j += strlen(tmp);
                     break;
@@ -130,9 +130,9 @@ void printf(char *str, ...)
                     j += strlen(str_arg);
                     break;
                 }
-                case 'x': // imprime en hexa pero con 8 digitos
+                case 'x': 
                 {
-                    h = uintToString(va_arg(args, unsigned int), tmp, 16); //base 16
+                    h = uintToString(va_arg(args, unsigned int), tmp, 16); 
                     for (forindex = 0; forindex < 8 - h; forindex++)
                     {
                         tmp2[forindex] = '0';
@@ -143,10 +143,9 @@ void printf(char *str, ...)
                     
                     break;
                 }
-                case 'X': // imprime en hexa pero solo con 2 digitos
+                case 'X': 
                 {
-                    h = uintToString(va_arg(args, unsigned int), tmp, 16); //base 16
-                    // aca me sale una string de len = 1 o 2
+                    h = uintToString(va_arg(args, unsigned int), tmp, 16);
                     if( h == 1 ) {
                         tmp2[0] = '0';
                         tmp2[1] = tmp[0];
@@ -207,8 +206,6 @@ int strToInt(char *str)
 }
 //-------------------------------------------------------------------------------
 
-
-// los caracteres ya tienen que ser validos cuando se llama a esta funcion
 uint64_t hexaStrToDir(char *hexaStr)
 { 
     int len = strlen(hexaStr);
@@ -259,7 +256,6 @@ uint32_t uintToString(uint64_t value, char * buffer, uint32_t base)
 	char *p1, *p2;
 	uint32_t digits = 0;
 
-	//Calculate characters for each digit
 	do
 	{
 		uint32_t remainder = value % base;
@@ -268,10 +264,7 @@ uint32_t uintToString(uint64_t value, char * buffer, uint32_t base)
 	}
 	while (value /= base);
 
-	// Terminate string in buffer.
 	*p = 0;
-
-	//Reverse string in buffer.
 	p1 = buffer;
 	p2 = p - 1;
 	while (p1 < p2)
@@ -319,26 +312,3 @@ uint64_t my_sem_close(uint64_t sem_id)
 {
     return _syscall(CLOSE_SEM, sem_id, 0,0,0,0);
 }
-
-/*
-
-uint64_t mySemOpen(uint64_t id){
-    return _syscall(OPEN_SEM, id, 0,0,0,0);
-}
-
-uint64_t mySemCreate(uint64_t value){
-    return _syscall(CREATE_SEM, value, 0,0,0,0);
-}
-
-void mySemClose(uint64_t id){
-    _syscall(CLOSE_SEM, id, 0, 0, 0, 0);
-}
-
-void mySemWait(uint64_t id){
-    _syscall(WAIT_SEM, id, 0, 0,0,0);
-}
-
-void mySemPost(uint64_t id){
-    _syscall(POST_SEM, id, 0, 0,0,0);
-}
-*/

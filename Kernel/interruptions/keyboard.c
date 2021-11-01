@@ -47,14 +47,12 @@ void keyboard_handler()
         unsigned char key = _getKey();
         switch (key)
         {
-            // dejamos un switch por si se agregan mas teclas especiales en un futuro
-            // o por si se diferencia entre los shifts   
             case LEFT_SHIFT : case RIGHT_SHIFT :   
             case LEFT_SHIFT + OFFSET : case RIGHT_SHIFT + OFFSET: 
             case CAPSLOCK :
                 mayuscFlag = (mayuscFlag == 1) ? 0 : 1;
                 break;
-            case LEFT_CONTROL: case LEFT_CONTROL + OFFSET:  // por ahora no tiene funcionalidad
+            case LEFT_CONTROL: case LEFT_CONTROL + OFFSET:
                 ctrlFlag = (ctrlFlag == 1) ? 0 : 1;
                 break;
             default:
