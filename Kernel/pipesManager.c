@@ -27,7 +27,7 @@ void initPipeManager(memoryManagerADT mm, schedulerADT sch)
 
 int newPipe()
 {
-    int i;
+    int i = 0;
     while (i < MAX_PIPES && pipeList[i] != NULL)
         i++;
 
@@ -51,7 +51,7 @@ int pipeWrite(int pipeId, char *src)
 
     while (*src != 0)
         pipePutChar(pipe, *src++);
-    
+
     return 0;
 }
 
@@ -74,7 +74,7 @@ int pipeRead(int pipeId, char *dest, int count)
         return -1;
     pipeADT pipe = pipeList[pipeId];
 
-    for(int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)
     {
         semWait(pipe->readSemId);
         dest[i] = pipe->buffer[pipe->readIndex];
@@ -127,13 +127,13 @@ void printPipes()
             {
                 ncPrint("En uso", 15);
                 ncPrint("     ", 15);
-            }   
+            }
             else
             {
                 ncPrint("Libre", 15);
                 ncPrint("      ", 15);
             }
-            
+
             printBlockedPids(pipeList[i]->readSemId);
         }
     }
