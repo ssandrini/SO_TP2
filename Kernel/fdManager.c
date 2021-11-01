@@ -86,6 +86,7 @@ int freeFd(int fd)
 
     if (fd > 1)
     {
+        freeMem(memoryManager, fdAux);
         return closePipe(fdAux->pipeId);
     }
     else
