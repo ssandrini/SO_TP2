@@ -131,6 +131,10 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         break;
     case 31:
         return (uint64_t) wait(scheduler, (int) r1);
+        break;
+    case 32:
+        return (uint64_t) seconds_elapsed();
+        break;
     default:
         return 0;
         break;

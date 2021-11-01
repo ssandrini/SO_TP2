@@ -8,6 +8,7 @@
 #include <memoryManager.h>
 #include <pipesManager.h>
 #include <fdManager.h>
+#include <time.h>
 extern int _RTC(int num);
 extern void _getRegisters(uint64_t * regs);
 extern void _cpuid(uint32_t * r1,uint32_t * r2, int * id);
