@@ -40,7 +40,6 @@ char keyPressed()
 
 void keyboard_handler() 
 {
-    char eof[2] = {-1,0};
     if(keyPressed())
     { 
         unsigned char key = _getKey();

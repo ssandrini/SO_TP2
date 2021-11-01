@@ -26,6 +26,7 @@
         "initializer_list": "c",
         "ranges": "c",
         "utility": "c",
-        "tests.h": "c"
+        "tests.h": "c",
+        "memorymanager.h": "c"
     }
 }
