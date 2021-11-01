@@ -3,7 +3,7 @@
 char commandsNames[BUILTIN_SIZE][NAME_MAX] = {"help", "clear"};
 char info[BUILTIN_SIZE + APPS_SIZE][INFO_MAX] = {"muestra todos los comandos con sus explicaciones\n", "borra toda la pantalla\n", "imprime su ID con un saludo cada 15 segundos\n", "imprime el stdin tal como lo recibe\n", "cuenta la cantidad de lineas del input\n",
                                                  "filtra las vocales del input\n", "implementa el problema de los filosofos comensales\n", "imprime en pantalla el valor de todos los registros\n",
-                                                 "realiza un volcado de memoria de 32 bytes a partir de la direccion recibida como argumento \n",
+                                                 "realiza un volcado de memoria de 32 bytes a partir de la dir recibida\n",
                                                  "despliega los features del procesador\n", "desplega el dia y la hora del sistema\n", "imprime el estado de la memoria\n",
                                                  "imprime la lista de todos los procesos con sus propiedades\n", "mata un proceso dado su ID\n",
                                                  "cambia la prioridad de un proceso dado su ID y la nueva prioridad\n", "cambia el estado de un proceso entre bloqueado y listo dado su ID\n",
