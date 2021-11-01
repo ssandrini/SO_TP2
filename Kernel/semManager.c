@@ -51,6 +51,7 @@ uint64_t semCreate(uint64_t initValue)
     sem->id = idCounter++;
     sem->mutex = 0;
     sem->attachedProcesses = 0;
+    sem->next = NULL;
 
     addInList(sem);
     return sem->id;
@@ -58,13 +59,10 @@ uint64_t semCreate(uint64_t initValue)
 
 uint64_t semOpen(uint64_t id)
 {
-    uintToBase(id,aux10,10);
-    ncPrint(aux10 , 10);
     Semaphore *sem = findSem(id);
-    // hay que chequear si el semaforo ya está lleno?
     if (sem == NULL)
     {
-         return (uint64_t)NULL;
+        return (uint64_t)NULL;
     }
     sem->attachedProcesses++;
     return sem->id;
@@ -134,7 +132,7 @@ int semClose(uint64_t id)
     Semaphore *sem = findSem(id);
     if (sem == NULL)
     {
-       
+
         return -1;
     }
 
@@ -211,12 +209,10 @@ static void addInList(Semaphore *newSem)
 {
     if (semList->size == 0)
     {
-        ncPrint("aca",11);
         semList->first = semList->last = newSem;
     }
     else
     {
-        ncPrint("otro",11);
         semList->last->next = newSem;
         semList->last = newSem;
     }
@@ -226,15 +222,24 @@ static void addInList(Semaphore *newSem)
 static void removeFromList(uint64_t id)
 {
     Semaphore *current = semList->first;
-    if(current == NULL)
-        return;
-
-    while (current->next != NULL && current->next->id != id)
+    Semaphore *prev = NULL;
+    while (current != NULL && current->id != id)
+    {
+        prev = current;
         current = current->next;
-    if (current->next == NULL)
+    }
+    if (current == NULL)
         return;
-    Semaphore *aux = current->next;
-    current->next = current->next->next;
+    if (prev == NULL)// era el first
+    { 
+        semList->first = current->next;
+    }
+    else
+    {
+        prev->next = current->next;
+        if (prev->next == NULL)
+            semList->last = prev;
+    }
     semList->size--;
-    freeMem(memMan, aux);
+    freeMem(memMan, current);
 }

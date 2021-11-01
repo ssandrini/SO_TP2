@@ -94,7 +94,7 @@ void test_sync(int argc, char **argv)
     char *argv2[] = {"inc", "1", "-1", "100000"};
 
     sem_id = my_sem_create(1);
-    _syscall(PRINT_SEM,0,0,0,0,0);
+    
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
         my_create_process2(argv1);
