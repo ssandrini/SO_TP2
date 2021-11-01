@@ -158,7 +158,7 @@ static int getPipeIndex(int argc, char **argv)
 {
     for (int i = 0; i < argc; i++)
     {
-        if (strcmp(argv[i], "-") == 0)
+        if (strcmp(argv[i], "|") == 0)
             return i;
     }
     return -1;
