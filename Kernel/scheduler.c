@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <scheduler.h>
 #include <naiveConsole.h>
+#define MAX_ALLOC 10
 typedef struct
 {
       int pid;
@@ -14,6 +15,7 @@ typedef struct
       int fd[2];
       void *rsp; // aca tendria que usar el stackFrame
       void *rbp;
+      void * allocs[MAX_ALLOC];
       State state;
 } PCB;
 
@@ -231,7 +233,11 @@ int newProcess(schedulerADT scheduler, unsigned int priority, void (*entryPoint)
       {
             blockProcess(scheduler, scheduler->currentProcess->pcb->pid);
       }
-
+      int i;
+      for(i =0; i< MAX_ALLOC; i++)
+      {
+            aux->allocs[i] = NULL;
+      }
       return aux->pid;
 }
 
@@ -607,11 +613,31 @@ static int isEmpty(PList *list)
 
 static void removeProcess(schedulerADT scheduler, PNode *node)
 {
-      for (int i = 0; i < node->pcb->argc; i++)
+      int i;
+      for (i = 0; i < node->pcb->argc; i++)
             freeMem(scheduler->memoryManager, node->pcb->argv[i]);
       freeMem(scheduler->memoryManager, node->pcb->argv);
       freeMem(scheduler->memoryManager, node->pcb->name);
       freeMem(scheduler->memoryManager, (void *)((char *)node->pcb->rbp - STACK_SIZE + 1));
+      for (i = 0; i < MAX_ALLOC; i++)
+      {
+            if(node->pcb->allocs[i] != NULL)
+                  freeMem(scheduler->memoryManager, node->pcb->allocs[i]);
+      }
       freeMem(scheduler->memoryManager, node->pcb);
       freeMem(scheduler->memoryManager, node);
+
+}
+
+void saveDir(schedulerADT scheduler, int pid, void * toSave) 
+{
+      int i;
+      for(i = 0; i < MAX_ALLOC; i++) 
+      {
+            if(scheduler->currentProcess->pcb->allocs[i] == NULL)
+            {
+                  scheduler->currentProcess->pcb->allocs[i] = toSave;
+                  return;
+            }
+      }  
 }

@@ -7,6 +7,7 @@ static memoryManagerADT memoryManager;
 
 uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, uint64_t r4, uint64_t rsp)
 {
+    
     switch (sysNumber)
     {
     case 0:
@@ -30,7 +31,7 @@ uint64_t sysHandler(uint64_t sysNumber, uint64_t r1, uint64_t r2, uint64_t r3, u
         return 0;
         break;
     case 5: 
-        return (uint64_t) allocMem(memoryManager, (size_t) r1);
+        return allocWrapper((size_t) r1);
         break;
     case 6: 
         ncClear();
@@ -208,4 +209,11 @@ void initSysHandler(memoryManagerADT mm, schedulerADT sch)
 {
     scheduler = sch;
     memoryManager = mm;
+}
+
+uint64_t allocWrapper(size_t size)
+{
+    void * ans = allocMem(memoryManager, size);
+    saveDir(scheduler,getPid(scheduler), ans);
+    return (uint64_t) ans;
 }

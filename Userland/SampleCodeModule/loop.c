@@ -25,6 +25,8 @@ void loop(int argc, char *argv[])
         return;
     }
     int pid = (int)_syscall(PID, 0, 0, 0, 0, 0);
+
+    char * aux = myMalloc(1000);
     while (1)
     {
         sleep(sec);

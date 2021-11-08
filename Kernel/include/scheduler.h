@@ -45,4 +45,6 @@ void yield(schedulerADT scheduler);
 int isBlocked(schedulerADT scheduler, int pid);
 
 int wait(schedulerADT scheduler, int pid);
+
+void saveDir(schedulerADT scheduler, int pid, void * toSave);
 #endif

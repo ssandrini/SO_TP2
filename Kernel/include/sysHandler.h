@@ -21,4 +21,5 @@ void getReg(uint64_t * r1, uint64_t * stackFrame);
 void getMem(uint8_t * dir, uint8_t * vec);
 void getInfo(uint32_t * r1, uint32_t * r2, int * id);
 void initSysHandler(memoryManagerADT mm, schedulerADT scheduler);
+uint64_t allocWrapper(size_t size);
 #endif
