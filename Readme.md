@@ -69,4 +69,9 @@ compartirlos acordando un identificador a priori.
   <li>otros (consultar help).</li>
 </ul>
 
-
+<h2>Autores</h2>
+<ul>
+  <li><a href="https://github.com/ssandrini">Santiago Sandrini</a></li>
+  <li><a href="https://github.com/solkonfe">Sol Konfederak</a></li>
+  <li><a href="https://github.com/florchao">Florencia Chao</a></li>
+</ul>
